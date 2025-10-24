@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  HttpCode,
   HttpException,
   HttpStatus,
   Inject,
@@ -18,6 +19,7 @@ export class CommentController {
   ) {}
 
   @Get(':id')
+  @HttpCode(200)
   async getCommentById(
     @Param('id') commentId: string,
   ): Promise<CommentViewType> {

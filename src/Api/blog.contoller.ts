@@ -36,12 +36,13 @@ export class BlogController {
   ) {}
 
   @Get()
+  @HttpCode(200)
   async returnAllBlogs(@Query() Query: InputQueryType): Promise<BlogPagesType> {
     return await this.blogQueryRep.findManyBlogs(Query);
   }
 
   @Post()
-  @HttpCode(200)
+  @HttpCode(201)
   async createBlog(
     @Body() reqBody: BlogInputType,
   ): Promise<BlogViewType | null> {
