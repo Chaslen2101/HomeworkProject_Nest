@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
-import { ObjectId } from 'mongodb';
 import { BlogInputType, PostInputType } from '../Types/Types';
 import { HydratedDocument, Model } from 'mongoose';
 import { PostDocumentType, PostModelType } from './post.schema';
@@ -16,7 +15,7 @@ export class Blog {
   @Prop({ type: String, required: true })
   websiteUrl: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: MongooseSchema.Types.Date, required: true })
   createdAt: Date;
 
   @Prop({ type: Boolean, default: false })

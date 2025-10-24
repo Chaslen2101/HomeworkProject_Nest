@@ -16,11 +16,11 @@ class NewestLikes {
 
 @Schema({ _id: false })
 class LikesInfo {
-  @Prop({ type: String, default: [] })
-  likedBy: string;
+  @Prop({ type: [String], default: [] })
+  likedBy: string[];
 
   @Prop({ type: [String], default: [] })
-  dislikedBy: string;
+  dislikedBy: string[];
 
   @Prop({ type: [NewestLikes], default: [] })
   newestLikes: NewestLikes[];
@@ -46,8 +46,8 @@ export class Post {
   @Prop({ type: MongooseSchema.Types.Date, required: true })
   createdAt: Date;
 
-  @Prop({ type: String, required: true, default: [] })
-  comments: string;
+  @Prop({ type: [], required: true, default: [] })
+  comments: [];
 
   @Prop({ type: LikesInfo })
   likesInfo: LikesInfo;
