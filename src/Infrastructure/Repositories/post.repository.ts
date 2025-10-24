@@ -1,24 +1,22 @@
-import {PostsInstanceType} from "../../Types/Types";
-import {PostsModel} from "../../db/MongoDB";
-import {injectable} from "inversify";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Post, PostDocumentType } from '../../Domain/post.schema';
+import type { PostModelType } from '../../Domain/post.schema';
 
+@Injectable()
+export class PostRepository {
+  constructor(@InjectModel(Post.name) private PostModel: PostModelType) {}
 
-@injectable()
-export class PostsRepository {
+  async save(post: PostDocumentType): Promise<PostDocumentType> {
+    return await post.save();
+  }
 
-    async save (post: PostsInstanceType): Promise<PostsInstanceType> {
-        return post.save()
-    }
+  async findById(postId: string): Promise<PostDocumentType | null> {
+    return await this.PostModel.findOne({ id: postId });
+  }
 
-    async findById (postId: string): Promise<PostsInstanceType | null> {
-
-        return await PostsModel.findOne({id: postId})
-    }
-
-    async delete(id: string): Promise<boolean> {
-
-        const result = await PostsModel.deleteOne({id: id})
-        return result.deletedCount !== 0
-    }
+  async delete(id: string): Promise<boolean> {
+    const result = await this.PostModel.deleteOne({ id: id });
+    return result.deletedCount !== 0;
+  }
 }
-

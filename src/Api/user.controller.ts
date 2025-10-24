@@ -1,47 +1,60 @@
-import {Request, Response} from "express"
-import {InputQueryType, UserInputType, UserQueryType, UserViewType} from "../Types/Types";
-import {UsersQueryRep} from "../Infrastructure/QueryRep/usersQueryRep";
-import {httpStatuses} from "../settings";
-import {queryHelper} from "../Infrastructure/Features/GlobalFeatures/helper";
-import {UsersService} from "../Application/Services/usersServices";
-import {inject} from "inversify";
+import type {
+  InputQueryType,
+  UserInputType,
+  UserQueryType,
+  UserPagesType,
+  UserViewType,
+} from '../Types/Types';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
+import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
+import { UserService } from '../Application/user.service';
+import { queryHelper } from '../Application/helper';
+import { ObjectId } from 'mongodb';
 
+@Controller('users')
+export class UserController {
+  constructor(
+    @Inject(UserService) protected userService: UserService,
+    @Inject(UserQueryRep) protected userQueryRep: UserQueryRep,
+  ) {}
 
-export class UsersController {
+  @Post()
+  @HttpCode(201)
+  async createUser(
+    @Body() reqBody: UserInputType,
+  ): Promise<UserViewType | null> {
+    const newUserId: ObjectId = await this.userService.createUser(reqBody);
 
-    constructor(
-        @inject(UsersQueryRep) protected usersQueryRep: UsersQueryRep,
-        @inject(UsersService) protected usersService: UsersService
-    ) {}
+    return await this.userQueryRep.findUserById(newUserId);
+  }
 
-    async createUser (req: Request<{}, {}, UserInputType>, res: Response)  {
-        const newUserId: string = await this.usersService.createUser(req.body)
-        const newUser: UserViewType | null = await this.usersQueryRep.findUserById(newUserId)
-        res
-            .status(httpStatuses.CREATED_201)
-            .json(newUser)
+  @Get()
+  @HttpCode(200)
+  async getManyUsers(
+    @Query() query: InputQueryType,
+  ): Promise<UserPagesType | null> {
+    const sanitizedQuery: UserQueryType = queryHelper.userQuery(query);
+    return await this.userQueryRep.findManyUsersByLoginOrEmail(sanitizedQuery);
+  }
+
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteUser(@Param('id') userId: string): Promise<void> {
+    const isDeleted: boolean = await this.userService.deleteUser(userId);
+    if (!isDeleted) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-
-    async getManyUsers (req: Request, res: Response) {
-
-        const sanitizedQuery: UserQueryType = queryHelper.userQuery(req.query as InputQueryType)
-        res
-            .status(httpStatuses.OK_200)
-            .json(await this.usersQueryRep.findManyUsersByLoginOrEmail(sanitizedQuery))
-    }
-
-    async deleteUser (req: Request, res: Response) {
-
-        const isDeleted: boolean = await this.usersService.deleteUser(req.params.id)
-        if (isDeleted) {
-            res
-                .status(httpStatuses.NO_CONTENT_204)
-                .json({})
-        } else {
-            res
-                .status(httpStatuses.NOT_FOUND_404)
-                .json({})
-        }
-    }
+  }
 }
-

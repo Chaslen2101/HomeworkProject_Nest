@@ -1,44 +1,61 @@
+import { Injectable } from '@nestjs/common';
 import {
-    BlogsPostsQueryType,
-    InputQueryType,
-    PostsPagesType,
-    PostsDBType,
-    PostsViewType
-} from "../../Types/Types";
-import {mapToView, queryHelper} from "../Features/GlobalFeatures/helper";
-import {PostsModel} from "../../db/MongoDB";
-import {injectable} from "inversify";
+  BlogPostQueryType,
+  InputQueryType,
+  PostPagesType,
+  PostViewType,
+} from '../../Types/Types';
+import { mapToView, queryHelper } from '../../Application/helper';
+import { InjectModel } from '@nestjs/mongoose';
+import { Post, PostDocumentType } from '../../Domain/post.schema';
+import type { PostModelType } from '../../Domain/post.schema';
+import { ObjectId, SortDirection } from 'mongodb';
 
+@Injectable()
+export class PostQueryRep {
+  constructor(
+    @InjectModel(Post.name) private readonly PostModel: PostModelType,
+  ) {}
 
-@injectable()
-export class PostsQueryRep {
+  async findManyPosts(
+    query: InputQueryType,
+    id?: string,
+  ): Promise<PostPagesType> {
+    const sanitizedQuery: BlogPostQueryType = queryHelper.blogPostQuery(query);
+    const filter: { blogId: string } | object = query.blogId
+      ? { blogId: query.blogId }
+      : id
+        ? { blogId: id }
+        : {};
 
-    async findManyPosts (query:InputQueryType, userId: string, id?: string, ): Promise<PostsPagesType> {
+    const items: PostDocumentType[] = await this.PostModel.find(filter)
+      .sort({
+        [sanitizedQuery.sortBy]: sanitizedQuery.sortDirection as SortDirection,
+      })
+      .limit(sanitizedQuery.pageSize)
+      .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize);
+    const totalCount: number = await this.PostModel.countDocuments(filter);
 
-        const sanitizedQuery: BlogsPostsQueryType = queryHelper.blogsPostsQuery(query)
-        const filter: {blogId:string} | {} = query.blogId ? {blogId: query.blogId} : id ? {blogId: id} : {}
+    const mappedPosts: PostViewType[] = mapToView.mapPosts(items);
 
-        const items: PostsDBType[] = await PostsModel.find(filter, {projection: {_id: 0}})
-            .sort({[sanitizedQuery.sortBy]: sanitizedQuery.sortDirection})
-            .limit(sanitizedQuery.pageSize)
-            .skip((sanitizedQuery.pageNumber-1)*sanitizedQuery.pageSize).lean()
-        const totalCount: number = await PostsModel.countDocuments(filter)
+    return {
+      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
+      page: sanitizedQuery.pageNumber,
+      pageSize: sanitizedQuery.pageSize,
+      totalCount: totalCount,
+      items: mappedPosts,
+    };
+  }
 
-        const mappedPosts: PostsViewType[] = mapToView.mapPosts(items, userId)
-
-        return {
-            pagesCount: Math.ceil(totalCount/sanitizedQuery.pageSize),
-            page: sanitizedQuery.pageNumber,
-            pageSize: sanitizedQuery.pageSize,
-            totalCount: totalCount,
-            items: mappedPosts
-        }
+  async findPostById(postId: ObjectId | string): Promise<PostViewType | null> {
+    const notMappedPost: PostDocumentType | null = await this.PostModel.findOne(
+      {
+        _id: postId,
+      },
+    );
+    if (!notMappedPost) {
+      return null;
     }
-
-    async findPostById(postId: string, userId: string): Promise<PostsViewType | null> {
-
-        const notMappedPost: PostsDBType | null = await PostsModel.findOne({id: postId}).lean()
-        if (!notMappedPost) {return null}
-        return mapToView.mapPost(notMappedPost, userId)
-    }
+    return mapToView.mapPost(notMappedPost);
+  }
 }

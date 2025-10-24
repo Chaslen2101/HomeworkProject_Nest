@@ -1,138 +1,128 @@
-import {Request, Response} from "express";
-import {httpStatuses} from "../settings";
-import {PostsQueryRep} from "../Infrastructure/QueryRep/postsQueryRep";
-import {BlogsQueryRep} from "../Infrastructure/QueryRep/blogsQueryRep";
 import {
-    AccessTokenPayloadType,
-    InputQueryType,
-    PostsPagesType,
-    PostsViewType
-} from "../Types/Types";
-import {PostsService} from "../Application/Services/postsServices";
-import {inject} from "inversify";
-import {jwtService} from "../Infrastructure/Features/GlobalFeatures/jwtService";
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { PostService } from '../Application/post.service';
+import { BlogQueryRep } from '../Infrastructure/Query-repositories/blog.query-repository';
+import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
+import type {
+  CommentQueryType,
+  CommentPagesType,
+  InputQueryType,
+  PostInputType,
+  PostPagesType,
+  PostViewType,
+} from '../Types/Types';
+import { ObjectId } from 'mongodb';
+import { queryHelper } from '../Application/helper';
+import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
 
+@Controller('posts')
+export class PostController {
+  constructor(
+    @Inject(PostQueryRep) protected postQueryRep: PostQueryRep,
+    @Inject(BlogQueryRep) protected blogQueryRep: BlogQueryRep,
+    @Inject(PostService) protected postService: PostService,
+    @Inject(CommentQueryRep) protected commentsQueryRep: CommentQueryRep,
+  ) {}
 
-export class PostsController {
+  @Get()
+  @HttpCode(200)
+  async returnAllPosts(@Query() query: InputQueryType): Promise<PostPagesType> {
+    const posts: PostPagesType = await this.postQueryRep.findManyPosts(query);
+    return posts;
+  }
 
-    constructor(
-        @inject(PostsQueryRep) protected postsQueryRep: PostsQueryRep,
-        @inject(BlogsQueryRep) protected blogsQueryRep: BlogsQueryRep,
-        @inject(PostsService) protected postsService: PostsService
-    ) {
-    }
-
-    async returnAllPosts(req: Request, res: Response) {
-
-        const isTokenExist: AccessTokenPayloadType | null = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(" ")[1]) : null
-        const userId: string = isTokenExist ? isTokenExist.id : ""
-
-        const posts: PostsPagesType = await this.postsQueryRep.findManyPosts(req.query as InputQueryType, userId)
-        res
-            .status(httpStatuses.OK_200)
-            .json(posts)
-    }
-
-    async createPost(req: Request, res: Response) {
-
-        try {
-            const isTokenExist: AccessTokenPayloadType | null = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(" ")[1]) : null
-            const userId: string = isTokenExist ? isTokenExist.id : ""
-
-            const createdPostId: string = await this.postsService.createPost(req.body)
-            const createdPost: PostsViewType | null = await this.postsQueryRep.findPostById(createdPostId, userId)
-            res
-                .status(httpStatuses.CREATED_201)
-                .json(createdPost)
-
-        } catch (e) {
-
-            if (e instanceof Error) {
-                if (e.message === "Cant find needed blog") {}
-                res
-                    .status(httpStatuses.BAD_REQUEST_400)
-                    .json({})
-            }
+  @Post()
+  @HttpCode(201)
+  async createPost(
+    @Body() reqBody: PostInputType,
+  ): Promise<PostViewType | null | undefined> {
+    try {
+      const createdPostId: ObjectId =
+        await this.postService.createPost(reqBody);
+      const createdPost: PostViewType | null =
+        await this.postQueryRep.findPostById(createdPostId);
+      return createdPost;
+    } catch (e) {
+      if (e instanceof Error) {
+        if (e.message === 'Cant find needed blog') {
+          throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
         }
+      }
     }
+  }
 
-    async findPostById(req: Request, res: Response) {
+  @Get(':id')
+  @HttpCode(200)
+  async findPostById(@Param('id') postId: string): Promise<PostViewType> {
+    const neededPost: PostViewType | null =
+      await this.postQueryRep.findPostById(postId);
+    if (neededPost) {
+      return neededPost;
+    } else {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+  }
 
-        const isTokenPassed: AccessTokenPayloadType | null = req.headers.authorization ? await jwtService.verifyAccessToken(req.headers.authorization.split(' ')[1]) : null
-        const userId: string = isTokenPassed ? isTokenPassed.id : ""
+  @Put(':id')
+  @HttpCode(204)
+  async updatePostByID(
+    @Param('id') postId: string,
+    @Body() reqBody: PostInputType,
+  ): Promise<void> {
+    const isUpdated: boolean = await this.postService.updatePost(
+      postId,
+      reqBody,
+    );
+    if (!isUpdated) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+    }
+  }
 
-        const neededPost: PostsViewType | null = await this.postsQueryRep.findPostById(req.params.id, userId)
-        if (neededPost) {
-            res
-                .status(httpStatuses.OK_200)
-                .json(neededPost)
-        } else {
-            res
-                .status(httpStatuses.NOT_FOUND_404)
-                .json({})
+  @Delete(':id')
+  @HttpCode(204)
+  async deletePostById(@Param('id') postId: string): Promise<void> {
+    try {
+      await this.postService.deletePost(postId);
+    } catch (e) {
+      if (e instanceof Error) {
+        if (e.message === 'Cant find needed post') {
+          throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
         }
+      }
+    }
+  }
+
+  @Get(':id/comments')
+  @HttpCode(200)
+  async getCommentsForPost(
+    @Param('id') postId: string,
+    @Query() query: InputQueryType,
+  ) {
+    const isPostExists: PostViewType | null =
+      await this.postQueryRep.findPostById(postId);
+    if (!isPostExists) {
+      throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
+      return;
     }
 
-    async updatePostByID(req: Request, res: Response) {
-
-        const isUpdated: boolean = await this.postsService.updatePost(req.params.id, req.body)
-        if (!isUpdated) {
-            res
-                .status(httpStatuses.NOT_FOUND_404)
-                .json({})
-        } else {
-            res
-                .status(httpStatuses.NO_CONTENT_204)
-                .json({})
-        }
-    }
-
-    async deletePostById(req: Request, res: Response) {
-
-        try {
-            await this.postsService.deletePost(req.params.id)
-            res
-                .status(httpStatuses.NO_CONTENT_204)
-                .json({})
-
-        } catch (e) {
-
-            if (e instanceof Error) {
-                if (e.message === "Cant find needed post") {
-                    res
-                        .status(httpStatuses.NOT_FOUND_404)
-                        .json({})
-                }
-            }
-        }
-    }
-
-    async updateLikeStatus(req: Request, res: Response) {
-
-        try {
-
-            await this.postsService.updateLikeStatus(req.params.postId, req.body.likeStatus, req.user)
-
-            res
-                .status(httpStatuses.NO_CONTENT_204)
-                .json({})
-
-        } catch (e) {
-
-            if (e instanceof Error) {
-
-                if (e.message === "Cant find needed post") {
-                    res
-                        .status(httpStatuses.NOT_FOUND_404)
-                        .json({})
-                }
-
-                if (e.message === "Invalid like status") {
-                    res
-                        .status(httpStatuses.BAD_REQUEST_400)
-                        .json({})
-                }
-            }
-        }
-    }
+    const sanitizedQuery: CommentQueryType = queryHelper.commentsQuery(query);
+    const commentsToView: CommentPagesType =
+      await this.commentsQueryRep.findManyCommentsByPostId(
+        postId,
+        sanitizedQuery,
+      );
+    return commentsToView;
+  }
 }

@@ -1,34 +1,22 @@
-import {BlogsInputType, BlogsInstanceType} from "../../Types/Types";
-import {BlogsModel} from "../../db/MongoDB";
-import {DeleteResult, UpdateResult} from "mongodb";
-import {injectable} from "inversify";
+import { DeleteResult } from 'mongodb';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Blog } from '../../Domain/blog.schema';
+import type { BlogModelType, BlogDocumentType } from '../../Domain/blog.schema';
 
+@Injectable()
+export class BlogRepository {
+  constructor(@InjectModel(Blog.name) private BlogModel: BlogModelType) {}
+  async save(blog: BlogDocumentType): Promise<BlogDocumentType> {
+    return await blog.save();
+  }
 
-@injectable()
-export class BlogsRepository {
+  async findById(blogId: string): Promise<BlogDocumentType | null> {
+    return this.BlogModel.findOne({ _id: blogId });
+  }
 
-    async save (blog: BlogsInstanceType): Promise<BlogsInstanceType> {
-        return blog.save()
-    }
-
-    async findById (blogId: string): Promise<BlogsInstanceType | null> {
-        return BlogsModel.findOne({id: blogId})
-    }
-
-    async delete(id: string): Promise<boolean> {
-        const result: DeleteResult = await BlogsModel.deleteOne({id: id})
-        return result.deletedCount !== 0
-    }
-
-    async update(id: string, newInfo: BlogsInputType): Promise<boolean> {
-        const result: UpdateResult = await BlogsModel.updateOne(
-            {id: id},
-            {$set: {
-                        name: newInfo.name,
-                        description: newInfo.description,
-                        websiteUrl: newInfo.websiteUrl
-            }
-        })
-        return result.modifiedCount !== 0
-    }
+  async delete(id: string): Promise<boolean> {
+    const result: DeleteResult = await this.BlogModel.deleteOne({ id: id });
+    return result.deletedCount !== 0;
+  }
 }

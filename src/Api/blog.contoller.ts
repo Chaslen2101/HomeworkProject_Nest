@@ -1,123 +1,122 @@
-import { Request, Response } from 'express';
-import { httpStatuses } from '../settings';
-import { BlogsQueryRep } from '../Infrastructure/QueryRep/blogsQueryRep';
-import {
-  AccessTokenPayloadType,
-  BlogsPagesType,
-  BlogsViewType,
+import { BlogQueryRep } from '../Infrastructure/Query-repositories/blog.query-repository';
+import type {
+  BlogInputType,
+  BlogPagesType,
+  BlogViewType,
   InputQueryType,
-  PostsPagesType,
-  PostsViewType,
+  PostInputType,
+  PostPagesType,
+  PostViewType,
 } from '../Types/Types';
-import { PostsQueryRep } from '../Infrastructure/QueryRep/postsQueryRep';
-import { BlogsService } from '../Application/Services/blogsServices';
-import { PostsService } from '../Application/Services/postsServices';
-import { inject } from 'inversify';
-import { jwtService } from '../Infrastructure/Features/GlobalFeatures/jwtService';
-import { Controller, Get, Inject, Injectable, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Query,
+} from '@nestjs/common';
+import { BlogService } from '../Application/blog.service';
+import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
+import { PostService } from '../Application/post.service';
+import { ObjectId } from 'mongodb';
 
 @Controller('blogs')
-export class BlogsController {
+export class BlogController {
   constructor(
-    protected blogsQueryRep: BlogsQueryRep,
-    protected postsQueryRep: PostsQueryRep,
-    protected blogsService: BlogsService,
-    protected postsService: PostsService,
+    protected blogsQueryRep: BlogQueryRep,
+    protected postsQueryRep: PostQueryRep,
+    protected blogsService: BlogService,
+    protected postsService: PostService,
   ) {}
 
   @Get()
-  async returnAllBlogs(@Query() Query: InputQueryType) {
-    const allBlogs: BlogsPagesType =
-      await this.blogsQueryRep.findManyBlogs(Query);
-    return allBlogs;
+  async returnAllBlogs(@Query() Query: InputQueryType): Promise<BlogPagesType> {
+    return await this.blogsQueryRep.findManyBlogs(Query);
   }
 
-  async createBlog(req: Request, res: Response) {
-    const createdBlogId: string = await this.blogsService.createBlog(req.body);
-    const createdBlog: BlogsViewType | null =
-      await this.blogsQueryRep.findBlogByID(createdBlogId);
-
-    res.status(httpStatuses.CREATED_201).json(createdBlog);
+  @Post()
+  @HttpCode(200)
+  async createBlog(
+    @Body() reqBody: BlogInputType,
+  ): Promise<BlogViewType | null> {
+    const createdBlogId: ObjectId = await this.blogsService.createBlog(reqBody);
+    return await this.blogsQueryRep.findBlogByID(createdBlogId);
   }
 
-  async findBlogById(req: Request, res: Response) {
-    const neededBlog: BlogsViewType | null =
-      await this.blogsQueryRep.findBlogByID(req.params.id);
+  @Get(':id')
+  @HttpCode(200)
+  async findBlogById(@Param('id') blogId: string): Promise<BlogViewType> {
+    const neededBlog: BlogViewType | null =
+      await this.blogsQueryRep.findBlogByID(blogId);
     if (neededBlog) {
-      res.status(httpStatuses.OK_200).json(neededBlog);
+      return neededBlog;
     } else {
-      res.status(httpStatuses.NOT_FOUND_404).json({});
+      throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     }
   }
 
-  async updateBlogById(req: Request, res: Response) {
+  @Put(':id')
+  @HttpCode(204)
+  async updateBlogById(
+    @Param('id') blogId: string,
+    @Body() reqBody: BlogInputType,
+  ): Promise<void> {
     try {
-      await this.blogsService.updateBlog(req.params.id, req.body);
-      res.status(httpStatuses.NO_CONTENT_204).json({});
+      await this.blogsService.updateBlog(blogId, reqBody);
     } catch (e) {
       if (e === 'Cant find needed blog') {
-        res.status(httpStatuses.NOT_FOUND_404).json({});
+        throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
       }
     }
   }
 
-  async deleteBlogByID(req: Request, res: Response) {
-    const isDeleted: boolean = await this.blogsService.deleteBlog(
-      req.params.id,
-    );
-    if (isDeleted) {
-      res.status(httpStatuses.NO_CONTENT_204).json({});
-    } else {
-      res.status(httpStatuses.NOT_FOUND_404).json({});
+  @Delete(':id')
+  @HttpCode(204)
+  async deleteBlogByID(@Param('id') blogId: string): Promise<void> {
+    const isDeleted: boolean = await this.blogsService.deleteBlog(blogId);
+    if (!isDeleted) {
+      throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     }
   }
 
-  async findPostsOfBlog(req: Request, res: Response) {
-    const neededBlog: BlogsViewType | null =
-      await this.blogsQueryRep.findBlogByID(req.params.blogId);
+  @Get(':blogId/posts')
+  @HttpCode(200)
+  async findPostsOfBlog(
+    @Param('blogId') blogId: string,
+    @Body() reqBody: PostInputType,
+    @Query() query: InputQueryType,
+  ): Promise<PostPagesType> {
+    const neededBlog: BlogViewType | null =
+      await this.blogsQueryRep.findBlogByID(blogId);
     if (!neededBlog) {
-      res.status(httpStatuses.NOT_FOUND_404).json({});
+      throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     } else {
-      const isTokenExist: AccessTokenPayloadType | null = req.headers
-        .authorization
-        ? await jwtService.verifyAccessToken(
-            req.headers.authorization.split(' ')[1],
-          )
-        : null;
-      const userId: string = isTokenExist ? isTokenExist.id : '';
-
-      const postsOfBlog: PostsPagesType =
-        await this.postsQueryRep.findManyPosts(
-          req.query as InputQueryType,
-          userId,
-          req.params.blogId,
-        );
-      res.status(httpStatuses.OK_200).json(postsOfBlog);
+      return await this.postsQueryRep.findManyPosts(query, blogId);
     }
   }
 
-  async createPostForBlog(req: Request, res: Response) {
-    const isTokenExist: AccessTokenPayloadType | null = req.headers
-      .authorization
-      ? await jwtService.verifyAccessToken(
-          req.headers.authorization.split(' ')[1],
-        )
-      : null;
-    const userId: string = isTokenExist ? isTokenExist.id : '';
-
+  @Post(':blogId/posts')
+  @HttpCode(201)
+  async createPostForBlog(
+    @Param('blogId') blogId: string,
+    @Body() reqBody: PostInputType,
+  ): Promise<PostViewType | null | undefined> {
     try {
-      const newPostId: string = await this.postsService.createPost(
-        req.body,
-        req.params.blogId,
+      const newPostId: ObjectId = await this.postsService.createPost(
+        reqBody,
+        blogId,
       );
-      const createdPost: PostsViewType | null =
-        await this.postsQueryRep.findPostById(newPostId, userId);
-
-      res.status(httpStatuses.CREATED_201).json(createdPost);
+      return await this.postsQueryRep.findPostById(newPostId);
     } catch (e) {
       if (e instanceof Error) {
         if (e.message === 'Cant find needed blog') {
-          res.status(httpStatuses.NOT_FOUND_404).json({});
+          throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
         }
       }
     }

@@ -1,27 +1,32 @@
-import {UserInputType, UserInstanceType} from "../../Types/Types";
-import {UsersRepository} from "../../Infrastructure/Repository/usersRepository";
-import {inject, injectable} from "inversify";
-import {hashHelper} from "../../Infrastructure/Features/GlobalFeatures/helper";
-import {UsersModel} from "../../db/MongoDB";
+import { Inject, Injectable } from '@nestjs/common';
+import { UserRepository } from '../Infrastructure/Repositories/user.repository';
+import { UserInputType } from '../Types/Types';
+import { hashHelper } from './helper';
+import { User, UserDocumentType } from '../Domain/user.schema';
+import type { UserModelType } from '../Domain/user.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { ObjectId } from 'mongodb';
 
+@Injectable()
+export class UserService {
+  constructor(
+    @Inject(UserRepository) protected userRepository: UserRepository,
+    @InjectModel(User.name) private UserModel: UserModelType,
+  ) {}
 
-@injectable()
-export class UsersService {
+  async createUser(newUserData: UserInputType): Promise<ObjectId> {
+    const hashedPassword: string = await hashHelper.hashNewPassword(
+      newUserData.password,
+    );
+    const newUser: UserDocumentType = this.UserModel.createNewUser(
+      newUserData,
+      hashedPassword,
+    );
+    await this.userRepository.save(newUser);
+    return newUser._id;
+  }
 
-    constructor(
-        @inject(UsersRepository) protected usersRepository: UsersRepository
-    ) {}
-
-    async createUser (newUserData: UserInputType): Promise<string> {
-
-        const hashedPassword: string = await hashHelper.hashNewPassword(newUserData.password)
-        const newUser: UserInstanceType = await UsersModel.createNewUser(newUserData, hashedPassword)
-        await this.usersRepository.save(newUser)
-        return newUser.id
-    }
-
-    async deleteUser (id: string) {
-        return await this.usersRepository.deleteUser(id)
-    }
+  async deleteUser(id: string) {
+    return await this.userRepository.deleteUser(id);
+  }
 }
-

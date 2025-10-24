@@ -1,46 +1,49 @@
-import mongoose, {Schema} from "mongoose";
-import {UserDBType, UserInstanceMethodsType, UserModelType, UserViewType} from "../Types/Types";
-import {ObjectId} from "mongodb";
-import {UsersModel} from "../db/MongoDB";
-import {add} from "date-fns";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
+import { UserInputType, UserViewType } from '../Types/Types';
+import { add } from 'date-fns';
+import { ObjectId } from 'mongodb';
 
+@Schema()
+export class User {
+  @Prop({ type: String, required: true })
+  login: string;
 
-export const UserSchema: Schema<UserDBType, UserModelType, UserInstanceMethodsType> = new mongoose.Schema(
-    {
-        id: String,
-        login: String,
-        email: String,
-        password: String,
-        createdAt: Schema.Types.Date,
-        emailConfirmationInfo: {
-            confirmationCode: String,
-            expirationDate: Schema.Types.Date,
-            isConfirmed: Boolean
-        },
-        passwordRecoveryCode: {
-            confirmationCode: String,
-            expirationDate: Schema.Types.Date
-        }
-    },
-    {
-        statics: {
-            createNewUser(user: UserViewType, hashedPassword: string, confirmCode?: string) {
-                return new UsersModel({
-                    id: new ObjectId().toString(),
-                    login: user.login,
-                    email: user.email,
-                    password: hashedPassword,
-                    createdAt: new Date(),
-                    emailConfirmationInfo: {
-                        confirmationCode: confirmCode ? confirmCode : null,
-                        expirationDate: confirmCode ? add(new Date(), {days: 1}) : null,
-                        isConfirmed: false
-                    },
-                    passwordRecoveryCode: {
-                        confirmationCode: null,
-                        expirationDate: null
-                    }
-                })
-            }
-        }
-    })
+  @Prop({ type: String, required: true })
+  email: string;
+
+  @Prop({ type: String, required: true })
+  password: string;
+
+  @Prop({ type: MongooseSchema.Types.Date, required: true })
+  createdAt: Date;
+
+  static createNewUser(
+    this: UserModelType,
+    user: UserInputType,
+    hashedPassword: string,
+    confirmCode?: string,
+  ) {
+    return new this({
+      id: new ObjectId().toString(),
+      login: user.login,
+      email: user.email,
+      password: hashedPassword,
+      createdAt: new Date(),
+      emailConfirmationInfo: {
+        confirmationCode: confirmCode ? confirmCode : null,
+        expirationDate: confirmCode ? add(new Date(), { days: 1 }) : null,
+        isConfirmed: false,
+      },
+      passwordRecoveryCode: {
+        confirmationCode: null,
+        expirationDate: null,
+      },
+    });
+  }
+}
+
+export type UserDocumentType = HydratedDocument<User>;
+export type UserModelType = Model<UserDocumentType> & typeof User;
+export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.loadClass(User);

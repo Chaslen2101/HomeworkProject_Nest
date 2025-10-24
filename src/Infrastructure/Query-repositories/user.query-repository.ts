@@ -1,62 +1,102 @@
-import {UsersModel} from "../../db/MongoDB";
-import {UsersPagesType, UserDBType, UserQueryType, UserViewType} from "../../Types/Types";
-import {mapToView} from "../Features/GlobalFeatures/helper";
-import {injectable} from "inversify";
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { User, UserDocumentType } from '../../Domain/user.schema';
+import type { UserModelType } from '../../Domain/user.schema';
+import { UserQueryType, UserPagesType, UserViewType } from '../../Types/Types';
+import { mapToView } from '../../Application/helper';
+import { ObjectId, SortDirection } from 'mongodb';
 
+@Injectable()
+export class UserQueryRep {
+  constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
-@injectable()
-export class UsersQueryRep {
+  async findUserById(id: string | ObjectId): Promise<UserViewType | null> {
+    const notMappedUser: UserDocumentType | null = await this.UserModel.findOne(
+      {
+        id: id,
+      },
+    );
+    if (!notMappedUser) {
+      return null;
+    }
+    return mapToView.mapUser(notMappedUser);
+  }
 
-    async findUserByLoginOrEmail (loginOrEmail: string): Promise<UserDBType | null> {
-        return await UsersModel.findOne({$or: [{login: loginOrEmail}, {email: loginOrEmail}]}, {projection: {_id: 0}}).lean();
+  async findManyUsersByLoginOrEmail(
+    sanitizedQuery: UserQueryType,
+  ): Promise<UserPagesType | null> {
+    let filter = {};
+    if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
+      filter = {
+        $or: [
+          { email: { $regex: sanitizedQuery.searchEmailTerm, $options: 'i' } },
+          { login: { $regex: sanitizedQuery.searchLoginTerm, $options: 'i' } },
+        ],
+      };
+    } else if (
+      !sanitizedQuery.searchLoginTerm &&
+      sanitizedQuery.searchEmailTerm
+    ) {
+      filter = {
+        email: { $regex: sanitizedQuery.searchEmailTerm, $options: 'i' },
+      };
+    } else if (
+      !sanitizedQuery.searchEmailTerm &&
+      sanitizedQuery.searchLoginTerm
+    ) {
+      filter = {
+        login: { $regex: sanitizedQuery.searchLoginTerm, $options: 'i' },
+      };
     }
 
-    async findUserById (id: string): Promise<UserViewType | null> {
-
-        const notMappedUser: UserDBType | null = await UsersModel.findOne({id: id,},{projection: {_id: 0}}).lean()
-        if(!notMappedUser) {return null}
-        return mapToView.mapUser(notMappedUser)
-    }
-
-    async findManyUsersByLoginOrEmail (sanitizedQuery: UserQueryType): Promise<UsersPagesType | null> {
-
-        let filter = {}
-        if (sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
-            filter = {$or:[{email:{$regex: sanitizedQuery.searchEmailTerm, $options: "i"}},{login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}]}
-        }else if (!sanitizedQuery.searchLoginTerm && sanitizedQuery.searchEmailTerm) {
-            filter = {email:{$regex: sanitizedQuery.searchEmailTerm, $options: "i"}}
-        }else if (!sanitizedQuery.searchEmailTerm && sanitizedQuery.searchLoginTerm) {
-            filter = {login:{$regex: sanitizedQuery.searchLoginTerm, $options:"i"}}
-        }
-
-        const items: UserDBType[] = await UsersModel.find(filter,{projection: {_id: 0}})
-            .sort({[sanitizedQuery.sortBy]: sanitizedQuery.sortDirection})
-            .limit(sanitizedQuery.pageSize)
-            .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
-            .lean()
-        const totalCount: number = await UsersModel.countDocuments(filter)
-        const users: UserViewType[] = mapToView.mapUsers(items)
-        return {
-            pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
-            page: sanitizedQuery.pageNumber,
-            pageSize: sanitizedQuery.pageSize,
-            totalCount: totalCount,
-            items: users
-        }
-    }
-
-    async findUserByEmailConfirmCode (code: string): Promise<UserViewType | null> {
-
-        const notMappedUser: UserDBType | null = await UsersModel.findOne({"emailConfirmationInfo.confirmationCode": code},{projection:{_id:0}}).lean()
-        if(!notMappedUser) {return null}
-        return mapToView.mapUser(notMappedUser)
-    }
-
-    async findUserByPasswordRecoveryCode (code: string): Promise<UserViewType | null> {
-
-        const notMappedUser: UserDBType | null = await UsersModel.findOne({"passwordRecoveryCode.confirmationCode": code},{projection:{_id:0}}).lean()
-        if(!notMappedUser) {return null}
-        return mapToView.mapUser(notMappedUser)
-    }
+    const items: UserDocumentType[] = await this.UserModel.find(filter, {
+      projection: { _id: 0 },
+    })
+      .sort({
+        [sanitizedQuery.sortBy]: sanitizedQuery.sortDirection as SortDirection,
+      })
+      .limit(sanitizedQuery.pageSize)
+      .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize);
+    const totalCount: number = await this.UserModel.countDocuments(filter);
+    const mappedUsers: UserViewType[] = mapToView.mapUsers(items);
+    return {
+      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
+      page: sanitizedQuery.pageNumber,
+      pageSize: sanitizedQuery.pageSize,
+      totalCount: totalCount,
+      items: mappedUsers,
+    };
+  }
 }
 
+// async findUserByEmailConfirmCode(code: string): Promise<UserViewType | null> {
+//   const notMappedUser: UserDocumentType | null = await this.UserModel.findOne(
+//     { 'emailConfirmationInfo.confirmationCode': code },
+//     { projection: { _id: 0 } },
+//   );
+//   if (!notMappedUser) {
+//     return null;
+//   }
+//   return mapToView.mapUser(notMappedUser);
+// }
+
+//   async findUserByPasswordRecoveryCode(
+//     code: string,
+//   ): Promise<UserViewType | null> {
+//     const notMappedUser: UserDocumentType | null = await this.UserModel.findOne(
+//       { 'passwordRecoveryCode.confirmationCode': code },
+//       { projection: { _id: 0 } },
+//     );
+//     if (!notMappedUser) {
+//       return null;
+//     }
+//     return mapToView.mapUser(notMappedUser);
+//   }
+
+// async findUserByLoginOrEmail(
+//   loginOrEmail: string,
+// ): Promise<UserViewType | null> {
+//   return await this.UserModel.findOne({
+//     $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+//   });
+// }
