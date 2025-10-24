@@ -13,7 +13,7 @@ export class UserQueryRep {
   async findUserById(id: string | ObjectId): Promise<UserViewType | null> {
     const notMappedUser: UserDocumentType | null = await this.UserModel.findOne(
       {
-        id: id,
+        _id: id,
       },
     );
     if (!notMappedUser) {

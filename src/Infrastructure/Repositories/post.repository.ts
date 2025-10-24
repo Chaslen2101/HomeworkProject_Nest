@@ -12,11 +12,11 @@ export class PostRepository {
   }
 
   async findById(postId: string): Promise<PostDocumentType | null> {
-    return await this.PostModel.findOne({ id: postId });
+    return await this.PostModel.findOne({ _id: postId });
   }
 
   async delete(id: string): Promise<boolean> {
-    const result = await this.PostModel.deleteOne({ id: id });
+    const result = await this.PostModel.deleteOne({ _id: id });
     return result.deletedCount !== 0;
   }
 }

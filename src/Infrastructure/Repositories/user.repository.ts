@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocumentType } from '../../Domain/user.schema';
 import type { UserModelType } from '../../Domain/user.schema';
-import { add } from 'date-fns';
 
 @Injectable()
 export class UserRepository {
@@ -13,7 +12,7 @@ export class UserRepository {
   }
 
   async deleteUser(id: string): Promise<boolean> {
-    const result = await this.UserModel.deleteOne({ id: id });
+    const result = await this.UserModel.deleteOne({ _id: id });
     return result.deletedCount !== 0;
   }
 }

@@ -43,9 +43,8 @@ export class BlogQueryRep {
 
   async findBlogByID(id: string | ObjectId): Promise<BlogViewType | null> {
     const notMappedBlog: BlogDocumentType | null = await this.BlogModel.findOne(
-      { id: id },
+      { _id: id },
     );
-
     if (!notMappedBlog) {
       return null;
     }

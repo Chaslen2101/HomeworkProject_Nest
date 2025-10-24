@@ -17,7 +17,7 @@ export class CommentQueryRep {
   ) {}
   async findCommentById(id: string): Promise<CommentViewType | null> {
     const comment: CommentDocumentType | null = await this.CommentModel.findOne(
-      { id: id },
+      { _id: id },
     );
     if (!comment) {
       return null;

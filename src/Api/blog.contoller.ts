@@ -29,15 +29,15 @@ import { ObjectId } from 'mongodb';
 @Controller('blogs')
 export class BlogController {
   constructor(
-    protected blogsQueryRep: BlogQueryRep,
-    protected postsQueryRep: PostQueryRep,
-    protected blogsService: BlogService,
-    protected postsService: PostService,
+    protected blogQueryRep: BlogQueryRep,
+    protected postQueryRep: PostQueryRep,
+    protected blogService: BlogService,
+    protected postService: PostService,
   ) {}
 
   @Get()
   async returnAllBlogs(@Query() Query: InputQueryType): Promise<BlogPagesType> {
-    return await this.blogsQueryRep.findManyBlogs(Query);
+    return await this.blogQueryRep.findManyBlogs(Query);
   }
 
   @Post()
@@ -45,15 +45,15 @@ export class BlogController {
   async createBlog(
     @Body() reqBody: BlogInputType,
   ): Promise<BlogViewType | null> {
-    const createdBlogId: ObjectId = await this.blogsService.createBlog(reqBody);
-    return await this.blogsQueryRep.findBlogByID(createdBlogId);
+    const createdBlogId: ObjectId = await this.blogService.createBlog(reqBody);
+    return await this.blogQueryRep.findBlogByID(createdBlogId);
   }
 
   @Get(':id')
   @HttpCode(200)
   async findBlogById(@Param('id') blogId: string): Promise<BlogViewType> {
     const neededBlog: BlogViewType | null =
-      await this.blogsQueryRep.findBlogByID(blogId);
+      await this.blogQueryRep.findBlogByID(blogId);
     if (neededBlog) {
       return neededBlog;
     } else {
@@ -68,7 +68,7 @@ export class BlogController {
     @Body() reqBody: BlogInputType,
   ): Promise<void> {
     try {
-      await this.blogsService.updateBlog(blogId, reqBody);
+      await this.blogService.updateBlog(blogId, reqBody);
     } catch (e) {
       if (e === 'Cant find needed blog') {
         throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
@@ -79,7 +79,7 @@ export class BlogController {
   @Delete(':id')
   @HttpCode(204)
   async deleteBlogByID(@Param('id') blogId: string): Promise<void> {
-    const isDeleted: boolean = await this.blogsService.deleteBlog(blogId);
+    const isDeleted: boolean = await this.blogService.deleteBlog(blogId);
     if (!isDeleted) {
       throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     }
@@ -93,11 +93,11 @@ export class BlogController {
     @Query() query: InputQueryType,
   ): Promise<PostPagesType> {
     const neededBlog: BlogViewType | null =
-      await this.blogsQueryRep.findBlogByID(blogId);
+      await this.blogQueryRep.findBlogByID(blogId);
     if (!neededBlog) {
       throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     } else {
-      return await this.postsQueryRep.findManyPosts(query, blogId);
+      return await this.postQueryRep.findManyPosts(query, blogId);
     }
   }
 
@@ -108,11 +108,11 @@ export class BlogController {
     @Body() reqBody: PostInputType,
   ): Promise<PostViewType | null | undefined> {
     try {
-      const newPostId: ObjectId = await this.postsService.createPost(
+      const newPostId: ObjectId = await this.postService.createPost(
         reqBody,
         blogId,
       );
-      return await this.postsQueryRep.findPostById(newPostId);
+      return await this.postQueryRep.findPostById(newPostId);
     } catch (e) {
       if (e instanceof Error) {
         if (e.message === 'Cant find needed blog') {
