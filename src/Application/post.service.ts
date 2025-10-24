@@ -28,7 +28,7 @@ export class PostService {
     const neededBlog: BlogDocumentType | null =
       await this.blogRepository.findById(neededBlogId);
     if (!neededBlog) {
-      throw new Error('Cant find needed blog');
+      throw new Error('Blog not found');
     }
     newPostData.blogId = neededBlogId;
     const newPost: PostDocumentType = neededBlog.createPostForBlog(
@@ -54,7 +54,7 @@ export class PostService {
     const neededPost: PostDocumentType | null =
       await this.postRepository.findById(id);
     if (!neededPost) {
-      throw new Error('Cant find needed post');
+      throw new Error('Post not found');
     }
     const neededBlog: BlogDocumentType | null =
       await this.blogRepository.findById(neededPost.blogId);

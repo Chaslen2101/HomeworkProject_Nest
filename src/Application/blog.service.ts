@@ -26,7 +26,7 @@ export class BlogService {
     const neededBlog: BlogDocumentType | null =
       await this.blogRepository.findById(blogId);
     if (!neededBlog) {
-      throw new Error();
+      throw new Error('Blog not found');
     }
     neededBlog.updateBlogData(newBlogData);
     await this.blogRepository.save(neededBlog);

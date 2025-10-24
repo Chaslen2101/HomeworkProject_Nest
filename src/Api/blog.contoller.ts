@@ -117,9 +117,7 @@ export class BlogController {
       return await this.postQueryRep.findPostById(newPostId);
     } catch (e) {
       if (e instanceof Error) {
-        if (e.message === 'Cant find needed blog') {
-          throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
-        }
+        throw new HttpException(e.message, HttpStatus.NOT_FOUND);
       }
     }
   }

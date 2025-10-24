@@ -56,9 +56,7 @@ export class PostController {
       return createdPost;
     } catch (e) {
       if (e instanceof Error) {
-        if (e.message === 'Cant find needed blog') {
-          throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
-        }
+        throw new HttpException(e.message, HttpStatus.NOT_FOUND);
       }
     }
   }
@@ -97,9 +95,7 @@ export class PostController {
       await this.postService.deletePost(postId);
     } catch (e) {
       if (e instanceof Error) {
-        if (e.message === 'Cant find needed post') {
-          throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
-        }
+        throw new HttpException(e.message, HttpStatus.NOT_FOUND);
       }
     }
   }
