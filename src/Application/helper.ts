@@ -14,8 +14,8 @@ import {
 import { PostDocumentType } from '../Domain/post.schema';
 import { BlogDocumentType } from '../Domain/blog.schema';
 import { CommentDocumentType } from '../Domain/comment.schema';
-import { compare, genSalt, hash } from 'bcrypt-ts';
 import { UserDocumentType } from '../Domain/user.schema';
+import bcrypt from 'bcrypt';
 
 export const queryHelper: QueryHelperType = {
   blogPostQuery(query: InputQueryType): BlogPostQueryType {
@@ -50,13 +50,13 @@ export const queryHelper: QueryHelperType = {
 };
 
 export const hashHelper = {
-  async hashNewPassword(password: string) {
-    const salt = await genSalt(10);
-    return await hash(password, salt);
+  async hashNewPassword(password: string): Promise<string> {
+    const salt: string = await bcrypt.genSalt(10);
+    return await bcrypt.hash(password, salt);
   },
 
   async comparePassword(hashedPassword: string, somePassword: string) {
-    return await compare(somePassword, hashedPassword);
+    return await bcrypt.compare(somePassword, hashedPassword);
   },
 };
 
