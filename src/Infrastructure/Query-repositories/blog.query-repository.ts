@@ -20,16 +20,13 @@ export class BlogQueryRep {
       ? { name: { $regex: sanitizedQuery.searchNameTerm, $options: 'i' } }
       : {};
 
-    const items: BlogDocumentType[] | null = await this.BlogModel.find({
-      filter,
-    })
+    const items: BlogDocumentType[] | null = await this.BlogModel.find(filter)
       .sort({
         [sanitizedQuery.sortBy]: sanitizedQuery.sortDirection as SortDirection,
       })
       .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize)
       .limit(sanitizedQuery.pageSize);
     const totalCount: number = await this.BlogModel.countDocuments(filter);
-
     const mappedBlogs: BlogViewType[] = mapToView.mapBlogs(items);
 
     return {

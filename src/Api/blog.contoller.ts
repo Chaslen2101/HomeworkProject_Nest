@@ -71,7 +71,8 @@ export class BlogController {
     try {
       await this.blogService.updateBlog(blogId, reqBody);
     } catch (e) {
-      if (e === 'Cant find needed blog') {
+      if (e instanceof Error) {
+        console.log(e.message);
         throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
       }
     }
