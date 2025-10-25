@@ -49,7 +49,7 @@ export class Blog {
     newPostData: PostInputType,
     PostModel: PostModelType,
   ): PostDocumentType {
-    return new PostModel({
+    const newPost: PostDocumentType = new PostModel({
       title: newPostData.title,
       shortDescription: newPostData.shortDescription,
       content: newPostData.content,
@@ -63,12 +63,14 @@ export class Blog {
         newestLikes: [],
       },
     });
+    this.posts.push(newPost._id.toString());
+    return newPost;
   }
 
   deletePost(this: BlogDocumentType, postId: string): boolean {
     const isPostExist: number = this.posts.indexOf(postId);
     if (isPostExist === -1) {
-      throw new Error("Post doesn't exist");
+      throw new Error("Blog doesn't have post with this id");
     }
     this.posts.splice(isPostExist, 1);
     return true;

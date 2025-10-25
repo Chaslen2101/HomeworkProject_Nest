@@ -16,8 +16,8 @@ import { PostService } from '../Application/post.service';
 import { BlogQueryRep } from '../Infrastructure/Query-repositories/blog.query-repository';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
 import type {
-  CommentQueryType,
   CommentPagesType,
+  CommentQueryType,
   InputQueryType,
   PostInputType,
   PostPagesType,
@@ -39,8 +39,7 @@ export class PostController {
   @Get()
   @HttpCode(200)
   async returnAllPosts(@Query() query: InputQueryType): Promise<PostPagesType> {
-    const posts: PostPagesType = await this.postQueryRep.findManyPosts(query);
-    return posts;
+    return await this.postQueryRep.findManyPosts(query);
   }
 
   @Post()
@@ -51,9 +50,7 @@ export class PostController {
     try {
       const createdPostId: ObjectId =
         await this.postService.createPost(reqBody);
-      const createdPost: PostViewType | null =
-        await this.postQueryRep.findPostById(createdPostId);
-      return createdPost;
+      return await this.postQueryRep.findPostById(createdPostId);
     } catch (e) {
       if (e instanceof Error) {
         throw new HttpException(e.message, HttpStatus.NOT_FOUND);
@@ -95,6 +92,7 @@ export class PostController {
       await this.postService.deletePost(postId);
     } catch (e) {
       if (e instanceof Error) {
+        console.log(e.message);
         throw new HttpException(e.message, HttpStatus.NOT_FOUND);
       }
     }
@@ -110,7 +108,6 @@ export class PostController {
       await this.postQueryRep.findPostById(postId);
     if (!isPostExists) {
       throw new HttpException('Post not found', HttpStatus.NOT_FOUND);
-      return;
     }
 
     const sanitizedQuery: CommentQueryType = queryHelper.commentsQuery(query);

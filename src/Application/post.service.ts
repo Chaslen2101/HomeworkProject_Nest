@@ -36,6 +36,7 @@ export class PostService {
       this.PostModel,
     );
     await this.postRepository.save(newPost);
+    await this.blogRepository.save(neededBlog);
     return newPost._id;
   }
 
