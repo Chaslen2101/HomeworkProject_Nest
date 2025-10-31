@@ -6,7 +6,7 @@ import { Post, PostDocumentType } from '../Domain/post.schema';
 import type { PostModelType } from '../Domain/post.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { PostInputType } from '../Api/Input-dto/post.input-dto';
+import { PostInputDTO } from '../Api/Input-dto/post.input-dto';
 
 @Injectable()
 export class PostService {
@@ -17,7 +17,7 @@ export class PostService {
   ) {}
 
   async createPost(
-    newPostData: PostInputType,
+    newPostData: PostInputDTO,
     blogIdFromParams?: string,
   ): Promise<ObjectId> {
     const neededBlogId: string = newPostData.blogId
@@ -40,7 +40,7 @@ export class PostService {
     return newPost._id;
   }
 
-  async updatePost(postId: string, newData: PostInputType): Promise<boolean> {
+  async updatePost(postId: string, newData: PostInputDTO): Promise<boolean> {
     const neededPost: PostDocumentType | null =
       await this.postRepository.findById(postId);
     if (!neededPost) {

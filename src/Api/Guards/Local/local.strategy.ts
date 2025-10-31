@@ -7,7 +7,7 @@ import { ObjectId } from 'mongodb';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super({ usernameField: 'loginOrEmail' });
+    super();
   }
 
   async validate(loginOrEmail: string, password: string) {

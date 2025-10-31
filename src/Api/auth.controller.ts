@@ -12,8 +12,6 @@ import {
 } from '@nestjs/common';
 import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
 import { AuthService } from '../Application/auth.service';
-import { CreateUserInputDTO } from './Input-dto/user.input-dto';
-import { LocalGuard } from './Guards/Local/local.guard';
 import { ObjectId } from 'mongodb';
 import {
   ConfirmEmailInputDTO,

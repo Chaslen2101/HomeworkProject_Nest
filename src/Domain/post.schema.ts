@@ -1,7 +1,7 @@
 import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { PostInputType } from '../Api/Input-dto/post.input-dto';
+import { PostInputDTO } from '../Api/Input-dto/post.input-dto';
 
 @Schema({ _id: false })
 class NewestLikes {
@@ -53,7 +53,7 @@ export class Post {
   @Prop({ type: LikesInfo })
   likesInfo: LikesInfo;
 
-  updatePost(this: PostDocumentType, newData: PostInputType): boolean {
+  updatePost(this: PostDocumentType, newData: PostInputDTO): boolean {
     this.title = newData.title;
     this.shortDescription = newData.shortDescription;
     this.content = newData.content;

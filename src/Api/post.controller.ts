@@ -25,7 +25,7 @@ import type {
 import { ObjectId } from 'mongodb';
 import { queryHelper } from '../Core/helper';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
-import { PostInputType } from './Input-dto/post.input-dto';
+import { PostInputDTO } from './Input-dto/post.input-dto';
 
 @Controller('posts')
 export class PostController {
@@ -45,7 +45,7 @@ export class PostController {
   @Post()
   @HttpCode(201)
   async createPost(
-    @Body() reqBody: PostInputType,
+    @Body() reqBody: PostInputDTO,
   ): Promise<PostViewType | null | undefined> {
     try {
       const createdPostId: ObjectId =
@@ -74,7 +74,7 @@ export class PostController {
   @HttpCode(204)
   async updatePostByID(
     @Param('id') postId: string,
-    @Body() reqBody: PostInputType,
+    @Body() reqBody: PostInputDTO,
   ): Promise<void> {
     const isUpdated: boolean = await this.postService.updatePost(
       postId,

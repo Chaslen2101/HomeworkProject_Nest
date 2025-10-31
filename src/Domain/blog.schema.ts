@@ -3,7 +3,7 @@ import { Schema as MongooseSchema } from 'mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { PostDocumentType, PostModelType } from './post.schema';
 import { BlogInputDTO } from '../Api/Input-dto/blog.input-dto';
-import { PostInputType } from '../Api/Input-dto/post.input-dto';
+import { PostInputDTO } from '../Api/Input-dto/post.input-dto';
 
 @Schema()
 export class Blog {
@@ -47,7 +47,7 @@ export class Blog {
 
   createPostForBlog(
     this: BlogDocumentType,
-    newPostData: PostInputType,
+    newPostData: PostInputDTO,
     PostModel: PostModelType,
   ): PostDocumentType {
     const newPost: PostDocumentType = new PostModel({

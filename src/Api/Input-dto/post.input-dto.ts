@@ -1,7 +1,7 @@
 import { IsString, MaxLength } from 'class-validator';
 import { Trim } from '../../Core/Decorators/Transform/trim';
 
-export class PostInputType {
+export class PostInputDTO {
   @IsString()
   @MaxLength(30)
   @Trim()
