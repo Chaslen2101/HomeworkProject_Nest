@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PostRepository } from '../Infrastructure/Repositories/post.repository';
 import { BlogRepository } from '../Infrastructure/Repositories/blog.repository';
 import { BlogDocumentType } from '../Domain/blog.schema';
-import { PostInputType } from '../Types/Types';
 import { Post, PostDocumentType } from '../Domain/post.schema';
 import type { PostModelType } from '../Domain/post.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
+import { PostInputType } from '../Api/Input-dto/post.input-dto';
 
 @Injectable()
 export class PostService {

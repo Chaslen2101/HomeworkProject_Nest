@@ -19,13 +19,13 @@ import type {
   CommentPagesType,
   CommentQueryType,
   InputQueryType,
-  PostInputType,
   PostPagesType,
   PostViewType,
 } from '../Types/Types';
 import { ObjectId } from 'mongodb';
-import { queryHelper } from '../Application/helper';
+import { queryHelper } from '../Core/helper';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
+import { PostInputType } from './Input-dto/post.input-dto';
 
 @Controller('posts')
 export class PostController {

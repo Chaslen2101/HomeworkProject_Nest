@@ -21,12 +21,6 @@ export type BlogPagesType = {
   items: BlogViewType[];
 };
 
-export type BlogInputType = {
-  name: string;
-  description: string;
-  websiteUrl: string;
-};
-
 export type BlogPostQueryType = {
   pageNumber: number;
   pageSize: number;
@@ -55,25 +49,12 @@ export type PostViewType = {
   };
 };
 
-export type PostInputType = {
-  title: string;
-  shortDescription: string;
-  content: string;
-  blogId: string;
-};
-
 export type PostPagesType = {
   pagesCount: number;
   page: number;
   pageSize: number;
   totalCount: number;
   items: PostViewType[];
-};
-
-export type UserInputType = {
-  login: string;
-  password: string;
-  email: string;
 };
 
 export type UserPagesType = {
@@ -98,6 +79,12 @@ export type UserQueryType = {
   sortDirection: string;
   searchLoginTerm: string | null;
   searchEmailTerm: string | null;
+};
+
+export type MyInfoType = {
+  email: string;
+  login: string;
+  userId: string;
 };
 
 export type AccessTokenPayloadType = {
@@ -205,4 +192,10 @@ export type QueryHelperType = {
   userQuery(query: InputQueryType): UserQueryType;
 
   commentsQuery(query: InputQueryType): CommentQueryType;
+};
+
+export type ExceptionResponseType = {
+  message: [];
+  error: string;
+  statusCode: number;
 };

@@ -1,8 +1,29 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
-import { UserInputType, UserViewType } from '../Types/Types';
-import { add } from 'date-fns';
 import { ObjectId } from 'mongodb';
+import { CreateUserInputDTO } from '../Api/Input-dto/user.input-dto';
+import { DomainException } from './Exceptions/domain-exceptions';
+
+@Schema()
+class EmailConfirmationInfo {
+  @Prop({ type: [String, null] })
+  confirmationCode: string | null;
+
+  @Prop({ type: [MongooseSchema.Types.Date, null] })
+  expirationDate: Date | null;
+
+  @Prop({ type: Boolean, default: false })
+  isConfirmed: boolean;
+}
+
+@Schema()
+class PasswordRecoveryInfo {
+  @Prop({ type: [String, null] })
+  confirmationCode: string | null;
+
+  @Prop({ type: [MongooseSchema.Types.Date, null] })
+  expirationDate: Date | null;
+}
 
 @Schema()
 export class User {
@@ -18,12 +39,21 @@ export class User {
   @Prop({ type: MongooseSchema.Types.Date, required: true })
   createdAt: Date;
 
+  @Prop({ type: EmailConfirmationInfo })
+  emailConfirmationInfo: EmailConfirmationInfo;
+
+  @Prop({ type: PasswordRecoveryInfo })
+  passwordRecoveryInfo: PasswordRecoveryInfo;
+
   static createNewUser(
     this: UserModelType,
-    user: UserInputType,
+    user: CreateUserInputDTO,
     hashedPassword: string,
     confirmCode?: string,
-  ) {
+  ): UserDocumentType {
+    const confirmEmailCodeExpDate: Date = new Date(
+      new Date().setDate(new Date().getDate() + 1),
+    );
     return new this({
       id: new ObjectId().toString(),
       login: user.login,
@@ -32,14 +62,69 @@ export class User {
       createdAt: new Date(),
       emailConfirmationInfo: {
         confirmationCode: confirmCode ? confirmCode : null,
-        expirationDate: confirmCode ? add(new Date(), { days: 1 }) : null,
+        expirationDate: confirmCode ? confirmEmailCodeExpDate : null,
         isConfirmed: false,
       },
-      passwordRecoveryCode: {
+      passwordRecoveryInfo: {
         confirmationCode: null,
         expirationDate: null,
       },
     });
+  }
+
+  confirmEmail(code: string): boolean {
+    if (!this.emailConfirmationInfo.expirationDate) {
+      throw new DomainException('Invalid expiration date', 400, 'code');
+    }
+    if (
+      this.emailConfirmationInfo.expirationDate.getTime() -
+        new Date().getTime() <
+      0
+    ) {
+      throw new DomainException('Confirm code expired', 400, 'code');
+    }
+    if (this.emailConfirmationInfo.isConfirmed) {
+      throw new DomainException('Your email is already confirmed', 400, 'code');
+    }
+    if (this.emailConfirmationInfo.confirmationCode !== code) {
+      throw new DomainException('Invalid confirm code', 400, 'code');
+    }
+    this.emailConfirmationInfo.isConfirmed = true;
+    return true;
+  }
+
+  changeEmailConfirmCode(code: string): boolean {
+    this.emailConfirmationInfo.confirmationCode = code;
+    return true;
+  }
+
+  setPasswordRecoveryCode(code: string): boolean {
+    this.passwordRecoveryInfo.confirmationCode = code;
+    this.passwordRecoveryInfo.expirationDate = new Date(
+      new Date().setDate(new Date().getDate() + 1),
+    );
+    return true;
+  }
+
+  setNewPassword(recoveryCode: string, newPassword: string): boolean {
+    if (this.passwordRecoveryInfo.confirmationCode !== recoveryCode) {
+      throw new DomainException('Invalid recovery code', 400, 'code');
+    }
+
+    if (!this.passwordRecoveryInfo.expirationDate) {
+      throw new DomainException('Invalid expiration date', 400, 'code');
+    }
+
+    if (
+      this.passwordRecoveryInfo.expirationDate.getTime() -
+        new Date().getTime() <
+      0
+    ) {
+      throw new DomainException('Recovery code expired', 400, 'code');
+    }
+
+    this.password = newPassword;
+    return true;
   }
 }
 

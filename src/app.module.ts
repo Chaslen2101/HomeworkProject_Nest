@@ -22,6 +22,14 @@ import { UserService } from './Application/user.service';
 import { UserRepository } from './Infrastructure/Repositories/user.repository';
 import { UserController } from './Api/user.controller';
 import dotenv from 'dotenv';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EmailService } from './Infrastructure/MailService/email.service';
+import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from './Api/Guards/Local/local.strategy';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthService } from './Application/auth.service';
+import { AuthController } from './Api/auth.controller';
+import { JwtStrategy } from './Api/Guards/Jwt/jwt.strategy';
 dotenv.config();
 
 @Module({
@@ -31,6 +39,27 @@ dotenv.config();
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MailerModule.forRootAsync({
+      useFactory: () => ({
+        transport: {
+          host: 'smtp.sendgrid.net',
+          port: 587,
+          secure: false,
+          auth: {
+            user: process.env.SENDGREED_USERNAME,
+            pass: process.env.SENDGREED_PASSWORD,
+          },
+        },
+        defaults: {
+          from: `"Chaslen2101" <Chaslen2101.itincubator@gmail.com>`,
+        },
+      }),
+    }),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: '10m' },
+    }),
   ],
   controllers: [
     AppController,
@@ -39,6 +68,7 @@ dotenv.config();
     CommentController,
     TestingController,
     UserController,
+    AuthController,
   ],
   providers: [
     AppService,
@@ -52,6 +82,10 @@ dotenv.config();
     UserService,
     UserRepository,
     UserQueryRep,
+    EmailService,
+    AuthService,
+    LocalStrategy,
+    JwtStrategy,
   ],
 })
 export class AppModule {}

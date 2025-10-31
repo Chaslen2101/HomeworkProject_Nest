@@ -1,10 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import type { BlogInputType } from '../Types/Types';
 import { Blog, BlogDocumentType } from '../Domain/blog.schema';
 import type { BlogModelType } from '../Domain/blog.schema';
 import { BlogRepository } from '../Infrastructure/Repositories/blog.repository';
 import { ObjectId } from 'mongodb';
+import { BlogInputDTO } from '../Api/Input-dto/blog.input-dto';
 
 @Injectable()
 export class BlogService {
@@ -13,7 +13,7 @@ export class BlogService {
     @InjectModel(Blog.name) protected BlogModel: BlogModelType,
   ) {}
 
-  async createBlog(blogData: BlogInputType): Promise<ObjectId> {
+  async createBlog(blogData: BlogInputDTO): Promise<ObjectId> {
     const newBlog: BlogDocumentType = this.BlogModel.createBlog(blogData);
     await this.blogRepository.save(newBlog);
     return newBlog._id;
@@ -21,7 +21,7 @@ export class BlogService {
 
   async updateBlog(
     blogId: string,
-    newBlogData: BlogInputType,
+    newBlogData: BlogInputDTO,
   ): Promise<boolean> {
     const neededBlog: BlogDocumentType | null =
       await this.blogRepository.findById(blogId);

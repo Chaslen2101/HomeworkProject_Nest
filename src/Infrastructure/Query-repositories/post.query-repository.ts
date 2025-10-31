@@ -5,7 +5,7 @@ import {
   PostPagesType,
   PostViewType,
 } from '../../Types/Types';
-import { mapToView, queryHelper } from '../../Application/helper';
+import { mapToView, queryHelper } from '../../Core/helper';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocumentType } from '../../Domain/post.schema';
 import type { PostModelType } from '../../Domain/post.schema';

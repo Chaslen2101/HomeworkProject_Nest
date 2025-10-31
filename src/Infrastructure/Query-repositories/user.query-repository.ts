@@ -2,8 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocumentType } from '../../Domain/user.schema';
 import type { UserModelType } from '../../Domain/user.schema';
-import { UserQueryType, UserPagesType, UserViewType } from '../../Types/Types';
-import { mapToView } from '../../Application/helper';
+import {
+  UserQueryType,
+  UserPagesType,
+  UserViewType,
+  MyInfoType,
+} from '../../Types/Types';
+import { mapToView } from '../../Core/helper';
 import { ObjectId, SortDirection } from 'mongodb';
 
 @Injectable()
@@ -67,6 +72,29 @@ export class UserQueryRep {
       items: mappedUsers,
     };
   }
+
+  async findUserByLoginOrEmail(
+    loginOrEmail: string,
+  ): Promise<UserViewType | null> {
+    return await this.UserModel.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
+  }
+
+  async getMyInfo(userId: ObjectId): Promise<boolean | MyInfoType> {
+    const userDocument: UserDocumentType | null =
+      await this.UserModel.findById(userId);
+    if (!userDocument) {
+      return false;
+    }
+    const mappedUser: MyInfoType = {
+      email: userDocument.email,
+      login: userDocument.login,
+      userId: userDocument._id.toString(),
+    };
+
+    return mappedUser;
+  }
 }
 
 // async findUserByEmailConfirmCode(code: string): Promise<UserViewType | null> {
@@ -92,11 +120,3 @@ export class UserQueryRep {
 //     }
 //     return mapToView.mapUser(notMappedUser);
 //   }
-
-// async findUserByLoginOrEmail(
-//   loginOrEmail: string,
-// ): Promise<UserViewType | null> {
-//   return await this.UserModel.findOne({
-//     $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-//   });
-// }

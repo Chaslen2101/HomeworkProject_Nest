@@ -1,10 +1,8 @@
 import { BlogQueryRep } from '../Infrastructure/Query-repositories/blog.query-repository';
 import type {
-  BlogInputType,
   BlogPagesType,
   BlogViewType,
   InputQueryType,
-  PostInputType,
   PostPagesType,
   PostViewType,
 } from '../Types/Types';
@@ -25,6 +23,8 @@ import { BlogService } from '../Application/blog.service';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
 import { PostService } from '../Application/post.service';
 import { ObjectId } from 'mongodb';
+import { BlogInputDTO } from './Input-dto/blog.input-dto';
+import { PostInputType } from './Input-dto/post.input-dto';
 
 @Controller('blogs')
 export class BlogController {
@@ -44,7 +44,7 @@ export class BlogController {
   @Post()
   @HttpCode(201)
   async createBlog(
-    @Body() reqBody: BlogInputType,
+    @Body() reqBody: BlogInputDTO,
   ): Promise<BlogViewType | null> {
     const createdBlogId: ObjectId = await this.blogService.createBlog(reqBody);
     return await this.blogQueryRep.findBlogByID(createdBlogId);
@@ -66,7 +66,7 @@ export class BlogController {
   @HttpCode(204)
   async updateBlogById(
     @Param('id') blogId: string,
-    @Body() reqBody: BlogInputType,
+    @Body() reqBody: BlogInputDTO,
   ): Promise<void> {
     try {
       await this.blogService.updateBlog(blogId, reqBody);
@@ -91,7 +91,6 @@ export class BlogController {
   @HttpCode(200)
   async findPostsOfBlog(
     @Param('blogId') blogId: string,
-    @Body() reqBody: PostInputType,
     @Query() query: InputQueryType,
   ): Promise<PostPagesType> {
     const neededBlog: BlogViewType | null =

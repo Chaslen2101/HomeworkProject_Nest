@@ -1,6 +1,7 @@
 import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { PostInputType } from '../Types/Types';
+
+import { PostInputType } from '../Api/Input-dto/post.input-dto';
 
 @Schema({ _id: false })
 class NewestLikes {

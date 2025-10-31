@@ -4,7 +4,7 @@ import {
   CommentPagesType,
   CommentViewType,
 } from '../../Types/Types';
-import { mapToView } from '../../Application/helper';
+import { mapToView } from '../../Core/helper';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentDocumentType, Comment } from '../../Domain/comment.schema';
 import type { CommentModelType } from '../../Domain/comment.schema';

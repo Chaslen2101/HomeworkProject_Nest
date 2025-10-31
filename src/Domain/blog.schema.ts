@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
-import { BlogInputType, PostInputType } from '../Types/Types';
 import { HydratedDocument, Model } from 'mongoose';
 import { PostDocumentType, PostModelType } from './post.schema';
+import { BlogInputDTO } from '../Api/Input-dto/blog.input-dto';
+import { PostInputType } from '../Api/Input-dto/post.input-dto';
 
 @Schema()
 export class Blog {
@@ -26,7 +27,7 @@ export class Blog {
 
   static createBlog(
     this: BlogModelType,
-    newBlogData: BlogInputType,
+    newBlogData: BlogInputDTO,
   ): BlogDocumentType {
     const newBlog: BlogDocumentType = new this();
     newBlog.name = newBlogData.name;
@@ -37,7 +38,7 @@ export class Blog {
     return newBlog;
   }
 
-  updateBlogData(this: BlogDocumentType, newBlogData: BlogInputType): boolean {
+  updateBlogData(this: BlogDocumentType, newBlogData: BlogInputDTO): boolean {
     this.name = newBlogData.name;
     this.description = newBlogData.description;
     this.websiteUrl = newBlogData.websiteUrl;

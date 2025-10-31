@@ -1,11 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { UserRepository } from '../Infrastructure/Repositories/user.repository';
-import { UserInputType } from '../Types/Types';
-import { hashHelper } from './helper';
+import { hashHelper } from '../Core/helper';
 import { User, UserDocumentType } from '../Domain/user.schema';
 import type { UserModelType } from '../Domain/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
+import { CreateUserInputDTO } from '../Api/Input-dto/user.input-dto';
 
 @Injectable()
 export class UserService {
@@ -14,7 +14,7 @@ export class UserService {
     @InjectModel(User.name) private UserModel: UserModelType,
   ) {}
 
-  async createUser(newUserData: UserInputType): Promise<ObjectId> {
+  async createUser(newUserData: CreateUserInputDTO): Promise<ObjectId> {
     const hashedPassword: string = await hashHelper.hashNewPassword(
       newUserData.password,
     );

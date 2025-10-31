@@ -1,6 +1,5 @@
 import type {
   InputQueryType,
-  UserInputType,
   UserQueryType,
   UserPagesType,
   UserViewType,
@@ -17,11 +16,15 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
 import { UserService } from '../Application/user.service';
-import { queryHelper } from '../Application/helper';
+import { queryHelper } from '../Core/helper';
 import { ObjectId } from 'mongodb';
+import { CreateUserInputDTO } from './Input-dto/user.input-dto';
+import { DomainException } from '../Domain/Exceptions/domain-exceptions';
+import { LocalGuard } from './Guards/Local/local.guard';
 
 @Controller('users')
 export class UserController {
@@ -31,9 +34,10 @@ export class UserController {
   ) {}
 
   @Post()
+  @UseGuards(LocalGuard)
   @HttpCode(201)
   async createUser(
-    @Body() reqBody: UserInputType,
+    @Body() reqBody: CreateUserInputDTO,
   ): Promise<UserViewType | null> {
     const newUserId: ObjectId = await this.userService.createUser(reqBody);
 
@@ -41,6 +45,7 @@ export class UserController {
   }
 
   @Get()
+  @UseGuards(LocalGuard)
   @HttpCode(200)
   async getManyUsers(
     @Query() query: InputQueryType,
@@ -50,6 +55,7 @@ export class UserController {
   }
 
   @Delete(':id')
+  @UseGuards(LocalGuard)
   @HttpCode(204)
   async deleteUser(@Param('id') userId: string): Promise<void> {
     const isDeleted: boolean = await this.userService.deleteUser(userId);

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserDocumentType } from '../../Domain/user.schema';
 import type { UserModelType } from '../../Domain/user.schema';
+import { UserViewType } from '../../Types/Types';
 
 @Injectable()
 export class UserRepository {
@@ -14,6 +15,26 @@ export class UserRepository {
   async deleteUser(id: string): Promise<boolean> {
     const result = await this.UserModel.deleteOne({ _id: id });
     return result.deletedCount !== 0;
+  }
+
+  async findUserByLoginOrEmail(
+    loginOrEmail: string,
+  ): Promise<UserDocumentType | null> {
+    return await this.UserModel.findOne({
+      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+    });
+  }
+
+  async findUserByEmailConfirmCode(
+    code: string,
+  ): Promise<UserDocumentType | null> {
+    const neededUser: UserDocumentType | null = await this.UserModel.findOne({
+      'emailConfirmationInfo.confirmationCode': code,
+    });
+    if (!neededUser) {
+      return null;
+    }
+    return neededUser;
   }
 }
 
