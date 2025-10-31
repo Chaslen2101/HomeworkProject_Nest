@@ -30,6 +30,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './Application/auth.service';
 import { AuthController } from './Api/auth.controller';
 import { JwtStrategy } from './Api/Guards/Jwt/jwt.strategy';
+import { BasicStrategy } from './Api/Guards/Basic/basic.strategy';
 dotenv.config();
 
 @Module({
@@ -86,6 +87,7 @@ dotenv.config();
     AuthService,
     LocalStrategy,
     JwtStrategy,
+    BasicStrategy,
   ],
 })
 export class AppModule {}

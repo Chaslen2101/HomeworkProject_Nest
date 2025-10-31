@@ -23,7 +23,7 @@ import { UserService } from '../Application/user.service';
 import { queryHelper } from '../Core/helper';
 import { ObjectId } from 'mongodb';
 import { CreateUserInputDTO } from './Input-dto/user.input-dto';
-import { LocalGuard } from './Guards/Local/local.guard';
+import { BasicGuard } from './Guards/Basic/basic.guard';
 
 @Controller('users')
 export class UserController {
@@ -33,7 +33,7 @@ export class UserController {
   ) {}
 
   @Post()
-  // @UseGuards(LocalGuard)
+  @UseGuards(BasicGuard)
   @HttpCode(201)
   async createUser(
     @Body() reqBody: CreateUserInputDTO,

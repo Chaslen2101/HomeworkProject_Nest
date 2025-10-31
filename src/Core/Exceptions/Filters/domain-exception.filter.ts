@@ -12,6 +12,8 @@ export class DomainExceptionFilter implements ExceptionFilter {
 
     if (exception.code === 400) {
       response.status(400).json({ errorsMessage: exception.message });
+    } else if (exception.code === 401) {
+      response.status(401).json();
     } else {
       response
         .status(exception.code)

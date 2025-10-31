@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(payload: jwtPayloadDTO) {
+  validate(payload: jwtPayloadDTO) {
     return payload.sub;
   }
 }
