@@ -6,13 +6,13 @@ import { CommentRepository } from '../../../Infrastructure/Repositories/comment.
 import { CommentDocumentType } from '../../../Domain/comment.schema';
 import { Types } from 'mongoose';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { JwtPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
 
 export class UpdateCommentLikeStatusCommand {
   constructor(
     public commentId: string,
     public updateLikeStatusDTO: UpdateCommentLikeStatusDTO,
-    public user: JwtPayloadDTO,
+    public user: UserPayloadDTO,
   ) {}
 }
 

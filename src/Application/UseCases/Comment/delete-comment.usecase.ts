@@ -7,12 +7,12 @@ import { ObjectId } from 'mongodb';
 import { PostDocumentType } from '../../../Domain/post.schema';
 import { PostRepository } from '../../../Infrastructure/Repositories/post.repository';
 import { Types } from 'mongoose';
-import { JwtPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
 
 export class DeleteCommentCommand {
   constructor(
     public commentId: string,
-    public user: JwtPayloadDTO,
+    public user: UserPayloadDTO,
   ) {}
 }
 

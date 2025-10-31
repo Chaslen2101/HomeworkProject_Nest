@@ -97,7 +97,7 @@ export class BlogController {
     if (!neededBlog) {
       throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     } else {
-      return await this.postQueryRep.findManyPosts(query, blogId);
+      return await this.postQueryRep.findManyPosts(query, undefined, blogId);
     }
   }
 

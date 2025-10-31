@@ -15,7 +15,7 @@ import { AuthService } from '../Application/auth.service';
 import { ObjectId } from 'mongodb';
 import {
   ConfirmEmailInputDTO,
-  JwtPayloadDTO,
+  UserPayloadDTO,
   LoginInputDTO,
   newPasswordInputDTO,
   PasswordRecoveryInputDTO,
@@ -55,7 +55,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() loginInputData: LoginInputDTO) {
-    const user: JwtPayloadDTO | null = await this.authService.validateUser(
+    const user: UserPayloadDTO | null = await this.authService.validateUser(
       loginInputData.loginOrEmail,
       loginInputData.password,
     );
@@ -82,6 +82,6 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @HttpCode(200)
   async getMe(@Request() req: Express.Request) {
-    return await this.usersQueryRep.getMyInfo(req.user as JwtPayloadDTO);
+    return await this.usersQueryRep.getMyInfo(req.user as UserPayloadDTO);
   }
 }

@@ -10,7 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocumentType } from '../../Domain/post.schema';
 import type { PostModelType } from '../../Domain/post.schema';
 import { ObjectId, SortDirection } from 'mongodb';
-import { JwtPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class PostQueryRep {
@@ -20,7 +20,7 @@ export class PostQueryRep {
 
   async findManyPosts(
     query: InputQueryType,
-    user?: JwtPayloadDTO,
+    user?: UserPayloadDTO,
     blogId?: string,
   ): Promise<PostPagesType> {
     const sanitizedQuery: BlogPostQueryType = queryHelper.blogPostQuery(query);
@@ -51,7 +51,7 @@ export class PostQueryRep {
 
   async findPostById(
     postId: ObjectId | string,
-    user?: JwtPayloadDTO,
+    user?: UserPayloadDTO,
   ): Promise<PostViewType | null> {
     const notMappedPost: PostDocumentType | null = await this.PostModel.findOne(
       {

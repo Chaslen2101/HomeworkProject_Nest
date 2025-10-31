@@ -10,7 +10,7 @@ import {
 } from '../../Types/Types';
 import { mapToView } from '../../Core/helper';
 import { ObjectId, SortDirection } from 'mongodb';
-import { JwtPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class UserQueryRep {
@@ -82,7 +82,7 @@ export class UserQueryRep {
     });
   }
 
-  async getMyInfo(user: JwtPayloadDTO): Promise<boolean | MyInfoType> {
+  async getMyInfo(user: UserPayloadDTO): Promise<boolean | MyInfoType> {
     const userDocument: UserDocumentType | null = await this.UserModel.findById(
       user.sub,
     );

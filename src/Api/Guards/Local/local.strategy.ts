@@ -4,6 +4,7 @@ import { Strategy } from 'passport-local';
 import { AuthService } from '../../../Application/auth.service';
 import { ObjectId } from 'mongodb';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { UserPayloadDTO } from '../../Input-dto/auth.input-dto';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -13,15 +14,18 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(loginOrEmail: string, password: string) {
-    const userId: null | ObjectId = await this.authService.validateUser(
+  async validate(
+    loginOrEmail: string,
+    password: string,
+  ): Promise<UserPayloadDTO> {
+    const user: UserPayloadDTO | null = await this.authService.validateUser(
       loginOrEmail,
       password,
     );
-    if (!userId) {
+    if (!user) {
       throw new DomainException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
 
-    return userId;
+    return user;
   }
 }

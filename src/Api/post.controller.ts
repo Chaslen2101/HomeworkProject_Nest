@@ -36,7 +36,7 @@ import {
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { UpdatePostLikeStatusCommand } from '../Application/UseCases/Post/update-likestatus.usecase';
-import { JwtPayloadDTO } from './Input-dto/auth.input-dto';
+import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 import { CreateCommentForPostCommand } from '../Application/UseCases/Post/create-comment-for-post.usecase';
 
 @Controller('posts')
@@ -65,7 +65,7 @@ export class PostController {
     const createdPostId: ObjectId = await this.postService.createPost(reqBody);
     return await this.postQueryRep.findPostById(
       createdPostId,
-      req.user as JwtPayloadDTO,
+      req.user as UserPayloadDTO,
     );
   }
 
@@ -137,7 +137,7 @@ export class PostController {
       new UpdatePostLikeStatusCommand(
         postId,
         reqBody,
-        req.user as JwtPayloadDTO,
+        req.user as UserPayloadDTO,
       ),
     );
     return;
@@ -155,13 +155,13 @@ export class PostController {
       new CreateCommentForPostCommand(
         postId,
         reqBody,
-        req.user as JwtPayloadDTO,
+        req.user as UserPayloadDTO,
       ),
     );
     const newComment: CommentViewType | null =
       await this.commentsQueryRep.findCommentById(
         newCommentId,
-        req.user as JwtPayloadDTO,
+        req.user as UserPayloadDTO,
       );
     return newComment;
   }

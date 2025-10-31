@@ -5,10 +5,10 @@ import { HttpStatus, Inject } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { Types } from 'mongoose';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { CommentDocumentType } from '../../../Domain/comment.schema';
+import { Comment, CommentDocumentType } from '../../../Domain/comment.schema';
 import type { CommentModelType } from '../../../Domain/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { JwtPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
 import { CreateCommentForPostDTO } from '../../../Api/Input-dto/post.input-dto';
 import { CommentRepository } from '../../../Infrastructure/Repositories/comment.repository';
 
@@ -16,7 +16,7 @@ export class CreateCommentForPostCommand {
   constructor(
     public postId: string,
     public createCommentForPostDTO: CreateCommentForPostDTO,
-    public user: JwtPayloadDTO,
+    public user: UserPayloadDTO,
   ) {}
 }
 

@@ -31,8 +31,23 @@ import { AuthService } from './Application/auth.service';
 import { AuthController } from './Api/auth.controller';
 import { JwtStrategy } from './Api/Guards/Jwt/jwt.strategy';
 import { BasicStrategy } from './Api/Guards/Basic/basic.strategy';
+import { DeleteCommentCommandUseCase } from './Application/UseCases/Comment/delete-comment.usecase';
+import { UpdateCommentUseCase } from './Application/UseCases/Comment/update-comment.usecase';
+import { UpdateCommentLikeStatusUseCase } from './Application/UseCases/Comment/update-likestatus.usecase';
+import { CreateCommentForPostUseCase } from './Application/UseCases/Post/create-comment-for-post.usecase';
+import { UpdatePostLikeStatusUseCase } from './Application/UseCases/Post/update-likestatus.usecase';
+import { CommentRepository } from './Infrastructure/Repositories/comment.repository';
+import { CqrsModule } from '@nestjs/cqrs';
 dotenv.config();
 
+const strategies = [LocalStrategy, JwtStrategy, BasicStrategy];
+const useCases = [
+  DeleteCommentCommandUseCase,
+  UpdateCommentUseCase,
+  UpdateCommentLikeStatusUseCase,
+  CreateCommentForPostUseCase,
+  UpdatePostLikeStatusUseCase,
+];
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGO_URL!),
@@ -61,6 +76,7 @@ dotenv.config();
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '10m' },
     }),
+    CqrsModule,
   ],
   controllers: [
     AppController,
@@ -79,15 +95,15 @@ dotenv.config();
     PostService,
     PostRepository,
     PostQueryRep,
+    CommentRepository,
     CommentQueryRep,
     UserService,
     UserRepository,
     UserQueryRep,
     EmailService,
     AuthService,
-    LocalStrategy,
-    JwtStrategy,
-    BasicStrategy,
+    ...strategies,
+    ...useCases,
   ],
 })
 export class AppModule {}

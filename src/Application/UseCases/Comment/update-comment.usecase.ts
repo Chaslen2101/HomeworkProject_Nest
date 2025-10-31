@@ -6,13 +6,13 @@ import { HttpStatus, Inject } from '@nestjs/common';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 import { ObjectId } from 'mongodb';
 import { Types } from 'mongoose';
-import { JwtPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
 
 export class UpdateCommentCommand {
   constructor(
     public updateCommentData: CreateUpdateCommentInputDTO,
     public commentId: string,
-    public user: JwtPayloadDTO,
+    public user: UserPayloadDTO,
   ) {}
 }
 

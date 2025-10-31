@@ -22,10 +22,9 @@ import {
 } from './Input-dto/comment.input-dto';
 import { CommandBus } from '@nestjs/cqrs';
 import { UpdateCommentCommand } from '../Application/UseCases/Comment/update-comment.usecase';
-import { ObjectId } from 'mongodb';
 import { DeleteCommentCommand } from '../Application/UseCases/Comment/delete-comment.usecase';
 import { UpdateCommentLikeStatusCommand } from '../Application/UseCases/Comment/update-likestatus.usecase';
-import { JwtPayloadDTO } from './Input-dto/auth.input-dto';
+import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 
 @Controller('comments')
 export class CommentController {
@@ -58,7 +57,7 @@ export class CommentController {
     @Body() reqBody: CreateUpdateCommentInputDTO,
   ): Promise<void> {
     await this.commandBus.execute(
-      new UpdateCommentCommand(reqBody, commentId, req.user as JwtPayloadDTO),
+      new UpdateCommentCommand(reqBody, commentId, req.user as UserPayloadDTO),
     );
     return;
   }
@@ -71,7 +70,7 @@ export class CommentController {
     @Param('commentId') commentId: string,
   ): Promise<void> {
     await this.commandBus.execute(
-      new DeleteCommentCommand(commentId, req.user as JwtPayloadDTO),
+      new DeleteCommentCommand(commentId, req.user as UserPayloadDTO),
     );
     return;
   }
@@ -88,7 +87,7 @@ export class CommentController {
       new UpdateCommentLikeStatusCommand(
         commentId,
         reqBody,
-        req.user as JwtPayloadDTO,
+        req.user as UserPayloadDTO,
       ),
     );
     return;

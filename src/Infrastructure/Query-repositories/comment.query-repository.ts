@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommentDocumentType, Comment } from '../../Domain/comment.schema';
 import type { CommentModelType } from '../../Domain/comment.schema';
 import { ObjectId, SortDirection } from 'mongodb';
-import { JwtPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class CommentQueryRep {
@@ -18,7 +18,7 @@ export class CommentQueryRep {
   ) {}
   async findCommentById(
     commentId: string,
-    user?: JwtPayloadDTO,
+    user?: UserPayloadDTO,
   ): Promise<CommentViewType | null> {
     const comment: CommentDocumentType | null = await this.CommentModel.findOne(
       { _id: commentId },

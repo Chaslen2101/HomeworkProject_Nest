@@ -4,7 +4,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { CreatePostDTO } from '../Api/Input-dto/post.input-dto';
 import { ObjectId } from 'mongodb';
 import { DomainException } from './Exceptions/domain-exceptions';
-import { JwtPayloadDTO } from '../Api/Input-dto/auth.input-dto';
+import { UserPayloadDTO } from '../Api/Input-dto/auth.input-dto';
 import { CommentDocumentType, CommentModelType } from './comment.schema';
 
 @Schema({ _id: false })
@@ -80,7 +80,7 @@ export class Post {
 
   updateLikeStatus(
     this: PostDocumentType,
-    user: JwtPayloadDTO,
+    user: UserPayloadDTO,
     likeStatus: string,
   ) {
     if (likeStatus === 'Like') {
@@ -156,7 +156,7 @@ export class Post {
   createComment(
     this: PostDocumentType,
     content: string,
-    user: JwtPayloadDTO,
+    user: UserPayloadDTO,
     CommentModel: CommentModelType,
   ) {
     const newComment: CommentDocumentType = new CommentModel({
