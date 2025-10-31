@@ -40,7 +40,7 @@ export class RegistrationInputDTO {
   password: string;
 
   @IsString()
-  @Matches(/^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+  @Matches(/^[\w-\\+.]+@([\w-]+\.)+[\w-]{2,4}$/)
   @Trim()
   email: string;
 }
