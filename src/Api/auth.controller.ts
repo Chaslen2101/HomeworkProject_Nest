@@ -66,7 +66,7 @@ export class AuthController {
       throw new UnauthorizedException();
     }
     const token: string = this.authService.login(user);
-    response.setCookie('refreshToken', token, {});
+    response.setCookie('refreshToken', token, { httpOnly: true, secure: true });
     return { accessToken: token };
   }
 

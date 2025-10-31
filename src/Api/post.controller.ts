@@ -38,6 +38,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { UpdatePostLikeStatusCommand } from '../Application/UseCases/Post/update-likestatus.usecase';
 import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 import { CreateCommentForPostCommand } from '../Application/UseCases/Post/create-comment-for-post.usecase';
+import { BasicGuard } from './Guards/Basic/basic.guard';
 
 @Controller('posts')
 export class PostController {
@@ -56,7 +57,7 @@ export class PostController {
   }
 
   @Post()
-  @UseGuards(JwtGuard)
+  @UseGuards(BasicGuard)
   @HttpCode(201)
   async createPost(
     @Request() req: Express.Request,
@@ -82,7 +83,7 @@ export class PostController {
   }
 
   @Put(':id')
-  @UseGuards(JwtGuard)
+  @UseGuards(BasicGuard)
   @HttpCode(204)
   async updatePostByID(
     @Param('id') postId: string,
@@ -98,7 +99,7 @@ export class PostController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtGuard)
+  @UseGuards(BasicGuard)
   @HttpCode(204)
   async deletePostById(@Param('id') postId: string): Promise<void> {
     await this.postService.deletePost(postId);
