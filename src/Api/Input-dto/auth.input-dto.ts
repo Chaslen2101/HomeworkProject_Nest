@@ -1,4 +1,4 @@
-import { IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 import { ObjectId } from 'mongodb';
 import { Trim } from 'src/Core/Decorators/Transform/trim';
 
@@ -48,9 +48,13 @@ export class RegistrationInputDTO {
 export class newPasswordInputDTO {
   @IsString()
   @Length(6, 20)
+  @IsNotEmpty()
+  @Trim()
   newPassword: string;
 
   @IsString()
+  @IsNotEmpty()
+  @Trim()
   recoveryCode: string;
 }
 

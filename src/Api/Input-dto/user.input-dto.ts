@@ -1,4 +1,4 @@
-import { IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
 import { Trim } from '../../Core/Decorators/Transform/trim';
 
 export class CreateUserInputDTO {

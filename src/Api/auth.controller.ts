@@ -4,15 +4,14 @@ import {
   Get,
   HttpCode,
   Inject,
-  Param,
   Post,
   Request,
+  Res,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
 import { AuthService } from '../Application/auth.service';
-import { ObjectId } from 'mongodb';
 import {
   ConfirmEmailInputDTO,
   UserPayloadDTO,
@@ -23,6 +22,7 @@ import {
   ResendConfirmCodeInputDTO,
 } from './Input-dto/auth.input-dto';
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
+import type { FastifyReply } from 'fastify';
 
 @Controller('auth')
 export class AuthController {
@@ -54,7 +54,10 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
-  async login(@Body() loginInputData: LoginInputDTO) {
+  async login(
+    @Body() loginInputData: LoginInputDTO,
+    @Res({ passthrough: true }) response: FastifyReply,
+  ) {
     const user: UserPayloadDTO | null = await this.authService.validateUser(
       loginInputData.loginOrEmail,
       loginInputData.password,
@@ -62,7 +65,9 @@ export class AuthController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return { accessToken: this.authService.login(user) };
+    const token: string = this.authService.login(user);
+    response.setCookie('refreshToken', token, {});
+    return { accessToken: token };
   }
 
   @Post('password-recovery')

@@ -44,7 +44,7 @@ export class BlogController {
   }
 
   @Post()
-  @UseGuards(BasicGuard)
+  // @UseGuards(BasicGuard)
   @HttpCode(201)
   async createBlog(
     @Body() reqBody: CreateUpdateBlogInputDTO,

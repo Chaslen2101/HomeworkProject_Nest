@@ -8,10 +8,19 @@ import {
 import { ValidationError } from 'class-validator';
 import { HttpExceptionsFilter } from './Core/Exceptions/Filters/http-exception.filter';
 import { DomainExceptionFilter } from './Core/Exceptions/Filters/domain-exception.filter';
+import cookieParser from 'cookie-parser';
+import fastifyCookie from '@fastify/cookie';
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  // app.setGlobalPrefix('api');
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+  );
+  await app.register(fastifyCookie);
   app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
@@ -30,6 +39,7 @@ async function bootstrap() {
     }),
   );
   app.useGlobalFilters(new HttpExceptionsFilter(), new DomainExceptionFilter());
+  app.use(cookieParser());
   await app.listen(5005);
 }
 bootstrap();
