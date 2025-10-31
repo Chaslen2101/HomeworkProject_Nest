@@ -11,7 +11,11 @@ export class DomainExceptionFilter implements ExceptionFilter {
     const request: Request = ctx.getRequest<Request>();
 
     if (exception.code === 400) {
-      response.status(400).json({ errorsMessage: exception.message });
+      response.status(400).json({
+        errorsMessages: [
+          { message: exception.message, field: exception.field },
+        ],
+      });
     } else if (exception.code === 401) {
       response.status(401).json();
     } else {

@@ -11,7 +11,7 @@ export class BasicStrategy extends PassportStrategy(Strategy) {
   }
 
   public validate = (username: string, password: string): boolean => {
-    if ('admin' !== username || 'qwerty' !== password) {
+    if (username !== 'admin' || password !== 'qwerty') {
       throw new DomainException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
     return true;

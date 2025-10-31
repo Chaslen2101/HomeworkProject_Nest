@@ -44,7 +44,7 @@ export class UserController {
   }
 
   @Get()
-  // @UseGuards(LocalGuard)
+  @UseGuards(BasicGuard)
   @HttpCode(200)
   async getManyUsers(
     @Query() query: InputQueryType,
@@ -54,7 +54,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  // @UseGuards(LocalGuard)
+  @UseGuards(BasicGuard)
   @HttpCode(204)
   async deleteUser(@Param('id') userId: string): Promise<void> {
     const isDeleted: boolean = await this.userService.deleteUser(userId);
