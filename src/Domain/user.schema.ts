@@ -92,6 +92,9 @@ export class User {
   }
 
   changeEmailConfirmCode(code: string): boolean {
+    if (this.emailConfirmationInfo.isConfirmed) {
+      throw new DomainException('Email is already confimed', 400, 'email');
+    }
     this.emailConfirmationInfo.confirmationCode = code;
     return true;
   }

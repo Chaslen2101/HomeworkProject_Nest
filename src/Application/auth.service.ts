@@ -83,7 +83,7 @@ export class AuthService {
     const neededUser: UserDocumentType | null =
       await this.userRepository.findUserByEmailConfirmCode(code);
     if (!neededUser) {
-      throw new DomainException('User not found', 404, 'code');
+      throw new DomainException('Invalid code', 400, 'code');
     }
 
     neededUser.confirmEmail(code);
