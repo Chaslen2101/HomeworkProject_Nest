@@ -7,12 +7,14 @@ import { ObjectId } from 'mongodb';
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private authService: AuthService) {
-    super();
+    super({
+      usernameField: 'loginOrEmail',
+    });
   }
 
-  async validate(loginOrEmail: string, password: string) {
+  async validate(username: string, password: string) {
     const userId: null | ObjectId = await this.authService.validateUser(
-      loginOrEmail,
+      username,
       password,
     );
     if (!userId) {
