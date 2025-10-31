@@ -136,6 +136,12 @@ export type CommentQueryType = {
   sortDirection: string;
 };
 
+export type NewestLikesType = {
+  addedAt: Date;
+  userId: string;
+  login: string;
+};
+
 export type SessionsInfoDBType = {
   ip: string | undefined;
   title: string | undefined;

@@ -1,4 +1,4 @@
-import { DeleteResult } from 'mongodb';
+import { DeleteResult, ObjectId } from 'mongodb';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Blog } from '../../Domain/blog.schema';
@@ -11,11 +11,11 @@ export class BlogRepository {
     return await blog.save();
   }
 
-  async findById(blogId: string): Promise<BlogDocumentType | null> {
+  async findById(blogId: string | ObjectId): Promise<BlogDocumentType | null> {
     return this.BlogModel.findOne({ _id: blogId });
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string | ObjectId): Promise<boolean> {
     const result: DeleteResult = await this.BlogModel.deleteOne({ _id: id });
     return result.deletedCount !== 0;
   }

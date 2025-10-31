@@ -10,12 +10,14 @@ import {
   UserQueryType,
   CommentQueryType,
   QueryHelperType,
+  NewestLikesType,
 } from '../Types/Types';
 import { PostDocumentType } from '../Domain/post.schema';
 import { BlogDocumentType } from '../Domain/blog.schema';
 import { CommentDocumentType } from '../Domain/comment.schema';
 import { UserDocumentType } from '../Domain/user.schema';
 import bcrypt from 'bcrypt';
+import { ObjectId } from 'mongodb';
 
 export const queryHelper: QueryHelperType = {
   blogPostQuery(query: InputQueryType): BlogPostQueryType {
@@ -80,7 +82,17 @@ export const mapToView = {
     });
   },
 
-  mapComment(comment: CommentDocumentType): CommentViewType {
+  mapComment(comment: CommentDocumentType, userId?: ObjectId): CommentViewType {
+    let status: string = 'None';
+
+    if (userId) {
+      if (comment.likesInfo.likedBy.includes(userId)) {
+        status = 'Like';
+      }
+      if (comment.likesInfo.dislikedBy.includes(userId)) {
+        status = 'Dislike';
+      }
+    }
     return {
       id: comment._id.toString(),
       content: comment.content,
@@ -92,7 +104,7 @@ export const mapToView = {
       likesInfo: {
         likesCount: comment.likesInfo.likedBy.length,
         dislikesCount: comment.likesInfo.dislikedBy.length,
-        myStatus: 'None',
+        myStatus: status,
       },
     };
   },
@@ -137,39 +149,78 @@ export const mapToView = {
     };
   },
 
-  mapPost(post: PostDocumentType): PostViewType {
+  mapPost(post: PostDocumentType, userId?: ObjectId): PostViewType {
+    let status: string = 'None';
+
+    if (userId) {
+      if (post.likesInfo.likedBy.includes(userId)) {
+        status = 'Like';
+      }
+      if (post.likesInfo.dislikedBy.includes(userId)) {
+        status = 'Dislike';
+      }
+    }
+
+    const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
+      (newestLike) => {
+        return {
+          addedAt: newestLike.addedAt,
+          userId: newestLike.userId.toString(),
+          login: newestLike.userId.toString(),
+        };
+      },
+    );
     return {
       id: post._id.toString(),
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
-      blogId: post.blogId,
+      blogId: post.blogId.toString(),
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
         likesCount: post.likesInfo.likedBy.length,
         dislikesCount: post.likesInfo.dislikedBy.length,
-        myStatus: 'None',
-        newestLikes: post.likesInfo.newestLikes,
+        myStatus: status,
+        newestLikes: newestLikes,
       },
     };
   },
 
-  mapPosts(posts: PostDocumentType[]): PostViewType[] {
-    return posts.map((post: PostDocumentType) => {
+  mapPosts(posts: PostDocumentType[], userId?: ObjectId): PostViewType[] {
+    return posts.map((post) => {
+      let status: string = 'None';
+
+      if (userId) {
+        if (post.likesInfo.likedBy.includes(userId)) {
+          status = 'Like';
+        }
+        if (post.likesInfo.dislikedBy.includes(userId)) {
+          status = 'Dislike';
+        }
+      }
+      const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
+        (newestLike) => {
+          return {
+            addedAt: newestLike.addedAt,
+            userId: newestLike.userId.toString(),
+            login: newestLike.userId.toString(),
+          };
+        },
+      );
       return {
         id: post._id.toString(),
         title: post.title,
         shortDescription: post.shortDescription,
         content: post.content,
-        blogId: post.blogId,
+        blogId: post.blogId.toString(),
         blogName: post.blogName,
         createdAt: post.createdAt,
         extendedLikesInfo: {
           likesCount: post.likesInfo.likedBy.length,
           dislikesCount: post.likesInfo.dislikedBy.length,
-          myStatus: 'None',
-          newestLikes: post.likesInfo.newestLikes,
+          myStatus: status,
+          newestLikes: newestLikes,
         },
       };
     });

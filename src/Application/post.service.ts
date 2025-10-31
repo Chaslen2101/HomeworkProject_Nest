@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PostRepository } from '../Infrastructure/Repositories/post.repository';
 import { BlogRepository } from '../Infrastructure/Repositories/blog.repository';
 import { BlogDocumentType } from '../Domain/blog.schema';
@@ -6,7 +6,9 @@ import { Post, PostDocumentType } from '../Domain/post.schema';
 import type { PostModelType } from '../Domain/post.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { PostInputDTO } from '../Api/Input-dto/post.input-dto';
+import { CreatePostDTO } from '../Api/Input-dto/post.input-dto';
+import { Types } from 'mongoose';
+import { DomainException } from '../Domain/Exceptions/domain-exceptions';
 
 @Injectable()
 export class PostService {
@@ -17,7 +19,7 @@ export class PostService {
   ) {}
 
   async createPost(
-    newPostData: PostInputDTO,
+    newPostData: CreatePostDTO,
     blogIdFromParams?: string,
   ): Promise<ObjectId> {
     const neededBlogId: string = newPostData.blogId
@@ -28,7 +30,7 @@ export class PostService {
     const neededBlog: BlogDocumentType | null =
       await this.blogRepository.findById(neededBlogId);
     if (!neededBlog) {
-      throw new Error('Blog not found');
+      throw new DomainException('Blog not found', HttpStatus.NOT_FOUND);
     }
     newPostData.blogId = neededBlogId;
     const newPost: PostDocumentType = neededBlog.createPostForBlog(
@@ -40,29 +42,31 @@ export class PostService {
     return newPost._id;
   }
 
-  async updatePost(postId: string, newData: PostInputDTO): Promise<boolean> {
+  async updatePost(postId: string, newData: CreatePostDTO): Promise<boolean> {
     const neededPost: PostDocumentType | null =
-      await this.postRepository.findById(postId);
+      await this.postRepository.findById(new Types.ObjectId(postId));
     if (!neededPost) {
       return false;
     }
-    neededPost.updatePost(newData);
+    const blogId: ObjectId = new Types.ObjectId(newData.blogId);
+    neededPost.updatePost(newData, blogId);
     await this.postRepository.save(neededPost);
     return true;
   }
 
   async deletePost(id: string): Promise<boolean> {
+    const postId: ObjectId = new Types.ObjectId(id);
     const neededPost: PostDocumentType | null =
-      await this.postRepository.findById(id);
+      await this.postRepository.findById(postId);
     if (!neededPost) {
-      throw new Error('Post not found');
+      throw new DomainException('Post not found', HttpStatus.NOT_FOUND);
     }
     const neededBlog: BlogDocumentType | null =
       await this.blogRepository.findById(neededPost.blogId);
     if (!neededBlog) {
-      throw new Error('Post has invalid blogID');
+      throw new DomainException('Blog not found', HttpStatus.NOT_FOUND);
     }
-    neededBlog.deletePost(id);
-    return await this.postRepository.delete(id);
+    neededBlog.deletePost(postId);
+    return await this.postRepository.delete(postId);
   }
 }

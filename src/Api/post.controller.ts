@@ -11,6 +11,8 @@ import {
   Post,
   Put,
   Query,
+  Request,
+  UseGuards,
 } from '@nestjs/common';
 import { PostService } from '../Application/post.service';
 import { BlogQueryRep } from '../Infrastructure/Query-repositories/blog.query-repository';
@@ -18,6 +20,7 @@ import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-re
 import type {
   CommentPagesType,
   CommentQueryType,
+  CommentViewType,
   InputQueryType,
   PostPagesType,
   PostViewType,
@@ -25,7 +28,16 @@ import type {
 import { ObjectId } from 'mongodb';
 import { queryHelper } from '../Core/helper';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
-import { PostInputDTO } from './Input-dto/post.input-dto';
+import {
+  CreateCommentForPostDTO,
+  CreatePostDTO,
+  UpdatePostLikeStatusDTO,
+} from './Input-dto/post.input-dto';
+import { JwtGuard } from './Guards/Jwt/jwt.guard';
+import { CommandBus } from '@nestjs/cqrs';
+import { UpdatePostLikeStatusCommand } from '../Application/UseCases/Post/update-likestatus.usecase';
+import { JwtPayloadDTO } from './Input-dto/auth.input-dto';
+import { CreateCommentForPostCommand } from '../Application/UseCases/Post/create-comment-for-post.usecase';
 
 @Controller('posts')
 export class PostController {
@@ -34,6 +46,7 @@ export class PostController {
     @Inject(BlogQueryRep) protected blogQueryRep: BlogQueryRep,
     @Inject(PostService) protected postService: PostService,
     @Inject(CommentQueryRep) protected commentsQueryRep: CommentQueryRep,
+    @Inject(CommandBus) protected commandBus: CommandBus,
   ) {}
 
   @Get()
@@ -43,19 +56,17 @@ export class PostController {
   }
 
   @Post()
+  @UseGuards(JwtGuard)
   @HttpCode(201)
   async createPost(
-    @Body() reqBody: PostInputDTO,
+    @Request() req: Express.Request,
+    @Body() reqBody: CreatePostDTO,
   ): Promise<PostViewType | null | undefined> {
-    try {
-      const createdPostId: ObjectId =
-        await this.postService.createPost(reqBody);
-      return await this.postQueryRep.findPostById(createdPostId);
-    } catch (e) {
-      if (e instanceof Error) {
-        throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-      }
-    }
+    const createdPostId: ObjectId = await this.postService.createPost(reqBody);
+    return await this.postQueryRep.findPostById(
+      createdPostId,
+      req.user as JwtPayloadDTO,
+    );
   }
 
   @Get(':id')
@@ -71,10 +82,11 @@ export class PostController {
   }
 
   @Put(':id')
+  @UseGuards(JwtGuard)
   @HttpCode(204)
   async updatePostByID(
     @Param('id') postId: string,
-    @Body() reqBody: PostInputDTO,
+    @Body() reqBody: CreatePostDTO,
   ): Promise<void> {
     const isUpdated: boolean = await this.postService.updatePost(
       postId,
@@ -86,19 +98,13 @@ export class PostController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtGuard)
   @HttpCode(204)
   async deletePostById(@Param('id') postId: string): Promise<void> {
-    try {
-      await this.postService.deletePost(postId);
-    } catch (e) {
-      if (e instanceof Error) {
-        console.log(e.message);
-        throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-      }
-    }
+    await this.postService.deletePost(postId);
   }
 
-  @Get(':id/comments')
+  @Get(':postId/comments')
   @HttpCode(200)
   async getCommentsForPost(
     @Param('id') postId: string,
@@ -117,5 +123,46 @@ export class PostController {
         sanitizedQuery,
       );
     return commentsToView;
+  }
+
+  @Put(':postId/like-status')
+  @UseGuards(JwtGuard)
+  @HttpCode(204)
+  async updateLikeStatus(
+    @Request() req: Express.Request,
+    @Param('postId') postId: string,
+    @Body() reqBody: UpdatePostLikeStatusDTO,
+  ): Promise<void> {
+    await this.commandBus.execute(
+      new UpdatePostLikeStatusCommand(
+        postId,
+        reqBody,
+        req.user as JwtPayloadDTO,
+      ),
+    );
+    return;
+  }
+
+  @Post(':postId/comments')
+  @UseGuards(JwtGuard)
+  @HttpCode(201)
+  async createCommentForPost(
+    @Request() req: Express.Request,
+    @Param('postId') postId: string,
+    @Body() reqBody: CreateCommentForPostDTO,
+  ) {
+    const newCommentId: string = await this.commandBus.execute(
+      new CreateCommentForPostCommand(
+        postId,
+        reqBody,
+        req.user as JwtPayloadDTO,
+      ),
+    );
+    const newComment: CommentViewType | null =
+      await this.commentsQueryRep.findCommentById(
+        newCommentId,
+        req.user as JwtPayloadDTO,
+      );
+    return newComment;
   }
 }

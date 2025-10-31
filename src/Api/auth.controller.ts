@@ -15,6 +15,7 @@ import { AuthService } from '../Application/auth.service';
 import { ObjectId } from 'mongodb';
 import {
   ConfirmEmailInputDTO,
+  JwtPayloadDTO,
   LoginInputDTO,
   newPasswordInputDTO,
   PasswordRecoveryInputDTO,
@@ -54,14 +55,14 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() loginInputData: LoginInputDTO) {
-    const userId: ObjectId | null = await this.authService.validateUser(
+    const user: JwtPayloadDTO | null = await this.authService.validateUser(
       loginInputData.loginOrEmail,
       loginInputData.password,
     );
-    if (!userId) {
+    if (!user) {
       throw new UnauthorizedException();
     }
-    return { accessToken: this.authService.login(userId) };
+    return { accessToken: this.authService.login(user) };
   }
 
   @Post('password-recovery')
@@ -81,6 +82,6 @@ export class AuthController {
   @UseGuards(JwtGuard)
   @HttpCode(200)
   async getMe(@Request() req: Express.Request) {
-    return await this.usersQueryRep.getMyInfo(req.user as ObjectId);
+    return await this.usersQueryRep.getMyInfo(req.user as JwtPayloadDTO);
   }
 }

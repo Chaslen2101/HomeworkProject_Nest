@@ -10,6 +10,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocumentType } from '../../Domain/post.schema';
 import type { PostModelType } from '../../Domain/post.schema';
 import { ObjectId, SortDirection } from 'mongodb';
+import { JwtPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class PostQueryRep {
@@ -19,13 +20,14 @@ export class PostQueryRep {
 
   async findManyPosts(
     query: InputQueryType,
-    id?: string,
+    user?: JwtPayloadDTO,
+    blogId?: string,
   ): Promise<PostPagesType> {
     const sanitizedQuery: BlogPostQueryType = queryHelper.blogPostQuery(query);
     const filter: { blogId: string } | object = query.blogId
       ? { blogId: query.blogId }
-      : id
-        ? { blogId: id }
+      : blogId
+        ? { blogId: blogId }
         : {};
 
     const items: PostDocumentType[] = await this.PostModel.find(filter)
@@ -36,7 +38,7 @@ export class PostQueryRep {
       .skip((sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize);
     const totalCount: number = await this.PostModel.countDocuments(filter);
 
-    const mappedPosts: PostViewType[] = mapToView.mapPosts(items);
+    const mappedPosts: PostViewType[] = mapToView.mapPosts(items, user?.sub);
 
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
@@ -47,7 +49,10 @@ export class PostQueryRep {
     };
   }
 
-  async findPostById(postId: ObjectId | string): Promise<PostViewType | null> {
+  async findPostById(
+    postId: ObjectId | string,
+    user?: JwtPayloadDTO,
+  ): Promise<PostViewType | null> {
     const notMappedPost: PostDocumentType | null = await this.PostModel.findOne(
       {
         _id: postId,
@@ -56,6 +61,6 @@ export class PostQueryRep {
     if (!notMappedPost) {
       return null;
     }
-    return mapToView.mapPost(notMappedPost);
+    return mapToView.mapPost(notMappedPost, user?.sub);
   }
 }

@@ -9,20 +9,24 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CommentDocumentType, Comment } from '../../Domain/comment.schema';
 import type { CommentModelType } from '../../Domain/comment.schema';
 import { ObjectId, SortDirection } from 'mongodb';
+import { JwtPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class CommentQueryRep {
   constructor(
     @InjectModel(Comment.name) private CommentModel: CommentModelType,
   ) {}
-  async findCommentById(id: string): Promise<CommentViewType | null> {
+  async findCommentById(
+    commentId: string,
+    user?: JwtPayloadDTO,
+  ): Promise<CommentViewType | null> {
     const comment: CommentDocumentType | null = await this.CommentModel.findOne(
-      { _id: id },
+      { _id: commentId },
     );
     if (!comment) {
       return null;
     }
-    return mapToView.mapComment(comment);
+    return mapToView.mapComment(comment, user?.sub);
   }
 
   async findManyCommentsByPostId(

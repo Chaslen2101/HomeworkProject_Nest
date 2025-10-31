@@ -1,7 +1,7 @@
 import { IsString, Matches, MaxLength } from 'class-validator';
 import { Trim } from '../../Core/Decorators/Transform/trim';
 
-export class BlogInputDTO {
+export class CreateUpdateBlogInputDTO {
   @IsString()
   @MaxLength(15)
   @Trim()
@@ -19,4 +19,18 @@ export class BlogInputDTO {
   )
   @Trim()
   websiteUrl: string;
+}
+
+export class CreatePostForBlogInputDTO {
+  @IsString()
+  @MaxLength(30)
+  title: string;
+
+  @IsString()
+  @MaxLength(100)
+  shortDescription: string;
+
+  @IsString()
+  @MaxLength(1000)
+  content: string;
 }

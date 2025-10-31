@@ -10,6 +10,7 @@ import { EmailService } from '../Infrastructure/MailService/email.service';
 import { ObjectId } from 'mongodb';
 import { JwtService } from '@nestjs/jwt';
 import {
+  JwtPayloadDTO,
   newPasswordInputDTO,
   RegistrationInputDTO,
 } from '../Api/Input-dto/auth.input-dto';
@@ -57,7 +58,7 @@ export class AuthService {
   async validateUser(
     loginOrEmail: string,
     password: string,
-  ): Promise<null | ObjectId> {
+  ): Promise<JwtPayloadDTO | null> {
     const user: UserDocumentType | null =
       await this.userRepository.findUserByLoginOrEmail(loginOrEmail);
     if (!user) {
@@ -72,11 +73,11 @@ export class AuthService {
       return null;
     }
 
-    return user._id;
+    return { sub: user._id, login: user.login };
   }
 
-  login(userId: ObjectId): string {
-    return this.jwtService.sign({ sub: userId });
+  login(user: JwtPayloadDTO): string {
+    return this.jwtService.sign({ sub: user.sub, login: user.login });
   }
 
   async confirmEmail(code: string): Promise<void> {

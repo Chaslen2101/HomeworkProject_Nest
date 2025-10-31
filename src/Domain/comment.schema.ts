@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
 import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
+import { DomainException } from './Exceptions/domain-exceptions';
 
 @Schema()
 class CommentatorInfo {
@@ -13,11 +14,11 @@ class CommentatorInfo {
 
 @Schema()
 class LikesInfo {
-  @Prop({ type: [String], default: [] })
-  likedBy: string[];
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
+  likedBy: ObjectId[];
 
-  @Prop({ type: [String], default: [] })
-  dislikedBy: [string];
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
+  dislikedBy: ObjectId[];
 }
 
 export class Comment {
@@ -35,6 +36,56 @@ export class Comment {
 
   @Prop({ type: LikesInfo, required: true })
   likesInfo: LikesInfo;
+
+  updateCommentContent(content: string, userId: ObjectId) {
+    if (userId !== this.commentatorInfo.userId) {
+      throw new DomainException('You cannot update not yours comment', 403);
+    }
+    this.content = content;
+    return true;
+  }
+
+  updateLikeStatus(likeStatus: string, userId: ObjectId) {
+    if (likeStatus === 'Like') {
+      if (!this.likesInfo.likedBy.includes(userId)) {
+        this.likesInfo.likedBy.push(userId);
+
+        const index: number = this.likesInfo.dislikedBy.indexOf(userId);
+        if (index > -1) {
+          this.likesInfo.dislikedBy.splice(index, 1);
+        }
+        return true;
+      }
+      return true;
+    }
+
+    if (likeStatus === 'Dislike') {
+      if (!this.likesInfo.dislikedBy.includes(userId)) {
+        this.likesInfo.dislikedBy.push(userId);
+
+        const index: number = this.likesInfo.likedBy.indexOf(userId);
+        if (index > -1) {
+          this.likesInfo.likedBy.splice(index, 1);
+        }
+        return true;
+      }
+      return true;
+    }
+
+    if (likeStatus === 'None') {
+      const likedByIndex: number = this.likesInfo.likedBy.indexOf(userId);
+      if (likedByIndex > -1) {
+        this.likesInfo.likedBy.splice(likedByIndex, 1);
+      }
+
+      const dislikedByIndex: number = this.likesInfo.dislikedBy.indexOf(userId);
+      if (dislikedByIndex > -1) {
+        this.likesInfo.dislikedBy.splice(dislikedByIndex, 1);
+      }
+      return true;
+    }
+    return false;
+  }
 }
 
 export type CommentDocumentType = HydratedDocument<Comment>;
@@ -42,61 +93,9 @@ export type CommentModelType = Model<CommentDocumentType> & typeof Comment;
 export const CommentSchema = SchemaFactory.createForClass(Comment);
 CommentSchema.loadClass(Comment);
 // {
-//     methods: {
-//         updateCommentContent(this: CommentsInstanceType, newContent: string) {
-//             this.content = newContent
-//             return true
-//         },
+//     methods: ,
 //
-//         updateLikeStatus(this: CommentsInstanceType, likeStatus: string, userId: string) {
-//
-//             if (likeStatus === "Like") {
-//
-//                 if (!this.likesInfo.likedBy.includes(userId)) {
-//
-//                     this.likesInfo.likedBy.push(userId)
-//
-//                     const index: number = this.likesInfo.dislikedBy.indexOf(userId)
-//                     if (index > -1) {
-//                         this.likesInfo.dislikedBy.splice(index, 1)
-//                     }
-//                     return true
-//                 }
-//                 return true
-//             }
-//
-//             if(likeStatus === "Dislike") {
-//
-//                 if (!this.likesInfo.dislikedBy.includes(userId)) {
-//
-//                     this.likesInfo.dislikedBy.push(userId)
-//
-//                     const index: number = this.likesInfo.likedBy.indexOf(userId)
-//                     if (index > -1) {
-//                         this.likesInfo.likedBy.splice(index, 1)
-//                     }
-//                     return true
-//                 }
-//                 return true
-//             }
-//
-//             if(likeStatus === "None") {
-//
-//                 const likedByIndex: number = this.likesInfo.likedBy.indexOf(userId)
-//                 if (likedByIndex > -1) {
-//                     this.likesInfo.likedBy.splice(likedByIndex, 1)
-//                 }
-//
-//                 const dislikedByIndex: number = this.likesInfo.dislikedBy.indexOf(userId)
-//                 if (dislikedByIndex > -1) {
-//                     this.likesInfo.dislikedBy.splice(dislikedByIndex, 1)
-//                 }
-//                 return true
-//             }
-//             return false
-//         }
-//
-//     },
+
 //     statics: {
 //
 //     }

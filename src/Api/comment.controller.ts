@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpCode,
@@ -6,16 +7,32 @@ import {
   HttpStatus,
   Inject,
   Param,
+  Put,
+  UseGuards,
+  Request,
+  Delete,
 } from '@nestjs/common';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
 import { CommentViewType } from '../Types/Types';
+import { JwtGuard } from './Guards/Jwt/jwt.guard';
+import {
+  CreateUpdateCommentInputDTO,
+  UpdateCommentLikeStatusDTO,
+} from './Input-dto/comment.input-dto';
+import { CommandBus } from '@nestjs/cqrs';
+import { UpdateCommentCommand } from '../Application/UseCases/Comment/update-comment.usecase';
+import { ObjectId } from 'mongodb';
+import { DeleteCommentCommand } from '../Application/UseCases/Comment/delete-comment.usecase';
+import { UpdateCommentLikeStatusCommand } from '../Application/UseCases/Comment/update-likestatus.usecase';
+import { JwtPayloadDTO } from './Input-dto/auth.input-dto';
 
 @Controller('comments')
 export class CommentController {
   constructor(
     @Inject(PostQueryRep) protected postsQueryRep: PostQueryRep,
     @Inject(CommentQueryRep) protected commentsQueryRep: CommentQueryRep,
+    @Inject(CommandBus) protected commandBus: CommandBus,
   ) {}
 
   @Get(':id')
@@ -31,69 +48,49 @@ export class CommentController {
     }
     return neededComment;
   }
-}
 
-//   async updateCommentById(req: Request, res: Response) {
-//     try {
-//       await this.commentsService.updateComment(
-//         req.body.content,
-//         req.params.commentId,
-//         req.user.id,
-//       );
-//       res.status(httpStatuses.NO_CONTENT_204).json({});
-//     } catch (e) {
-//       if (e instanceof Error) {
-//         if (e.message === 'Cant find needed comment') {
-//           res.status(httpStatuses.NOT_FOUND_404).json({});
-//         }
-//
-//         if (e.message === 'You cant update foreign comment') {
-//           res.status(httpStatuses.FORBIDDEN_403).json({});
-//         }
-//       }
-//     }
-//   }
-//
-//   async deleteCommentById(req: Request, res: Response) {
-//     try {
-//       await this.commentsService.deleteComment(
-//         req.params.commentId,
-//         req.user.id,
-//       );
-//       res.status(httpStatuses.NO_CONTENT_204).json({});
-//     } catch (e) {
-//       if (e instanceof Error) {
-//         if (e.message === 'Cant find needed comment') {
-//           res.status(httpStatuses.NOT_FOUND_404).json({});
-//         }
-//
-//         if (e.message === 'You cant delete foreign comment') {
-//           res.status(httpStatuses.FORBIDDEN_403).json({});
-//         }
-//       }
-//     }
-//   }
-//
-//   async updateLikeStatus(req: Request, res: Response) {
-//     try {
-//       await this.commentsService.updateLikeStatus(
-//         req.params.commentId,
-//         req.body.likeStatus,
-//         req.user.id,
-//       );
-//
-//       res.status(httpStatuses.NO_CONTENT_204).json({});
-//     } catch (e) {
-//       if (e === 'Cant find needed comment') {
-//         res.status(httpStatuses.NOT_FOUND_404).json({});
-//       }
-//
-//       if (e === 'Invalid like status') {
-//         res.status(httpStatuses.BAD_REQUEST_400).json({
-//           message: e,
-//           field: 'likeStatus',
-//         });
-//       }
-//     }
-//   }
-// }
+  @Put(':commentId')
+  @UseGuards(JwtGuard)
+  @HttpCode(204)
+  async updateComment(
+    @Request() req: Express.Request,
+    @Param('commentId') commentId: string,
+    @Body() reqBody: CreateUpdateCommentInputDTO,
+  ): Promise<void> {
+    await this.commandBus.execute(
+      new UpdateCommentCommand(reqBody, commentId, req.user as JwtPayloadDTO),
+    );
+    return;
+  }
+
+  @Delete(':commentId')
+  @UseGuards(JwtGuard)
+  @HttpCode(204)
+  async deleteCommentById(
+    @Request() req: Express.Request,
+    @Param('commentId') commentId: string,
+  ): Promise<void> {
+    await this.commandBus.execute(
+      new DeleteCommentCommand(commentId, req.user as JwtPayloadDTO),
+    );
+    return;
+  }
+
+  @Put(':commentId/like-status')
+  @UseGuards(JwtGuard)
+  @HttpCode(204)
+  async updateLikeStatus(
+    @Request() req: Express.Request,
+    @Param('commentId') commentId: string,
+    @Body() reqBody: UpdateCommentLikeStatusDTO,
+  ) {
+    await this.commandBus.execute(
+      new UpdateCommentLikeStatusCommand(
+        commentId,
+        reqBody,
+        req.user as JwtPayloadDTO,
+      ),
+    );
+    return;
+  }
+}

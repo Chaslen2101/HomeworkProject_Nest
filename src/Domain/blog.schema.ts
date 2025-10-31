@@ -2,8 +2,9 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { PostDocumentType, PostModelType } from './post.schema';
-import { BlogInputDTO } from '../Api/Input-dto/blog.input-dto';
-import { PostInputDTO } from '../Api/Input-dto/post.input-dto';
+import { CreateUpdateBlogInputDTO } from '../Api/Input-dto/blog.input-dto';
+import { CreatePostDTO } from '../Api/Input-dto/post.input-dto';
+import { ObjectId } from 'mongodb';
 
 @Schema()
 export class Blog {
@@ -22,12 +23,12 @@ export class Blog {
   @Prop({ type: Boolean, default: false })
   isMembership: boolean;
 
-  @Prop({ type: [String], default: [] })
-  posts: string[];
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
+  posts: ObjectId[];
 
   static createBlog(
     this: BlogModelType,
-    newBlogData: BlogInputDTO,
+    newBlogData: CreateUpdateBlogInputDTO,
   ): BlogDocumentType {
     const newBlog: BlogDocumentType = new this();
     newBlog.name = newBlogData.name;
@@ -38,7 +39,10 @@ export class Blog {
     return newBlog;
   }
 
-  updateBlogData(this: BlogDocumentType, newBlogData: BlogInputDTO): boolean {
+  updateBlogData(
+    this: BlogDocumentType,
+    newBlogData: CreateUpdateBlogInputDTO,
+  ): boolean {
     this.name = newBlogData.name;
     this.description = newBlogData.description;
     this.websiteUrl = newBlogData.websiteUrl;
@@ -47,7 +51,7 @@ export class Blog {
 
   createPostForBlog(
     this: BlogDocumentType,
-    newPostData: PostInputDTO,
+    newPostData: CreatePostDTO,
     PostModel: PostModelType,
   ): PostDocumentType {
     const newPost: PostDocumentType = new PostModel({
@@ -64,11 +68,11 @@ export class Blog {
         newestLikes: [],
       },
     });
-    this.posts.push(newPost._id.toString());
+    this.posts.push(newPost._id);
     return newPost;
   }
 
-  deletePost(this: BlogDocumentType, postId: string): boolean {
+  deletePost(this: BlogDocumentType, postId: ObjectId): boolean {
     const isPostExist: number = this.posts.indexOf(postId);
     if (isPostExist === -1) {
       throw new Error("Blog doesn't have post with this id");

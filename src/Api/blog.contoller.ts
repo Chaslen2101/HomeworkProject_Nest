@@ -18,13 +18,15 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { BlogService } from '../Application/blog.service';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
 import { PostService } from '../Application/post.service';
 import { ObjectId } from 'mongodb';
-import { BlogInputDTO } from './Input-dto/blog.input-dto';
-import { PostInputDTO } from './Input-dto/post.input-dto';
+import { CreateUpdateBlogInputDTO } from './Input-dto/blog.input-dto';
+import { CreatePostDTO } from './Input-dto/post.input-dto';
+import { BasicGuard } from './Guards/Basic/basic.guard';
 
 @Controller('blogs')
 export class BlogController {
@@ -42,9 +44,10 @@ export class BlogController {
   }
 
   @Post()
+  @UseGuards(BasicGuard)
   @HttpCode(201)
   async createBlog(
-    @Body() reqBody: BlogInputDTO,
+    @Body() reqBody: CreateUpdateBlogInputDTO,
   ): Promise<BlogViewType | null> {
     const createdBlogId: ObjectId = await this.blogService.createBlog(reqBody);
     return await this.blogQueryRep.findBlogByID(createdBlogId);
@@ -63,22 +66,18 @@ export class BlogController {
   }
 
   @Put(':id')
+  @UseGuards(BasicGuard)
   @HttpCode(204)
   async updateBlogById(
     @Param('id') blogId: string,
-    @Body() reqBody: BlogInputDTO,
+    @Body() reqBody: CreateUpdateBlogInputDTO,
   ): Promise<void> {
-    try {
-      await this.blogService.updateBlog(blogId, reqBody);
-    } catch (e) {
-      if (e instanceof Error) {
-        console.log(e.message);
-        throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
-      }
-    }
+    await this.blogService.updateBlog(blogId, reqBody);
+    return;
   }
 
   @Delete(':id')
+  @UseGuards(BasicGuard)
   @HttpCode(204)
   async deleteBlogByID(@Param('id') blogId: string): Promise<void> {
     const isDeleted: boolean = await this.blogService.deleteBlog(blogId);
@@ -103,21 +102,16 @@ export class BlogController {
   }
 
   @Post(':blogId/posts')
+  @UseGuards(BasicGuard)
   @HttpCode(201)
   async createPostForBlog(
     @Param('blogId') blogId: string,
-    @Body() reqBody: PostInputDTO,
+    @Body() reqBody: CreatePostDTO,
   ): Promise<PostViewType | null | undefined> {
-    try {
-      const newPostId: ObjectId = await this.postService.createPost(
-        reqBody,
-        blogId,
-      );
-      return await this.postQueryRep.findPostById(newPostId);
-    } catch (e) {
-      if (e instanceof Error) {
-        throw new HttpException(e.message, HttpStatus.NOT_FOUND);
-      }
-    }
+    const newPostId: ObjectId = await this.postService.createPost(
+      reqBody,
+      blogId,
+    );
+    return await this.postQueryRep.findPostById(newPostId);
   }
 }

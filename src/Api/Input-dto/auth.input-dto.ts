@@ -54,6 +54,7 @@ export class newPasswordInputDTO {
   recoveryCode: string;
 }
 
-export class jwtPayloadDTO {
+export class JwtPayloadDTO {
   sub: ObjectId;
+  login: string;
 }

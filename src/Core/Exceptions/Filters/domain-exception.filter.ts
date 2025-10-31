@@ -16,12 +16,12 @@ export class DomainExceptionFilter implements ExceptionFilter {
           { message: exception.message, field: exception.field },
         ],
       });
-    } else if (exception.code === 401) {
-      response.status(401).json();
-    } else {
+    } else if (exception.code === 500) {
       response
         .status(exception.code)
         .json({ Error: exception.message, Path: request.url });
+    } else {
+      response.status(exception.code).json();
     }
   }
 }

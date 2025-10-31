@@ -1,7 +1,7 @@
-import { IsString, MaxLength } from 'class-validator';
+import { IsIn, IsString, Length, MaxLength } from 'class-validator';
 import { Trim } from '../../Core/Decorators/Transform/trim';
 
-export class PostInputDTO {
+export class CreatePostDTO {
   @IsString()
   @MaxLength(30)
   @Trim()
@@ -18,4 +18,16 @@ export class PostInputDTO {
 
   @IsString()
   blogId: string;
+}
+
+export class UpdatePostLikeStatusDTO {
+  @IsString()
+  @IsIn(['None', 'Like', 'Dislike'])
+  likeStatus: string;
+}
+
+export class CreateCommentForPostDTO {
+  @IsString()
+  @Length(20, 300)
+  content: string;
 }
