@@ -36,6 +36,7 @@ export class AuthService {
     }
 
     const confirmationCode: string = randomUUID().toString();
+
     const hashedPassword: string = await hashHelper.hashNewPassword(
       newUserData.password,
     );

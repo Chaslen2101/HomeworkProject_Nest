@@ -6,10 +6,10 @@ import { DomainException } from './Exceptions/domain-exceptions';
 
 @Schema()
 class EmailConfirmationInfo {
-  @Prop({ type: [String, null] })
+  @Prop({ type: String, default: null })
   confirmationCode: string | null;
 
-  @Prop({ type: [MongooseSchema.Types.Date, null] })
+  @Prop({ type: MongooseSchema.Types.Date, default: null })
   expirationDate: Date | null;
 
   @Prop({ type: Boolean, default: false })
@@ -18,10 +18,10 @@ class EmailConfirmationInfo {
 
 @Schema()
 class PasswordRecoveryInfo {
-  @Prop({ type: [String, null] })
+  @Prop({ type: String, default: null })
   confirmationCode: string | null;
 
-  @Prop({ type: [MongooseSchema.Types.Date, null] })
+  @Prop({ type: MongooseSchema.Types.Date, default: null })
   expirationDate: Date | null;
 }
 
@@ -51,9 +51,8 @@ export class User {
     hashedPassword: string,
     confirmCode?: string,
   ): UserDocumentType {
-    const confirmEmailCodeExpDate: Date = new Date(
-      new Date().setDate(new Date().getDate() + 1),
-    );
+    const confirmEmailCodeExpDate: Date = new Date();
+    confirmEmailCodeExpDate.setDate(confirmEmailCodeExpDate.getDate() + 1);
     return new this({
       id: new ObjectId().toString(),
       login: user.login,
@@ -76,11 +75,10 @@ export class User {
     if (!this.emailConfirmationInfo.expirationDate) {
       throw new DomainException('Invalid expiration date', 400, 'code');
     }
-    if (
-      this.emailConfirmationInfo.expirationDate.getTime() -
-        new Date().getTime() <
-      0
-    ) {
+    const expirationDate: Date = new Date(
+      this.emailConfirmationInfo.expirationDate,
+    );
+    if (expirationDate.getTime() - new Date().getTime() < 0) {
       throw new DomainException('Confirm code expired', 400, 'code');
     }
     if (this.emailConfirmationInfo.isConfirmed) {
