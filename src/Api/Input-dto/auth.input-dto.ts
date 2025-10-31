@@ -17,7 +17,7 @@ export class ConfirmEmailInputDTO {
 
 export class ResendConfirmCodeInputDTO {
   @IsString()
-  @Matches(/^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+  @Matches(/^[\w-\\+.]+@([\w-]+\.)+[\w-]{2,4}$/)
   email: string;
 }
 
