@@ -24,8 +24,10 @@ import { BlogService } from '../Application/blog.service';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
 import { PostService } from '../Application/post.service';
 import { ObjectId } from 'mongodb';
-import { CreateUpdateBlogInputDTO } from './Input-dto/blog.input-dto';
-import { CreatePostDTO } from './Input-dto/post.input-dto';
+import {
+  CreatePostForBlogInputDTO,
+  CreateUpdateBlogInputDTO,
+} from './Input-dto/blog.input-dto';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 
 @Controller('blogs')
@@ -106,7 +108,7 @@ export class BlogController {
   @HttpCode(201)
   async createPostForBlog(
     @Param('blogId') blogId: string,
-    @Body() reqBody: CreatePostDTO,
+    @Body() reqBody: CreatePostForBlogInputDTO,
   ): Promise<PostViewType | null | undefined> {
     const newPostId: ObjectId = await this.postService.createPost(
       reqBody,

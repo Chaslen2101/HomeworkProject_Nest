@@ -23,7 +23,7 @@ export class CreatePostDTO {
   @IsString()
   @Trim()
   @IsNotEmpty()
-  blogId: string;
+  blogId?: string;
 }
 
 export class UpdatePostLikeStatusDTO {
