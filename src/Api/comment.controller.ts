@@ -43,7 +43,7 @@ export class CommentController {
     @Param('id') commentId: string,
     @Req() request: Request,
   ): Promise<CommentViewType> {
-    const jwtToken: string | null = request.headers.get('authorization');
+    const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
       : undefined;

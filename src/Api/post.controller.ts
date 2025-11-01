@@ -59,7 +59,7 @@ export class PostController {
     @Query() query: InputQueryType,
     @Req() request: Request,
   ): Promise<PostPagesType> {
-    const jwtToken: string | null = request.headers.get('authorization');
+    const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
       : undefined;
@@ -86,7 +86,7 @@ export class PostController {
     @Param('id') postId: string,
     @Req() request: Request,
   ): Promise<PostViewType> {
-    const jwtToken: string | null = request.headers.get('authorization');
+    const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
       : undefined;
@@ -130,7 +130,7 @@ export class PostController {
     @Query() query: InputQueryType,
     @Req() request: Request,
   ) {
-    const jwtToken: string | null = request.headers.get('authorization');
+    const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
       : undefined;

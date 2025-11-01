@@ -115,7 +115,7 @@ export class BlogController {
     @Body() reqBody: CreatePostForBlogInputDTO,
     @Req() request: Request,
   ): Promise<PostViewType | null | undefined> {
-    const jwtToken: string | null = request.headers.get('authorization');
+    const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
       : undefined;
