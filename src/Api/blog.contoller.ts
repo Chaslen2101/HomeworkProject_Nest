@@ -18,6 +18,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { BlogService } from '../Application/blog.service';
@@ -29,6 +30,8 @@ import {
   CreateUpdateBlogInputDTO,
 } from './Input-dto/blog.input-dto';
 import { BasicGuard } from './Guards/Basic/basic.guard';
+import { UserPayloadDTO } from './Input-dto/auth.input-dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('blogs')
 export class BlogController {
@@ -37,6 +40,7 @@ export class BlogController {
     protected postQueryRep: PostQueryRep,
     protected blogService: BlogService,
     protected postService: PostService,
+    protected jwtService: JwtService,
   ) {}
 
   @Get()
@@ -109,11 +113,18 @@ export class BlogController {
   async createPostForBlog(
     @Param('blogId') blogId: string,
     @Body() reqBody: CreatePostForBlogInputDTO,
+    @Req() request: Request,
   ): Promise<PostViewType | null | undefined> {
+    const jwtToken: string | null = request.headers.get('authorization');
+    const user: UserPayloadDTO | undefined = jwtToken
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      : undefined;
+
     const newPostId: ObjectId = await this.postService.createPost(
       reqBody,
       blogId,
     );
-    return await this.postQueryRep.findPostById(newPostId);
+
+    return await this.postQueryRep.findPostById(newPostId, user);
   }
 }

@@ -11,6 +11,7 @@ import {
   UseGuards,
   Request,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
@@ -25,6 +26,7 @@ import { UpdateCommentCommand } from '../Application/UseCases/Comment/update-com
 import { DeleteCommentCommand } from '../Application/UseCases/Comment/delete-comment.usecase';
 import { UpdateCommentLikeStatusCommand } from '../Application/UseCases/Comment/update-likestatus.usecase';
 import { UserPayloadDTO } from './Input-dto/auth.input-dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('comments')
 export class CommentController {
@@ -32,15 +34,22 @@ export class CommentController {
     @Inject(PostQueryRep) protected postsQueryRep: PostQueryRep,
     @Inject(CommentQueryRep) protected commentsQueryRep: CommentQueryRep,
     @Inject(CommandBus) protected commandBus: CommandBus,
+    protected jwtService: JwtService,
   ) {}
 
   @Get(':id')
   @HttpCode(200)
   async getCommentById(
     @Param('id') commentId: string,
+    @Req() request: Request,
   ): Promise<CommentViewType> {
+    const jwtToken: string | null = request.headers.get('authorization');
+    const user: UserPayloadDTO | undefined = jwtToken
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      : undefined;
+
     const neededComment: CommentViewType | null =
-      await this.commentsQueryRep.findCommentById(commentId);
+      await this.commentsQueryRep.findCommentById(commentId, user);
 
     if (!neededComment) {
       throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);

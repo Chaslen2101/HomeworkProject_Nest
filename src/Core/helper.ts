@@ -63,8 +63,21 @@ export const hashHelper = {
 };
 
 export const mapToView = {
-  mapComments(comments: CommentDocumentType[]): CommentViewType[] {
+  mapComments(
+    comments: CommentDocumentType[],
+    userId?: ObjectId,
+  ): CommentViewType[] {
     return comments.map((comment: CommentDocumentType) => {
+      let status: string = 'None';
+
+      if (userId) {
+        if (comment.likesInfo.likedBy.includes(userId)) {
+          status = 'Like';
+        }
+        if (comment.likesInfo.dislikedBy.includes(userId)) {
+          status = 'Dislike';
+        }
+      }
       return {
         id: comment._id.toString(),
         content: comment.content,
@@ -76,7 +89,7 @@ export const mapToView = {
         likesInfo: {
           likesCount: comment.likesInfo.likedBy.length,
           dislikesCount: comment.likesInfo.dislikedBy.length,
-          myStatus: 'None',
+          myStatus: status,
         },
       };
     });
@@ -166,7 +179,7 @@ export const mapToView = {
         return {
           addedAt: newestLike.addedAt,
           userId: newestLike.userId.toString(),
-          login: newestLike.userId.toString(),
+          login: newestLike.login,
         };
       },
     );
@@ -204,7 +217,7 @@ export const mapToView = {
           return {
             addedAt: newestLike.addedAt,
             userId: newestLike.userId.toString(),
-            login: newestLike.userId.toString(),
+            login: newestLike.login,
           };
         },
       );

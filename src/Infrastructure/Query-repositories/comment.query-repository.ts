@@ -32,6 +32,7 @@ export class CommentQueryRep {
   async findManyCommentsByPostId(
     postId: string | ObjectId,
     query: CommentQueryType,
+    user?: UserPayloadDTO,
   ): Promise<CommentPagesType> {
     const items: CommentDocumentType[] = await this.CommentModel.find({
       postId: postId,
@@ -42,7 +43,10 @@ export class CommentQueryRep {
     const totalCount: number = await this.CommentModel.countDocuments({
       postId: postId,
     });
-    const mappedComments: CommentViewType[] = mapToView.mapComments(items);
+    const mappedComments: CommentViewType[] = mapToView.mapComments(
+      items,
+      user?.sub,
+    );
     return {
       pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,

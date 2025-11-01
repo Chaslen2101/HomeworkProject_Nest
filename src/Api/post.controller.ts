@@ -11,6 +11,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   Request,
   UseGuards,
 } from '@nestjs/common';
@@ -39,6 +40,7 @@ import { UpdatePostLikeStatusCommand } from '../Application/UseCases/Post/update
 import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 import { CreateCommentForPostCommand } from '../Application/UseCases/Post/create-comment-for-post.usecase';
 import { BasicGuard } from './Guards/Basic/basic.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('posts')
 export class PostController {
@@ -48,12 +50,20 @@ export class PostController {
     @Inject(PostService) protected postService: PostService,
     @Inject(CommentQueryRep) protected commentsQueryRep: CommentQueryRep,
     @Inject(CommandBus) protected commandBus: CommandBus,
+    @Inject(JwtService) protected jwtService: JwtService,
   ) {}
 
   @Get()
   @HttpCode(200)
-  async returnAllPosts(@Query() query: InputQueryType): Promise<PostPagesType> {
-    return await this.postQueryRep.findManyPosts(query);
+  async returnAllPosts(
+    @Query() query: InputQueryType,
+    @Req() request: Request,
+  ): Promise<PostPagesType> {
+    const jwtToken: string | null = request.headers.get('authorization');
+    const user: UserPayloadDTO | undefined = jwtToken
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      : undefined;
+    return await this.postQueryRep.findManyPosts(query, user);
   }
 
   @Post()
@@ -72,9 +82,17 @@ export class PostController {
 
   @Get(':id')
   @HttpCode(200)
-  async findPostById(@Param('id') postId: string): Promise<PostViewType> {
+  async findPostById(
+    @Param('id') postId: string,
+    @Req() request: Request,
+  ): Promise<PostViewType> {
+    const jwtToken: string | null = request.headers.get('authorization');
+    const user: UserPayloadDTO | undefined = jwtToken
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      : undefined;
     const neededPost: PostViewType | null =
-      await this.postQueryRep.findPostById(postId);
+      await this.postQueryRep.findPostById(postId, user);
+
     if (neededPost) {
       return neededPost;
     } else {
@@ -110,7 +128,13 @@ export class PostController {
   async getCommentsForPost(
     @Param('id') postId: string,
     @Query() query: InputQueryType,
+    @Req() request: Request,
   ) {
+    const jwtToken: string | null = request.headers.get('authorization');
+    const user: UserPayloadDTO | undefined = jwtToken
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      : undefined;
+
     const isPostExists: PostViewType | null =
       await this.postQueryRep.findPostById(postId);
     if (!isPostExists) {
@@ -122,6 +146,7 @@ export class PostController {
       await this.commentsQueryRep.findManyCommentsByPostId(
         postId,
         sanitizedQuery,
+        user,
       );
     return commentsToView;
   }
