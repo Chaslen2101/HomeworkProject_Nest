@@ -20,8 +20,8 @@ export class CommentQueryRep {
     commentId: string,
     user?: UserPayloadDTO,
   ): Promise<CommentViewType | null> {
-    const comment: CommentDocumentType | null = await this.CommentModel.findOne(
-      { _id: commentId },
+    const comment: CommentDocumentType | null = await this.CommentModel.findById(
+      commentId,
     );
     if (!comment) {
       return null;

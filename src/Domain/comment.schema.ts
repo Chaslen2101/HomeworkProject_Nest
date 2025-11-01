@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
 import { DomainException } from './Exceptions/domain-exceptions';
 
-@Schema()
+@Schema({ _id: false })
 class CommentatorInfo {
   @Prop({ type: ObjectId, required: true })
   userId: ObjectId;
@@ -12,7 +12,7 @@ class CommentatorInfo {
   userLogin: string;
 }
 
-@Schema()
+@Schema({ _id: false })
 class LikesInfo {
   @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   likedBy: ObjectId[];
@@ -21,6 +21,7 @@ class LikesInfo {
   dislikedBy: ObjectId[];
 }
 
+@Schema()
 export class Comment {
   @Prop({ type: String, required: true })
   content: string;
@@ -92,11 +93,3 @@ export type CommentDocumentType = HydratedDocument<Comment>;
 export type CommentModelType = Model<CommentDocumentType> & typeof Comment;
 export const CommentSchema = SchemaFactory.createForClass(Comment);
 CommentSchema.loadClass(Comment);
-// {
-//     methods: ,
-//
-
-//     statics: {
-//
-//     }
-// })

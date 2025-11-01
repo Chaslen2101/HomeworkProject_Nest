@@ -1,4 +1,4 @@
-import { CommandHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { PostDocumentType } from '../../../Domain/post.schema';
 import { PostRepository } from '../../../Infrastructure/Repositories/post.repository';
 import { HttpStatus, Inject } from '@nestjs/common';
@@ -21,7 +21,9 @@ export class CreateCommentForPostCommand {
 }
 
 @CommandHandler(CreateCommentForPostCommand)
-export class CreateCommentForPostUseCase {
+export class CreateCommentForPostUseCase
+  implements ICommandHandler<CreateCommentForPostCommand, string>
+{
   constructor(
     @Inject(PostRepository) protected postRepository: PostRepository,
     @InjectModel(Comment.name) protected commentModel: CommentModelType,

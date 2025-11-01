@@ -1,4 +1,9 @@
-import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
+import {
+  HydratedDocument,
+  Model,
+  Schema as MongooseSchema,
+  Types,
+} from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { CreatePostDTO } from '../Api/Input-dto/post.input-dto';
@@ -158,15 +163,15 @@ export class Post {
     content: string,
     user: UserPayloadDTO,
     CommentModel: CommentModelType,
-  ) {
+  ): CommentDocumentType {
     const newComment: CommentDocumentType = new CommentModel({
       content: content,
       commentatorInfo: {
-        userId: user.sub,
+        userId: new Types.ObjectId(user.sub),
         userLogin: user.login,
       },
       createdAt: new Date(),
-      postId: this.id,
+      postId: this._id,
       likesInfo: {
         likedBy: [],
         dislikedBy: [],
