@@ -92,7 +92,9 @@ export class Post {
       if (!this.likesInfo.likedBy.includes(user.sub)) {
         this.likesInfo.likedBy.push(user.sub);
 
-        const index: number = this.likesInfo.dislikedBy.indexOf(user.sub);
+        const index: number = this.likesInfo.dislikedBy.findIndex((objId) =>
+          objId.equals(user.sub),
+        );
         if (index > -1) {
           this.likesInfo.dislikedBy.splice(index, 1);
         }
@@ -116,7 +118,9 @@ export class Post {
       if (!this.likesInfo.dislikedBy.includes(user.sub)) {
         this.likesInfo.dislikedBy.push(user.sub);
 
-        const index: number = this.likesInfo.likedBy.indexOf(user.sub);
+        const index: number = this.likesInfo.likedBy.findIndex((objId) =>
+          objId.equals(user.sub),
+        );
         if (index > -1) {
           this.likesInfo.likedBy.splice(index, 1);
         }
@@ -134,20 +138,22 @@ export class Post {
     }
 
     if (likeStatus === 'None') {
-      const likedByIndex: number = this.likesInfo.likedBy.indexOf(user.sub);
+      const likedByIndex: number = this.likesInfo.likedBy.findIndex((objId) =>
+        objId.equals(user.sub),
+      );
       if (likedByIndex > -1) {
         this.likesInfo.likedBy.splice(likedByIndex, 1);
       }
 
-      const dislikedByIndex: number = this.likesInfo.dislikedBy.indexOf(
-        user.sub,
+      const dislikedByIndex: number = this.likesInfo.dislikedBy.findIndex(
+        (objId) => objId.equals(user.sub),
       );
       if (dislikedByIndex > -1) {
         this.likesInfo.dislikedBy.splice(dislikedByIndex, 1);
       }
 
       const isLikeNewest: number = this.likesInfo.newestLikes.findIndex(
-        (like) => like.userId === user.sub,
+        (like) => like.userId.toString() === user.sub.toString(),
       );
       if (isLikeNewest > -1) {
         this.likesInfo.newestLikes.splice(isLikeNewest, 1);
@@ -163,7 +169,7 @@ export class Post {
     content: string,
     user: UserPayloadDTO,
     CommentModel: CommentModelType,
-  ): CommentDocumentType {
+  ): CommentDocumentType  {
     const newComment: CommentDocumentType = new CommentModel({
       content: content,
       commentatorInfo: {

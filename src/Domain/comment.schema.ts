@@ -51,7 +51,9 @@ export class Comment {
       if (!this.likesInfo.likedBy.includes(userId)) {
         this.likesInfo.likedBy.push(userId);
 
-        const index: number = this.likesInfo.dislikedBy.indexOf(userId);
+        const index: number = this.likesInfo.dislikedBy.findIndex((objId) =>
+          objId.equals(userId),
+        );
         if (index > -1) {
           this.likesInfo.dislikedBy.splice(index, 1);
         }
@@ -64,7 +66,9 @@ export class Comment {
       if (!this.likesInfo.dislikedBy.includes(userId)) {
         this.likesInfo.dislikedBy.push(userId);
 
-        const index: number = this.likesInfo.likedBy.indexOf(userId);
+        const index: number = this.likesInfo.likedBy.findIndex((objId) =>
+          objId.equals(userId),
+        );
         if (index > -1) {
           this.likesInfo.likedBy.splice(index, 1);
         }
@@ -74,12 +78,16 @@ export class Comment {
     }
 
     if (likeStatus === 'None') {
-      const likedByIndex: number = this.likesInfo.likedBy.indexOf(userId);
+      const likedByIndex: number = this.likesInfo.likedBy.findIndex((objId) =>
+        objId.equals(userId),
+      );
       if (likedByIndex > -1) {
         this.likesInfo.likedBy.splice(likedByIndex, 1);
       }
 
-      const dislikedByIndex: number = this.likesInfo.dislikedBy.indexOf(userId);
+      const dislikedByIndex: number = this.likesInfo.dislikedBy.findIndex(
+        (objId) => objId.equals(userId),
+      );
       if (dislikedByIndex > -1) {
         this.likesInfo.dislikedBy.splice(dislikedByIndex, 1);
       }

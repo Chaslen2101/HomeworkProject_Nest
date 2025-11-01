@@ -31,7 +31,10 @@ export class UpdateCommentUseCase
       throw new DomainException('Comment not found', HttpStatus.NOT_FOUND);
     }
 
-    if (neededComment.commentatorInfo.userId !== dto.user.sub) {
+    if (
+      neededComment.commentatorInfo.userId.toString() !==
+      dto.user.sub.toString()
+    ) {
       throw new DomainException(
         'You cant update not yours comment',
         HttpStatus.FORBIDDEN,
