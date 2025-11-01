@@ -38,7 +38,6 @@ export class CreateCommentForPostUseCase
     if (!neededPost) {
       throw new DomainException('Post not found', HttpStatus.NOT_FOUND);
     }
-
     const newComment: CommentDocumentType = neededPost.createComment(
       dto.createCommentForPostDTO.content,
       dto.user,
