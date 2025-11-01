@@ -61,7 +61,7 @@ export class PostController {
   ): Promise<PostPagesType> {
     const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
-      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
       : undefined;
     return await this.postQueryRep.findManyPosts(query, user);
   }
@@ -88,7 +88,7 @@ export class PostController {
   ): Promise<PostViewType> {
     const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
-      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
       : undefined;
     const neededPost: PostViewType | null =
       await this.postQueryRep.findPostById(postId, user);
@@ -132,7 +132,7 @@ export class PostController {
   ) {
     const jwtToken: string | null = request.headers['authorization'];
     const user: UserPayloadDTO | undefined = jwtToken
-      ? this.jwtService.verify<UserPayloadDTO>(jwtToken)
+      ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
       : undefined;
 
     const isPostExists: PostViewType | null =

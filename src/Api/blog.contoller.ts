@@ -18,6 +18,7 @@ import {
   Post,
   Put,
   Query,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { BlogService } from '../Application/blog.service';
@@ -30,6 +31,7 @@ import {
 } from './Input-dto/blog.input-dto';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 import { JwtService } from '@nestjs/jwt';
+import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 
 @Controller('blogs')
 export class BlogController {
@@ -95,13 +97,18 @@ export class BlogController {
   async findPostsOfBlog(
     @Param('blogId') blogId: string,
     @Query() query: InputQueryType,
+    @Req() request: Request,
   ): Promise<PostPagesType> {
     const neededBlog: BlogViewType | null =
       await this.blogQueryRep.findBlogByID(blogId);
     if (!neededBlog) {
       throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     } else {
-      return await this.postQueryRep.findManyPosts(query, undefined, blogId);
+      const jwtToken: string | null = request.headers['authorization'];
+      const user: UserPayloadDTO | undefined = jwtToken
+        ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
+        : undefined;
+      return await this.postQueryRep.findManyPosts(query, user, blogId);
     }
   }
 
