@@ -5,8 +5,8 @@ import { DomainException } from './Exceptions/domain-exceptions';
 
 @Schema({ _id: false })
 class CommentatorInfo {
-  @Prop({ type: ObjectId, required: true })
-  userId: ObjectId;
+  @Prop({ type: String, required: true })
+  userId: string;
 
   @Prop({ type: String, required: true })
   userLogin: string;
@@ -14,11 +14,11 @@ class CommentatorInfo {
 
 @Schema({ _id: false })
 class LikesInfo {
-  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
-  likedBy: ObjectId[];
+  @Prop({ type: [String], default: [] })
+  likedBy: string[];
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
-  dislikedBy: ObjectId[];
+  @Prop({ type: [String], default: [] })
+  dislikedBy: string[];
 }
 
 @Schema()
@@ -32,13 +32,13 @@ export class Comment {
   @Prop({ type: MongooseSchema.Types.Date, required: true })
   createdAt: Date;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
-  postId: ObjectId;
+  @Prop({ type: String, required: true })
+  postId: string;
 
   @Prop({ type: LikesInfo, required: true })
   likesInfo: LikesInfo;
 
-  updateCommentContent(content: string, userId: ObjectId) {
+  updateCommentContent(content: string, userId: string) {
     if (userId !== this.commentatorInfo.userId) {
       throw new DomainException('You cannot update not yours comment', 403);
     }
@@ -46,14 +46,12 @@ export class Comment {
     return true;
   }
 
-  updateLikeStatus(likeStatus: string, userId: ObjectId) {
+  updateLikeStatus(likeStatus: string, userId: string) {
     if (likeStatus === 'Like') {
       if (!this.likesInfo.likedBy.includes(userId)) {
         this.likesInfo.likedBy.push(userId);
 
-        const index: number = this.likesInfo.dislikedBy.findIndex((objId) =>
-          objId.equals(userId),
-        );
+        const index: number = this.likesInfo.dislikedBy.indexOf(userId);
         if (index > -1) {
           this.likesInfo.dislikedBy.splice(index, 1);
         }
@@ -66,9 +64,7 @@ export class Comment {
       if (!this.likesInfo.dislikedBy.includes(userId)) {
         this.likesInfo.dislikedBy.push(userId);
 
-        const index: number = this.likesInfo.likedBy.findIndex((objId) =>
-          objId.equals(userId),
-        );
+        const index: number = this.likesInfo.likedBy.indexOf(userId);
         if (index > -1) {
           this.likesInfo.likedBy.splice(index, 1);
         }
@@ -78,16 +74,12 @@ export class Comment {
     }
 
     if (likeStatus === 'None') {
-      const likedByIndex: number = this.likesInfo.likedBy.findIndex((objId) =>
-        objId.equals(userId),
-      );
+      const likedByIndex: number = this.likesInfo.likedBy.indexOf(userId);
       if (likedByIndex > -1) {
         this.likesInfo.likedBy.splice(likedByIndex, 1);
       }
 
-      const dislikedByIndex: number = this.likesInfo.dislikedBy.findIndex(
-        (objId) => objId.equals(userId),
-      );
+      const dislikedByIndex: number = this.likesInfo.dislikedBy.indexOf(userId);
       if (dislikedByIndex > -1) {
         this.likesInfo.dislikedBy.splice(dislikedByIndex, 1);
       }

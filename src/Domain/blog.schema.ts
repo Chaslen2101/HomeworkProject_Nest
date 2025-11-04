@@ -23,8 +23,8 @@ export class Blog {
   @Prop({ type: Boolean, default: false })
   isMembership: boolean;
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
-  posts: ObjectId[];
+  @Prop({ type: [String], default: [] })
+  posts: string[];
 
   static createBlog(
     this: BlogModelType,
@@ -68,11 +68,11 @@ export class Blog {
         newestLikes: [],
       },
     });
-    this.posts.push(newPost._id);
+    this.posts.push(newPost._id.toString());
     return newPost;
   }
 
-  deletePost(this: BlogDocumentType, postId: ObjectId): boolean {
+  deletePost(this: BlogDocumentType, postId: string): boolean {
     const isPostExist: number = this.posts.indexOf(postId);
     if (isPostExist === -1) {
       throw new Error("Blog doesn't have post with this id");

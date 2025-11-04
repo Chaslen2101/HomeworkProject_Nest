@@ -31,7 +31,7 @@ import { queryHelper } from '../Core/helper';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
 import {
   CreateCommentForPostDTO,
-  CreatePostDTO,
+  CreatePostDTO, UpdatePostDTO,
   UpdatePostLikeStatusDTO,
 } from './Input-dto/post.input-dto';
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
@@ -73,7 +73,7 @@ export class PostController {
     @Request() req: Express.Request,
     @Body() reqBody: CreatePostDTO,
   ): Promise<PostViewType | null | undefined> {
-    const createdPostId: ObjectId = await this.postService.createPost(reqBody);
+    const createdPostId: string = await this.postService.createPost(reqBody);
     return await this.postQueryRep.findPostById(
       createdPostId,
       req.user as UserPayloadDTO,
@@ -105,7 +105,7 @@ export class PostController {
   @HttpCode(204)
   async updatePostByID(
     @Param('id') postId: string,
-    @Body() reqBody: CreatePostDTO,
+    @Body() reqBody: UpdatePostDTO,
   ): Promise<void> {
     const isUpdated: boolean = await this.postService.updatePost(
       postId,

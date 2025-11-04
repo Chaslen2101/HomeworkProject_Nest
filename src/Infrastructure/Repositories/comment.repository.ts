@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { Comment, CommentDocumentType } from '../../Domain/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class CommentRepository {
@@ -14,11 +13,11 @@ export class CommentRepository {
     return await comment.save();
   }
 
-  async findById(id: ObjectId): Promise<CommentDocumentType | null> {
+  async findById(id: string): Promise<CommentDocumentType | null> {
     return this.CommentModel.findOne({ _id: id });
   }
 
-  async deleteComment(id: ObjectId): Promise<boolean> {
+  async deleteComment(id: string): Promise<boolean> {
     const result = await this.CommentModel.deleteOne({ _id: id });
     return result.deletedCount === 1;
   }

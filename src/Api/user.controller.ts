@@ -38,7 +38,7 @@ export class UserController {
   async createUser(
     @Body() reqBody: CreateUserInputDTO,
   ): Promise<UserViewType | null> {
-    const newUserId: ObjectId = await this.userService.createUser(reqBody);
+    const newUserId: string = await this.userService.createUser(reqBody);
 
     return await this.userQueryRep.findUserById(newUserId);
   }

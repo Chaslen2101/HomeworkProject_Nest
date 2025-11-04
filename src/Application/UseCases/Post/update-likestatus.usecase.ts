@@ -25,9 +25,8 @@ export class UpdatePostLikeStatusUseCase
   ) {}
 
   async execute(dto: UpdatePostLikeStatusCommand): Promise<boolean> {
-    const postId: ObjectId = new Types.ObjectId(dto.postId);
     const neededPost: PostDocumentType | null =
-      await this.postRepository.findById(postId);
+      await this.postRepository.findById(dto.postId);
     if (!neededPost) {
       throw new DomainException('Post not found', HttpStatus.NOT_FOUND);
     }

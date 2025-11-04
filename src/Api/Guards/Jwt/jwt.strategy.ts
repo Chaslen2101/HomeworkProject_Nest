@@ -15,8 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: UserPayloadDTO) {
-    const userId = new Types.ObjectId(payload.sub);
-    return { sub: userId, login: payload.login };
+  validate(payload: UserPayloadDTO): UserPayloadDTO {
+    return { sub: payload.sub, login: payload.login };
   }
 }

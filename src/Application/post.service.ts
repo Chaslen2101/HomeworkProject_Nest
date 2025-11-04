@@ -6,7 +6,7 @@ import { Post, PostDocumentType } from '../Domain/post.schema';
 import type { PostModelType } from '../Domain/post.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { ObjectId } from 'mongodb';
-import { CreatePostDTO } from '../Api/Input-dto/post.input-dto';
+import {CreatePostDTO, UpdatePostDTO} from '../Api/Input-dto/post.input-dto';
 import { Types } from 'mongoose';
 import { DomainException } from '../Domain/Exceptions/domain-exceptions';
 
@@ -21,7 +21,7 @@ export class PostService {
   async createPost(
     newPostData: CreatePostDTO,
     blogIdFromParams?: string,
-  ): Promise<ObjectId> {
+  ): Promise<string> {
     const neededBlogId: string = newPostData.blogId
       ? newPostData.blogId
       : blogIdFromParams
@@ -39,23 +39,22 @@ export class PostService {
     );
     await this.postRepository.save(newPost);
     await this.blogRepository.save(neededBlog);
-    return newPost._id;
+    return newPost._id.toString();
   }
 
-  async updatePost(postId: string, newData: CreatePostDTO): Promise<boolean> {
+  async updatePost(postId: string, newData: UpdatePostDTO): Promise<boolean> {
     const neededPost: PostDocumentType | null =
-      await this.postRepository.findById(new Types.ObjectId(postId));
+      await this.postRepository.findById(postId);
     if (!neededPost) {
       return false;
     }
-    const blogId: ObjectId = new Types.ObjectId(newData.blogId);
-    neededPost.updatePost(newData, blogId);
+    neededPost.updatePost(newData, newData.blogId);
     await this.postRepository.save(neededPost);
     return true;
   }
 
-  async deletePost(id: string): Promise<boolean> {
-    const postId: ObjectId = new Types.ObjectId(id);
+  async deletePost(postId: string): Promise<boolean> {
+
     const neededPost: PostDocumentType | null =
       await this.postRepository.findById(postId);
     if (!neededPost) {

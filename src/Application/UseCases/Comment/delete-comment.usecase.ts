@@ -27,9 +27,8 @@ export class DeleteCommentCommandUseCase
   ) {}
 
   async execute(dto: DeleteCommentCommand): Promise<boolean> {
-    const commentId: ObjectId = new Types.ObjectId(dto.commentId);
     const neededComment: CommentDocumentType | null =
-      await this.commentRepository.findById(commentId);
+      await this.commentRepository.findById(dto.commentId);
     if (!neededComment) {
       throw new DomainException('Comment not found', HttpStatus.NOT_FOUND);
     }
@@ -48,9 +47,9 @@ export class DeleteCommentCommandUseCase
     if (!neededPost) {
       throw new DomainException('Cant find needed post', HttpStatus.NOT_FOUND);
     }
-    neededPost.deleteComment(commentId);
+    neededPost.deleteComment(dto.commentId);
     await this.postRepository.save(neededPost);
-    await this.commentRepository.deleteComment(commentId);
+    await this.commentRepository.deleteComment(dto.commentId);
     return true;
   }
 }

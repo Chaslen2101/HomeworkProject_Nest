@@ -55,7 +55,7 @@ export class BlogController {
   async createBlog(
     @Body() reqBody: CreateUpdateBlogInputDTO,
   ): Promise<BlogViewType | null> {
-    const createdBlogId: ObjectId = await this.blogService.createBlog(reqBody);
+    const createdBlogId: string = await this.blogService.createBlog(reqBody);
     return await this.blogQueryRep.findBlogByID(createdBlogId);
   }
 
@@ -119,7 +119,7 @@ export class BlogController {
     @Param('blogId') blogId: string,
     @Body() reqBody: CreatePostForBlogInputDTO,
   ): Promise<PostViewType | null | undefined> {
-    const newPostId: ObjectId = await this.postService.createPost(
+    const newPostId: string = await this.postService.createPost(
       reqBody,
       blogId,
     );

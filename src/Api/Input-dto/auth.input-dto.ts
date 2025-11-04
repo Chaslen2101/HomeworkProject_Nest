@@ -59,6 +59,6 @@ export class newPasswordInputDTO {
 }
 
 export class UserPayloadDTO {
-  sub: ObjectId;
+  sub: string;
   login: string;
 }

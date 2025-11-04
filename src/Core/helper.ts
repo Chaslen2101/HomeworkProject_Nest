@@ -65,7 +65,7 @@ export const hashHelper = {
 export const mapToView = {
   mapComments(
     comments: CommentDocumentType[],
-    userId?: ObjectId,
+    userId?: string,
   ): CommentViewType[] {
     return comments.map((comment: CommentDocumentType) => {
       let status: string = 'None';
@@ -82,7 +82,7 @@ export const mapToView = {
         id: comment._id.toString(),
         content: comment.content,
         commentatorInfo: {
-          userId: comment.commentatorInfo.userId.toString(),
+          userId: comment.commentatorInfo.userId,
           userLogin: comment.commentatorInfo.userLogin,
         },
         createdAt: comment.createdAt,
@@ -95,7 +95,7 @@ export const mapToView = {
     });
   },
 
-  mapComment(comment: CommentDocumentType, userId?: ObjectId): CommentViewType {
+  mapComment(comment: CommentDocumentType, userId?: string): CommentViewType {
     let status: string = 'None';
 
     if (userId) {
@@ -110,7 +110,7 @@ export const mapToView = {
       id: comment._id.toString(),
       content: comment.content,
       commentatorInfo: {
-        userId: comment.commentatorInfo.userId.toString(),
+        userId: comment.commentatorInfo.userId,
         userLogin: comment.commentatorInfo.userLogin,
       },
       createdAt: comment.createdAt,
@@ -162,7 +162,7 @@ export const mapToView = {
     };
   },
 
-  mapPost(post: PostDocumentType, userId?: ObjectId): PostViewType {
+  mapPost(post: PostDocumentType, userId?: string): PostViewType {
     let status: string = 'None';
 
     if (userId) {
@@ -178,7 +178,7 @@ export const mapToView = {
       (newestLike) => {
         return {
           addedAt: newestLike.addedAt,
-          userId: newestLike.userId.toString(),
+          userId: newestLike.userId,
           login: newestLike.login,
         };
       },
@@ -188,7 +188,7 @@ export const mapToView = {
       title: post.title,
       shortDescription: post.shortDescription,
       content: post.content,
-      blogId: post.blogId.toString(),
+      blogId: post.blogId,
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
@@ -200,7 +200,7 @@ export const mapToView = {
     };
   },
 
-  mapPosts(posts: PostDocumentType[], userId?: ObjectId): PostViewType[] {
+  mapPosts(posts: PostDocumentType[], userId?: string): PostViewType[] {
     return posts.map((post) => {
       let status: string = 'None';
 
@@ -216,7 +216,7 @@ export const mapToView = {
         (newestLike) => {
           return {
             addedAt: newestLike.addedAt,
-            userId: newestLike.userId.toString(),
+            userId: newestLike.userId,
             login: newestLike.login,
           };
         },
@@ -226,7 +226,7 @@ export const mapToView = {
         title: post.title,
         shortDescription: post.shortDescription,
         content: post.content,
-        blogId: post.blogId.toString(),
+        blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt,
         extendedLikesInfo: {

@@ -24,9 +24,8 @@ export class UpdateCommentUseCase
     @Inject(CommentRepository) protected commentRepository: CommentRepository,
   ) {}
   async execute(dto: UpdateCommentCommand) {
-    const commentId: ObjectId = new Types.ObjectId(dto.commentId);
     const neededComment: CommentDocumentType | null =
-      await this.commentRepository.findById(commentId);
+      await this.commentRepository.findById(dto.commentId);
     if (!neededComment) {
       throw new DomainException('Comment not found', HttpStatus.NOT_FOUND);
     }

@@ -14,7 +14,7 @@ export class UserService {
     @InjectModel(User.name) private UserModel: UserModelType,
   ) {}
 
-  async createUser(newUserData: CreateUserInputDTO): Promise<ObjectId> {
+  async createUser(newUserData: CreateUserInputDTO): Promise<string> {
     const hashedPassword: string = await hashHelper.hashNewPassword(
       newUserData.password,
     );
@@ -23,10 +23,10 @@ export class UserService {
       hashedPassword,
     );
     await this.userRepository.save(newUser);
-    return newUser._id;
+    return newUser._id.toString();
   }
 
-  async deleteUser(id: string) {
-    return await this.userRepository.deleteUser(id);
+  async deleteUser(userId: string) {
+    return await this.userRepository.deleteUser(userId);
   }
 }

@@ -73,7 +73,7 @@ export class AuthService {
       return null;
     }
 
-    return { sub: user._id, login: user.login };
+    return { sub: user._id.toString(), login: user.login };
   }
 
   login(user: UserPayloadDTO): string {

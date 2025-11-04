@@ -7,7 +7,6 @@ import {
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { CreatePostDTO } from '../Api/Input-dto/post.input-dto';
-import { ObjectId } from 'mongodb';
 import { DomainException } from './Exceptions/domain-exceptions';
 import { UserPayloadDTO } from '../Api/Input-dto/auth.input-dto';
 import { CommentDocumentType, CommentModelType } from './comment.schema';
@@ -18,7 +17,7 @@ class NewestLikes {
   addedAt: Date;
 
   @Prop({ type: String })
-  userId: ObjectId;
+  userId: string;
 
   @Prop({ type: String })
   login: string;
@@ -26,11 +25,11 @@ class NewestLikes {
 
 @Schema({ _id: false })
 class LikesInfo {
-  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
-  likedBy: ObjectId[];
+  @Prop({ type: [String], default: [] })
+  likedBy: string[];
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
-  dislikedBy: ObjectId[];
+  @Prop({ type: [String], default: [] })
+  dislikedBy: string[];
 
   @Prop({ type: [NewestLikes], default: [] })
   newestLikes: NewestLikes[];
@@ -47,8 +46,8 @@ export class Post {
   @Prop({ type: String, required: true })
   content: string;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
-  blogId: ObjectId;
+  @Prop({ type: String, required: true })
+  blogId: string;
 
   @Prop({ type: String, required: true })
   blogName: string;
@@ -56,8 +55,8 @@ export class Post {
   @Prop({ type: MongooseSchema.Types.Date, required: true })
   createdAt: Date;
 
-  @Prop({ type: [ObjectId], required: true, default: [] })
-  comments: ObjectId[];
+  @Prop({ type: [String], required: true, default: [] })
+  comments: string[];
 
   @Prop({ type: LikesInfo })
   likesInfo: LikesInfo;
@@ -65,7 +64,7 @@ export class Post {
   updatePost(
     this: PostDocumentType,
     newData: CreatePostDTO,
-    blogId: ObjectId,
+    blogId: string,
   ): boolean {
     this.title = newData.title;
     this.shortDescription = newData.shortDescription;
@@ -74,7 +73,7 @@ export class Post {
     return true;
   }
 
-  deleteComment(this: PostDocumentType, commentId: ObjectId): boolean {
+  deleteComment(this: PostDocumentType, commentId: string): boolean {
     const isCommentExist: number = this.comments.indexOf(commentId);
     if (isCommentExist === -1) {
       throw new DomainException('Post dont have this comment', 404);
@@ -92,9 +91,7 @@ export class Post {
       if (!this.likesInfo.likedBy.includes(user.sub)) {
         this.likesInfo.likedBy.push(user.sub);
 
-        const index: number = this.likesInfo.dislikedBy.findIndex((objId) =>
-          objId.equals(user.sub),
-        );
+        const index: number = this.likesInfo.dislikedBy.indexOf(user.sub);
         if (index > -1) {
           this.likesInfo.dislikedBy.splice(index, 1);
         }
@@ -118,9 +115,7 @@ export class Post {
       if (!this.likesInfo.dislikedBy.includes(user.sub)) {
         this.likesInfo.dislikedBy.push(user.sub);
 
-        const index: number = this.likesInfo.likedBy.findIndex((objId) =>
-          objId.equals(user.sub),
-        );
+        const index: number = this.likesInfo.likedBy.indexOf(user.sub);
         if (index > -1) {
           this.likesInfo.likedBy.splice(index, 1);
         }
@@ -138,22 +133,20 @@ export class Post {
     }
 
     if (likeStatus === 'None') {
-      const likedByIndex: number = this.likesInfo.likedBy.findIndex((objId) =>
-        objId.equals(user.sub),
-      );
+      const likedByIndex: number = this.likesInfo.likedBy.indexOf(user.sub);
       if (likedByIndex > -1) {
         this.likesInfo.likedBy.splice(likedByIndex, 1);
       }
 
-      const dislikedByIndex: number = this.likesInfo.dislikedBy.findIndex(
-        (objId) => objId.equals(user.sub),
+      const dislikedByIndex: number = this.likesInfo.dislikedBy.indexOf(
+        user.sub,
       );
       if (dislikedByIndex > -1) {
         this.likesInfo.dislikedBy.splice(dislikedByIndex, 1);
       }
 
       const isLikeNewest: number = this.likesInfo.newestLikes.findIndex(
-        (like) => like.userId.toString() === user.sub.toString(),
+        (like): boolean => like.userId === user.sub,
       );
       if (isLikeNewest > -1) {
         this.likesInfo.newestLikes.splice(isLikeNewest, 1);
@@ -170,7 +163,7 @@ export class Post {
     user: UserPayloadDTO,
     CommentModel: CommentModelType,
   ): CommentDocumentType  {
-    const newComment: CommentDocumentType = new CommentModel({
+    const newComment: CommentDocumentType  = new CommentModel({
       content: content,
       commentatorInfo: {
         userId: new Types.ObjectId(user.sub),
@@ -183,7 +176,7 @@ export class Post {
         dislikedBy: [],
       },
     });
-    this.comments.push(newComment._id);
+    this.comments.push(newComment._id.toString());
 
     return newComment;
   }

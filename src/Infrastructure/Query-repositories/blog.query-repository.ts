@@ -9,7 +9,7 @@ import {
   InputQueryType,
   BlogViewType,
 } from '../../Types/Types';
-import { ObjectId, SortDirection } from 'mongodb';
+import { SortDirection } from 'mongodb';
 
 @Injectable()
 export class BlogQueryRep {
@@ -38,7 +38,7 @@ export class BlogQueryRep {
     };
   }
 
-  async findBlogByID(id: string | ObjectId): Promise<BlogViewType | null> {
+  async findBlogByID(id: string): Promise<BlogViewType | null> {
     const notMappedBlog: BlogDocumentType | null = await this.BlogModel.findOne(
       { _id: id },
     );

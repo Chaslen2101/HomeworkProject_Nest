@@ -9,14 +9,14 @@ import {
   MyInfoType,
 } from '../../Types/Types';
 import { mapToView } from '../../Core/helper';
-import { ObjectId, SortDirection } from 'mongodb';
+import { SortDirection } from 'mongodb';
 import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class UserQueryRep {
   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
 
-  async findUserById(id: string | ObjectId): Promise<UserViewType | null> {
+  async findUserById(id: string): Promise<UserViewType | null> {
     const notMappedUser: UserDocumentType | null = await this.UserModel.findOne(
       {
         _id: id,

@@ -8,7 +8,7 @@ import { mapToView } from '../../Core/helper';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentDocumentType, Comment } from '../../Domain/comment.schema';
 import type { CommentModelType } from '../../Domain/comment.schema';
-import { ObjectId, SortDirection } from 'mongodb';
+import { SortDirection } from 'mongodb';
 import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class CommentQueryRep {
   }
 
   async findManyCommentsByPostId(
-    postId: string | ObjectId,
+    postId: string,
     query: CommentQueryType,
     user?: UserPayloadDTO,
   ): Promise<CommentPagesType> {

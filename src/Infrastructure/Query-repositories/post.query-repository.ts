@@ -9,7 +9,7 @@ import { mapToView, queryHelper } from '../../Core/helper';
 import { InjectModel } from '@nestjs/mongoose';
 import { Post, PostDocumentType } from '../../Domain/post.schema';
 import type { PostModelType } from '../../Domain/post.schema';
-import { ObjectId, SortDirection } from 'mongodb';
+import { SortDirection } from 'mongodb';
 import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
@@ -50,7 +50,7 @@ export class PostQueryRep {
   }
 
   async findPostById(
-    postId: ObjectId | string,
+    postId: string,
     user?: UserPayloadDTO,
   ): Promise<PostViewType | null> {
     const notMappedPost: PostDocumentType | null = await this.PostModel.findOne(

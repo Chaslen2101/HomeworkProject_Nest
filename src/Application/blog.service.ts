@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Blog, BlogDocumentType } from '../Domain/blog.schema';
 import type { BlogModelType } from '../Domain/blog.schema';
 import { BlogRepository } from '../Infrastructure/Repositories/blog.repository';
-import { ObjectId } from 'mongodb';
 import { CreateUpdateBlogInputDTO } from '../Api/Input-dto/blog.input-dto';
 import { DomainException } from '../Domain/Exceptions/domain-exceptions';
 
@@ -14,10 +13,10 @@ export class BlogService {
     @InjectModel(Blog.name) protected BlogModel: BlogModelType,
   ) {}
 
-  async createBlog(blogData: CreateUpdateBlogInputDTO): Promise<ObjectId> {
+  async createBlog(blogData: CreateUpdateBlogInputDTO): Promise<string> {
     const newBlog: BlogDocumentType = this.BlogModel.createBlog(blogData);
     await this.blogRepository.save(newBlog);
-    return newBlog._id;
+    return newBlog._id.toString();
   }
 
   async updateBlog(
@@ -34,7 +33,7 @@ export class BlogService {
     return true;
   }
 
-  async deleteBlog(id: string) {
-    return await this.blogRepository.delete(id);
+  async deleteBlog(blogId: string) {
+    return await this.blogRepository.delete(blogId);
   }
 }
