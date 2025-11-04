@@ -26,12 +26,12 @@ import type {
   PostPagesType,
   PostViewType,
 } from '../Types/Types';
-import { ObjectId } from 'mongodb';
 import { queryHelper } from '../Core/helper';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
 import {
   CreateCommentForPostDTO,
-  CreatePostDTO, UpdatePostDTO,
+  CreatePostDTO,
+  UpdatePostDTO,
   UpdatePostLikeStatusDTO,
 } from './Input-dto/post.input-dto';
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
@@ -59,7 +59,9 @@ export class PostController {
     @Query() query: InputQueryType,
     @Req() request: Request,
   ): Promise<PostPagesType> {
-    const jwtToken: string | null = request.headers['authorization'];
+    const jwtToken: string | null = request.headers['authorization']
+      ? (request.headers['authorization'] as string)
+      : null;
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
       : undefined;
@@ -86,7 +88,9 @@ export class PostController {
     @Param('id') postId: string,
     @Req() request: Request,
   ): Promise<PostViewType> {
-    const jwtToken: string | null = request.headers['authorization'];
+    const jwtToken: string | null = request.headers['authorization']
+      ? (request.headers['authorization'] as string)
+      : null;
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
       : undefined;
@@ -126,11 +130,13 @@ export class PostController {
   @Get(':postId/comments')
   @HttpCode(200)
   async getCommentsForPost(
-    @Param('id') postId: string,
+    @Param('postId') postId: string,
     @Query() query: InputQueryType,
     @Req() request: Request,
   ) {
-    const jwtToken: string | null = request.headers['authorization'];
+    const jwtToken: string | null = request.headers['authorization']
+      ? (request.headers['authorization'] as string)
+      : null;
     const user: UserPayloadDTO | undefined = jwtToken
       ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
       : undefined;

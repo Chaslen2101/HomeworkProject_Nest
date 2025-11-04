@@ -21,7 +21,6 @@ import {
 import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
 import { UserService } from '../Application/user.service';
 import { queryHelper } from '../Core/helper';
-import { ObjectId } from 'mongodb';
 import { CreateUserInputDTO } from './Input-dto/user.input-dto';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 

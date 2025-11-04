@@ -24,7 +24,6 @@ import {
 import { BlogService } from '../Application/blog.service';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
 import { PostService } from '../Application/post.service';
-import { ObjectId } from 'mongodb';
 import {
   CreatePostForBlogInputDTO,
   CreateUpdateBlogInputDTO,
@@ -104,7 +103,9 @@ export class BlogController {
     if (!neededBlog) {
       throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     } else {
-      const jwtToken: string | null = request.headers['authorization'];
+      const jwtToken: string | null = request.headers['authorization']
+        ? (request.headers['authorization'] as string)
+        : null;
       const user: UserPayloadDTO | undefined = jwtToken
         ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
         : undefined;
