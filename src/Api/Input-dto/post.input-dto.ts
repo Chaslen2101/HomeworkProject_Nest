@@ -44,18 +44,22 @@ export class UpdatePostDTO {
   @IsString()
   @MaxLength(30)
   @Trim()
+  @IsNotEmpty()
   title: string;
 
   @IsString()
   @MaxLength(100)
   @Trim()
+  @IsNotEmpty()
   shortDescription: string;
 
   @IsString()
   @MaxLength(1000)
   @Trim()
+  @IsNotEmpty()
   content: string;
 
   @IsString()
+  @IsNotEmpty()
   blogId: string;
 }

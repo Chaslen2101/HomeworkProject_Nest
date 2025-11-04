@@ -4,14 +4,17 @@ import { Trim } from 'src/Core/Decorators/Transform/trim';
 
 export class LoginInputDTO {
   @IsString()
+  @IsNotEmpty()
   loginOrEmail: string;
 
   @IsString()
+  @IsNotEmpty()
   password: string;
 }
 
 export class ConfirmEmailInputDTO {
   @IsString()
+  @IsNotEmpty()
   code: string;
 }
 
