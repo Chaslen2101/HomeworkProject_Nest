@@ -123,7 +123,7 @@ export class AuthController {
     const tokenPair: TokenPairType = await this.commandBus.execute(
       new RefreshTokenCommand(req.user as RefreshTokenPayloadType),
     );
-
+    console.log('Send cookie:', tokenPair.refreshToken);
     response.setCookie('refreshToken', tokenPair.refreshToken, {
       httpOnly: true,
       secure: true,
