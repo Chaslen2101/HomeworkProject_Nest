@@ -46,6 +46,7 @@ import { JwtRefreshStrategy } from './Api/Guards/Jwt/refresh.strategy';
 import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.usecase';
 import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
 import { DeleteSessionUseCase } from './Application/UseCases/Security/delete-session.usecase';
+import { SecurityController } from './Api/security.controller';
 dotenv.config();
 
 const strategies = [
@@ -112,6 +113,7 @@ const useCases = [
     TestingController,
     UserController,
     AuthController,
+    SecurityController,
   ],
   providers: [
     AppService,

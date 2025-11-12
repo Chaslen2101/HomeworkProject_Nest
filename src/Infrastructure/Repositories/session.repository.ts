@@ -35,7 +35,6 @@ export class SessionRepository {
     const sessions: SessionDocumentType[] = await this.sessionModel.find({
       userId: sessionsInfo.sub,
     });
-
     return mapToView.mapSessionsInfo(sessions);
   }
 }

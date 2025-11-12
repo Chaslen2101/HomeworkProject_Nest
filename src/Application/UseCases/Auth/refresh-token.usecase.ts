@@ -46,7 +46,6 @@ export class RefreshTokenUseCase
     const hashedRefreshToken: string = await hashHelper.hash(
       tokenPair.refreshToken,
     );
-
     neededSession.updateRefreshToken(hashedRefreshToken);
     await this.sessionRepository.save(neededSession);
 

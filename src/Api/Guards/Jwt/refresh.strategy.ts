@@ -31,7 +31,6 @@ export class JwtRefreshStrategy extends PassportStrategy(
     payload: RefreshTokenPayloadType,
   ): Promise<RefreshTokenPayloadType> {
     const refreshToken: string = req.cookies.refreshToken as string;
-
     const neededSession: SessionDocumentType | null =
       await this.sessionRepository.findByDeviceId(payload.deviceId);
     if (!neededSession) {
