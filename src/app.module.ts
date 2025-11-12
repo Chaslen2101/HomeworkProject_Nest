@@ -38,15 +38,32 @@ import { CreateCommentForPostUseCase } from './Application/UseCases/Post/create-
 import { UpdatePostLikeStatusUseCase } from './Application/UseCases/Post/update-likestatus.usecase';
 import { CommentRepository } from './Infrastructure/Repositories/comment.repository';
 import { CqrsModule } from '@nestjs/cqrs';
+import { ThrottlerModule } from '@nestjs/throttler';
+import { LoginUseCase } from './Application/UseCases/Auth/login.usecase';
+import { SessionRepository } from './Infrastructure/Repositories/session.repository';
+import { Session, SessionSchema } from './Domain/session.schema';
+import { JwtRefreshStrategy } from './Api/Guards/Jwt/refresh.strategy';
+import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.usecase';
+import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
+import { DeleteSessionUseCase } from './Application/UseCases/Security/delete-session.usecase';
 dotenv.config();
 
-const strategies = [LocalStrategy, JwtStrategy, BasicStrategy];
+const strategies = [
+  LocalStrategy,
+  JwtStrategy,
+  BasicStrategy,
+  JwtRefreshStrategy,
+];
 const useCases = [
   DeleteCommentCommandUseCase,
   UpdateCommentUseCase,
   UpdateCommentLikeStatusUseCase,
   CreateCommentForPostUseCase,
   UpdatePostLikeStatusUseCase,
+  LoginUseCase,
+  RefreshTokenUseCase,
+  LogoutUseCase,
+  DeleteSessionUseCase,
 ];
 @Module({
   imports: [
@@ -55,6 +72,7 @@ const useCases = [
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Session.name, schema: SessionSchema }]),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -74,9 +92,17 @@ const useCases = [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10m' },
+      signOptions: { expiresIn: '10s' },
     }),
     CqrsModule,
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 100,
+          limit: 5,
+        },
+      ],
+    }),
   ],
   controllers: [
     AppController,
@@ -102,6 +128,7 @@ const useCases = [
     UserQueryRep,
     EmailService,
     AuthService,
+    SessionRepository,
     ...strategies,
     ...useCases,
   ],

@@ -8,8 +8,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import { CreatePostDTO } from '../Api/Input-dto/post.input-dto';
 import { DomainException } from './Exceptions/domain-exceptions';
-import { UserPayloadDTO } from '../Api/Input-dto/auth.input-dto';
 import { CommentDocumentType, CommentModelType } from './comment.schema';
+import { AccessTokenPayloadType } from '../Types/Types';
 
 @Schema({ _id: false })
 class NewestLikes {
@@ -84,7 +84,7 @@ export class Post {
 
   updateLikeStatus(
     this: PostDocumentType,
-    user: UserPayloadDTO,
+    user: AccessTokenPayloadType,
     likeStatus: string,
   ) {
     if (likeStatus === 'Like') {
@@ -160,10 +160,10 @@ export class Post {
   createComment(
     this: PostDocumentType,
     content: string,
-    user: UserPayloadDTO,
+    user: AccessTokenPayloadType,
     CommentModel: CommentModelType,
-  ): CommentDocumentType  {
-    const newComment: CommentDocumentType  = new CommentModel({
+  ): CommentDocumentType {
+    const newComment: CommentDocumentType = new CommentModel({
       content: content,
       commentatorInfo: {
         userId: new Types.ObjectId(user.sub),

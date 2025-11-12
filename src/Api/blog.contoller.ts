@@ -1,5 +1,6 @@
 import { BlogQueryRep } from '../Infrastructure/Query-repositories/blog.query-repository';
 import type {
+  AccessTokenPayloadType,
   BlogPagesType,
   BlogViewType,
   InputQueryType,
@@ -30,7 +31,6 @@ import {
 } from './Input-dto/blog.input-dto';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 import { JwtService } from '@nestjs/jwt';
-import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 
 @Controller('blogs')
 export class BlogController {
@@ -106,8 +106,8 @@ export class BlogController {
       const jwtToken: string | null = request.headers['authorization']
         ? (request.headers['authorization'] as string)
         : null;
-      const user: UserPayloadDTO | undefined = jwtToken
-        ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
+      const user: AccessTokenPayloadType | undefined = jwtToken
+        ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
         : undefined;
       return await this.postQueryRep.findManyPosts(query, user, blogId);
     }

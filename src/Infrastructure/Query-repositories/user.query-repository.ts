@@ -7,10 +7,10 @@ import {
   UserPagesType,
   UserViewType,
   MyInfoType,
+  AccessTokenPayloadType,
 } from '../../Types/Types';
 import { mapToView } from '../../Core/helper';
 import { SortDirection } from 'mongodb';
-import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class UserQueryRep {
@@ -82,7 +82,7 @@ export class UserQueryRep {
     });
   }
 
-  async getMyInfo(user: UserPayloadDTO): Promise<boolean | MyInfoType> {
+  async getMyInfo(user: AccessTokenPayloadType): Promise<boolean | MyInfoType> {
     const userDocument: UserDocumentType | null = await this.UserModel.findById(
       user.sub,
     );

@@ -2,8 +2,7 @@ import {
   CommentViewType,
   InputQueryType,
   UserViewType,
-  SessionsInfoDBType,
-  SessionsInfoViewType,
+  SessionsViewType,
   PostViewType,
   BlogViewType,
   BlogPostQueryType,
@@ -17,7 +16,7 @@ import { BlogDocumentType } from '../Domain/blog.schema';
 import { CommentDocumentType } from '../Domain/comment.schema';
 import { UserDocumentType } from '../Domain/user.schema';
 import bcrypt from 'bcrypt';
-import { ObjectId } from 'mongodb';
+import { SessionDocumentType } from '../Domain/session.schema';
 
 export const queryHelper: QueryHelperType = {
   blogPostQuery(query: InputQueryType): BlogPostQueryType {
@@ -52,13 +51,12 @@ export const queryHelper: QueryHelperType = {
 };
 
 export const hashHelper = {
-  async hashNewPassword(password: string): Promise<string> {
-    const salt: string = await bcrypt.genSalt(10);
-    return await bcrypt.hash(password, salt);
+  async hash(smthToHash: string): Promise<string> {
+    return await bcrypt.hash(smthToHash, 10);
   },
 
-  async comparePassword(hashedPassword: string, somePassword: string) {
-    return await bcrypt.compare(somePassword, hashedPassword);
+  async compare(hashedString: string, someStringToComp: string) {
+    return await bcrypt.compare(someStringToComp, hashedString);
   },
 };
 
@@ -142,8 +140,8 @@ export const mapToView = {
     };
   },
 
-  mapSessionsInfo(sessionsInfo: SessionsInfoDBType[]): SessionsInfoViewType[] {
-    return sessionsInfo.map((sessionInfo) => {
+  mapSessionsInfo(sessions: SessionDocumentType[]): SessionsViewType[] {
+    return sessions.map((sessionInfo: SessionDocumentType) => {
       return {
         ip: sessionInfo.ip,
         title: sessionInfo.title,
@@ -153,14 +151,14 @@ export const mapToView = {
     });
   },
 
-  mapSessionInfo(sessionInfo: SessionsInfoDBType): SessionsInfoViewType {
-    return {
-      ip: sessionInfo.ip,
-      title: sessionInfo.title,
-      lastActiveDate: sessionInfo.lastActiveDate,
-      deviceId: sessionInfo.deviceId,
-    };
-  },
+  // mapSessionInfo(sessionInfo: SessionsInfoDBType): SessionsInfoViewType {
+  //   return {
+  //     ip: sessionInfo.ip,
+  //     title: sessionInfo.title,
+  //     lastActiveDate: sessionInfo.lastActiveDate,
+  //     deviceId: sessionInfo.deviceId,
+  //   };
+  // },
 
   mapPost(post: PostDocumentType, userId?: string): PostViewType {
     let status: string = 'None';

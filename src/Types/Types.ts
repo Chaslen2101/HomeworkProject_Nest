@@ -1,4 +1,4 @@
-import mongoose, { HydratedDocument, Model, Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 export type InputQueryType = {
   [key: string]: string | undefined;
@@ -87,24 +87,6 @@ export type MyInfoType = {
   userId: string;
 };
 
-export type AccessTokenPayloadType = {
-  id: string;
-  login: string;
-};
-
-export type RefreshTokenPayload = {
-  deviceId: string;
-  id: string;
-  login: string;
-};
-
-export const RefreshTokenPayloadSchema: Schema<RefreshTokenPayload> =
-  new mongoose.Schema({
-    deviceId: String,
-    id: String,
-    login: String,
-  });
-
 export type CommentatorInfoType = {
   userId: string;
   userLogin: string;
@@ -142,39 +124,11 @@ export type NewestLikesType = {
   login: string;
 };
 
-export type SessionsInfoDBType = {
+export type SessionsViewType = {
   ip: string | undefined;
   title: string | undefined;
   lastActiveDate: Date;
   deviceId: string;
-  userId: string;
-};
-
-export type SessionsInfoViewType = {
-  ip: string | undefined;
-  title: string | undefined;
-  lastActiveDate: Date;
-  deviceId: string;
-};
-
-export type SessionsInfoInstanceMethodsType = {};
-
-export type SessionsInfoInstanceType = HydratedDocument<
-  SessionsInfoDBType,
-  SessionsInfoInstanceMethodsType
->;
-
-export type SessionsInfoModelType = Model<
-  SessionsInfoDBType,
-  {},
-  SessionsInfoInstanceMethodsType
-> & {
-  createNewSession(
-    deviceId: string,
-    userId: string,
-    ip: string | undefined,
-    deviceName: string | undefined,
-  ): SessionsInfoInstanceType;
 };
 
 export class ApiRequestsInfoClass {
@@ -204,4 +158,20 @@ export type ExceptionResponseType = {
   message: [];
   error: string;
   statusCode: number;
+};
+
+export type AccessTokenPayloadType = {
+  sub: string;
+  login: string;
+};
+
+export type RefreshTokenPayloadType = {
+  sub: string;
+  login: string;
+  deviceId: string;
+};
+
+export type TokenPairType = {
+  accessToken: string;
+  refreshToken: string;
 };

@@ -3,6 +3,7 @@ import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
 import { ObjectId } from 'mongodb';
 import { CreateUserInputDTO } from '../Api/Input-dto/user.input-dto';
 import { DomainException } from './Exceptions/domain-exceptions';
+import { SessionDocumentType, SessionModelType } from './session.schema';
 
 @Schema()
 class EmailConfirmationInfo {
@@ -44,6 +45,9 @@ export class User {
 
   @Prop({ type: PasswordRecoveryInfo })
   passwordRecoveryInfo: PasswordRecoveryInfo;
+
+  @Prop({ type: [String] })
+  sessions: string[];
 
   static createNewUser(
     this: UserModelType,
@@ -126,6 +130,27 @@ export class User {
 
     this.password = newPassword;
     return true;
+  }
+
+  createNewSession(
+    this: UserDocumentType,
+    SessionModel: SessionModelType,
+    ip: string,
+    deviceName: string,
+    deviceId: string,
+    hashedRefreshToken: string,
+  ): SessionDocumentType {
+    const newSession: SessionDocumentType = new SessionModel({
+      ip: ip,
+      title: deviceName,
+      lastActiveDate: new Date(),
+      deviceId: deviceId,
+      userId: this._id,
+      refreshToken: hashedRefreshToken,
+    });
+
+    this.sessions.push(newSession.deviceId);
+    return newSession;
   }
 }
 

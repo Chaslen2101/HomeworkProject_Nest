@@ -3,16 +3,15 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CommentDocumentType } from '../../../Domain/comment.schema';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { ObjectId } from 'mongodb';
 import { PostDocumentType } from '../../../Domain/post.schema';
 import { PostRepository } from '../../../Infrastructure/Repositories/post.repository';
-import { Types } from 'mongoose';
-import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
+
+import { AccessTokenPayloadType } from '../../../Types/Types';
 
 export class DeleteCommentCommand {
   constructor(
     public commentId: string,
-    public user: UserPayloadDTO,
+    public user: AccessTokenPayloadType,
   ) {}
 }
 

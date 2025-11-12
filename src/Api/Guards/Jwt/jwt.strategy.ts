@@ -2,8 +2,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import * as process from 'node:process';
-import { UserPayloadDTO } from '../../Input-dto/auth.input-dto';
-import { Types } from 'mongoose';
+import { AccessTokenPayloadType } from '../../../Types/Types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -15,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: UserPayloadDTO): UserPayloadDTO {
-    return { sub: payload.sub, login: payload.login };
+  validate(payload: AccessTokenPayloadType): AccessTokenPayloadType {
+    return payload;
   }
 }

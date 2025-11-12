@@ -4,13 +4,14 @@ import { HttpStatus, Inject } from '@nestjs/common';
 import { CommentRepository } from '../../../Infrastructure/Repositories/comment.repository';
 import { CommentDocumentType } from '../../../Domain/comment.schema';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
+
+import { AccessTokenPayloadType } from '../../../Types/Types';
 
 export class UpdateCommentLikeStatusCommand {
   constructor(
     public commentId: string,
     public updateLikeStatusDTO: UpdateCommentLikeStatusDTO,
-    public user: UserPayloadDTO,
+    public user: AccessTokenPayloadType,
   ) {}
 }
 

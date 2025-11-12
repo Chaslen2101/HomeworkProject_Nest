@@ -19,6 +19,7 @@ import { PostService } from '../Application/post.service';
 import { BlogQueryRep } from '../Infrastructure/Query-repositories/blog.query-repository';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
 import type {
+  AccessTokenPayloadType,
   CommentPagesType,
   CommentQueryType,
   CommentViewType,
@@ -37,7 +38,6 @@ import {
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { UpdatePostLikeStatusCommand } from '../Application/UseCases/Post/update-likestatus.usecase';
-import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 import { CreateCommentForPostCommand } from '../Application/UseCases/Post/create-comment-for-post.usecase';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 import { JwtService } from '@nestjs/jwt';
@@ -62,8 +62,8 @@ export class PostController {
     const jwtToken: string | null = request.headers['authorization']
       ? (request.headers['authorization'] as string)
       : null;
-    const user: UserPayloadDTO | undefined = jwtToken
-      ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
+    const user: AccessTokenPayloadType | undefined = jwtToken
+      ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
       : undefined;
     return await this.postQueryRep.findManyPosts(query, user);
   }
@@ -78,7 +78,7 @@ export class PostController {
     const createdPostId: string = await this.postService.createPost(reqBody);
     return await this.postQueryRep.findPostById(
       createdPostId,
-      req.user as UserPayloadDTO,
+      req.user as AccessTokenPayloadType,
     );
   }
 
@@ -91,8 +91,8 @@ export class PostController {
     const jwtToken: string | null = request.headers['authorization']
       ? (request.headers['authorization'] as string)
       : null;
-    const user: UserPayloadDTO | undefined = jwtToken
-      ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
+    const user: AccessTokenPayloadType | undefined = jwtToken
+      ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
       : undefined;
     const neededPost: PostViewType | null =
       await this.postQueryRep.findPostById(postId, user);
@@ -137,8 +137,8 @@ export class PostController {
     const jwtToken: string | null = request.headers['authorization']
       ? (request.headers['authorization'] as string)
       : null;
-    const user: UserPayloadDTO | undefined = jwtToken
-      ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
+    const user: AccessTokenPayloadType | undefined = jwtToken
+      ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
       : undefined;
 
     const isPostExists: PostViewType | null =
@@ -169,7 +169,7 @@ export class PostController {
       new UpdatePostLikeStatusCommand(
         postId,
         reqBody,
-        req.user as UserPayloadDTO,
+        req.user as AccessTokenPayloadType,
       ),
     );
     return;
@@ -187,13 +187,13 @@ export class PostController {
       new CreateCommentForPostCommand(
         postId,
         reqBody,
-        req.user as UserPayloadDTO,
+        req.user as AccessTokenPayloadType,
       ),
     );
     const newComment: CommentViewType | null =
       await this.commentsQueryRep.findCommentById(
         newCommentId,
-        req.user as UserPayloadDTO,
+        req.user as AccessTokenPayloadType,
       );
     return newComment;
   }

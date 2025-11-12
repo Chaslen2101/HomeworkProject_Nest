@@ -15,9 +15,7 @@ export class UserService {
   ) {}
 
   async createUser(newUserData: CreateUserInputDTO): Promise<string> {
-    const hashedPassword: string = await hashHelper.hashNewPassword(
-      newUserData.password,
-    );
+    const hashedPassword: string = await hashHelper.hash(newUserData.password);
     const newUser: UserDocumentType = this.UserModel.createNewUser(
       newUserData,
       hashedPassword,

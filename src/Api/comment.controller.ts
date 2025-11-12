@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { CommentQueryRep } from '../Infrastructure/Query-repositories/comment.query-repository';
 import { PostQueryRep } from '../Infrastructure/Query-repositories/post.query-repository';
-import { CommentViewType } from '../Types/Types';
+import { AccessTokenPayloadType, CommentViewType } from '../Types/Types';
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
 import {
   CreateUpdateCommentInputDTO,
@@ -25,7 +25,6 @@ import { CommandBus } from '@nestjs/cqrs';
 import { UpdateCommentCommand } from '../Application/UseCases/Comment/update-comment.usecase';
 import { DeleteCommentCommand } from '../Application/UseCases/Comment/delete-comment.usecase';
 import { UpdateCommentLikeStatusCommand } from '../Application/UseCases/Comment/update-likestatus.usecase';
-import { UserPayloadDTO } from './Input-dto/auth.input-dto';
 import { JwtService } from '@nestjs/jwt';
 
 @Controller('comments')
@@ -46,8 +45,8 @@ export class CommentController {
     const jwtToken: string | null = request.headers['authorization']
       ? (request.headers['authorization'] as string)
       : null;
-    const user: UserPayloadDTO | undefined = jwtToken
-      ? this.jwtService.verify<UserPayloadDTO>(jwtToken.slice(7))
+    const user: AccessTokenPayloadType | undefined = jwtToken
+      ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
       : undefined;
 
     const neededComment: CommentViewType | null =
@@ -68,7 +67,11 @@ export class CommentController {
     @Body() reqBody: CreateUpdateCommentInputDTO,
   ): Promise<void> {
     await this.commandBus.execute(
-      new UpdateCommentCommand(reqBody, commentId, req.user as UserPayloadDTO),
+      new UpdateCommentCommand(
+        reqBody,
+        commentId,
+        req.user as AccessTokenPayloadType,
+      ),
     );
     return;
   }
@@ -81,7 +84,7 @@ export class CommentController {
     @Param('commentId') commentId: string,
   ): Promise<void> {
     await this.commandBus.execute(
-      new DeleteCommentCommand(commentId, req.user as UserPayloadDTO),
+      new DeleteCommentCommand(commentId, req.user as AccessTokenPayloadType),
     );
     return;
   }
@@ -98,7 +101,7 @@ export class CommentController {
       new UpdateCommentLikeStatusCommand(
         commentId,
         reqBody,
-        req.user as UserPayloadDTO,
+        req.user as AccessTokenPayloadType,
       ),
     );
     return;

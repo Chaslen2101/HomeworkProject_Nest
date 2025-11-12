@@ -59,8 +59,3 @@ export class newPasswordInputDTO {
   @Trim()
   recoveryCode: string;
 }
-
-export class UserPayloadDTO {
-  sub: string;
-  login: string;
-}

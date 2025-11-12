@@ -1,0 +1,55 @@
+import {
+  AccessTokenPayloadType,
+  RefreshTokenPayloadType,
+  TokenPairType,
+} from '../../../Types/Types';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
+import { HttpStatus, Inject } from '@nestjs/common';
+import { SessionRepository } from '../../../Infrastructure/Repositories/session.repository';
+import { SessionDocumentType } from '../../../Domain/session.schema';
+import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { AuthService } from '../../auth.service';
+import { hashHelper } from '../../../Core/helper';
+
+export class RefreshTokenCommand {
+  constructor(public refreshTokenPayload: RefreshTokenPayloadType) {}
+}
+
+@CommandHandler(RefreshTokenCommand)
+export class RefreshTokenUseCase
+  implements ICommandHandler<RefreshTokenCommand, TokenPairType>
+{
+  constructor(
+    @Inject(SessionRepository) private sessionRepository: SessionRepository,
+    @Inject(AuthService) private authService: AuthService,
+  ) {}
+
+  async execute(dto: RefreshTokenCommand): Promise<TokenPairType> {
+    const neededSession: SessionDocumentType | null =
+      await this.sessionRepository.findByDeviceId(
+        dto.refreshTokenPayload.deviceId,
+      );
+
+    if (!neededSession) {
+      throw new DomainException('Unauthorized', HttpStatus.UNAUTHORIZED);
+    }
+
+    const accessTokenPayload: AccessTokenPayloadType = {
+      sub: dto.refreshTokenPayload.sub,
+      login: dto.refreshTokenPayload.login,
+    };
+    const tokenPair: TokenPairType = this.authService.tokenPairGen(
+      accessTokenPayload,
+      dto.refreshTokenPayload,
+    );
+
+    const hashedRefreshToken: string = await hashHelper.hash(
+      tokenPair.refreshToken,
+    );
+
+    neededSession.updateRefreshToken(hashedRefreshToken);
+    await this.sessionRepository.save(neededSession);
+
+    return tokenPair;
+  }
+}

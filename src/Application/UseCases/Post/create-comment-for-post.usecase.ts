@@ -8,15 +8,15 @@ import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 import { Comment, CommentDocumentType } from '../../../Domain/comment.schema';
 import type { CommentModelType } from '../../../Domain/comment.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
 import { CreateCommentForPostDTO } from '../../../Api/Input-dto/post.input-dto';
 import { CommentRepository } from '../../../Infrastructure/Repositories/comment.repository';
+import { AccessTokenPayloadType } from '../../../Types/Types';
 
 export class CreateCommentForPostCommand {
   constructor(
     public postId: string,
     public createCommentForPostDTO: CreateCommentForPostDTO,
-    public user: UserPayloadDTO,
+    public user: AccessTokenPayloadType,
   ) {}
 }
 
@@ -31,7 +31,6 @@ export class CreateCommentForPostUseCase
   ) {}
 
   async execute(dto: CreateCommentForPostCommand): Promise<string> {
-
     const neededPost: PostDocumentType | null =
       await this.postRepository.findById(dto.postId);
     if (!neededPost) {

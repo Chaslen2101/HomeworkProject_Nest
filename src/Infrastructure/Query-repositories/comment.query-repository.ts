@@ -3,13 +3,13 @@ import {
   CommentQueryType,
   CommentPagesType,
   CommentViewType,
+  AccessTokenPayloadType,
 } from '../../Types/Types';
 import { mapToView } from '../../Core/helper';
 import { InjectModel } from '@nestjs/mongoose';
 import { CommentDocumentType, Comment } from '../../Domain/comment.schema';
 import type { CommentModelType } from '../../Domain/comment.schema';
 import { SortDirection } from 'mongodb';
-import { UserPayloadDTO } from '../../Api/Input-dto/auth.input-dto';
 
 @Injectable()
 export class CommentQueryRep {
@@ -18,11 +18,10 @@ export class CommentQueryRep {
   ) {}
   async findCommentById(
     commentId: string,
-    user?: UserPayloadDTO,
+    user?: AccessTokenPayloadType,
   ): Promise<CommentViewType | null> {
-    const comment: CommentDocumentType | null = await this.CommentModel.findById(
-      commentId,
-    );
+    const comment: CommentDocumentType | null =
+      await this.CommentModel.findById(commentId);
     if (!comment) {
       return null;
     }
@@ -32,7 +31,7 @@ export class CommentQueryRep {
   async findManyCommentsByPostId(
     postId: string,
     query: CommentQueryType,
-    user?: UserPayloadDTO,
+    user?: AccessTokenPayloadType,
   ): Promise<CommentPagesType> {
     const items: CommentDocumentType[] = await this.CommentModel.find({
       postId: postId,

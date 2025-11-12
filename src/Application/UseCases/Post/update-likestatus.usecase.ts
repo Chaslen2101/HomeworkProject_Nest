@@ -6,13 +6,14 @@ import { PostRepository } from '../../../Infrastructure/Repositories/post.reposi
 import { HttpStatus, Inject } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { UserPayloadDTO } from '../../../Api/Input-dto/auth.input-dto';
+
+import { AccessTokenPayloadType } from '../../../Types/Types';
 
 export class UpdatePostLikeStatusCommand {
   constructor(
     public postId: string,
     public updateLikeStatusDTO: UpdatePostLikeStatusDTO,
-    public user: UserPayloadDTO,
+    public user: AccessTokenPayloadType,
   ) {}
 }
 

@@ -10,10 +10,14 @@ import { EmailService } from '../Infrastructure/MailService/email.service';
 import { ObjectId } from 'mongodb';
 import { JwtService } from '@nestjs/jwt';
 import {
-  UserPayloadDTO,
   newPasswordInputDTO,
   RegistrationInputDTO,
 } from '../Api/Input-dto/auth.input-dto';
+import {
+  AccessTokenPayloadType,
+  RefreshTokenPayloadType,
+  TokenPairType,
+} from '../Types/Types';
 
 @Injectable()
 export class AuthService {
@@ -38,9 +42,7 @@ export class AuthService {
 
     const confirmationCode: string = randomUUID().toString();
 
-    const hashedPassword: string = await hashHelper.hashNewPassword(
-      newUserData.password,
-    );
+    const hashedPassword: string = await hashHelper.hash(newUserData.password);
     const newUser: UserDocumentType = this.UserModel.createNewUser(
       newUserData,
       hashedPassword,
@@ -58,14 +60,14 @@ export class AuthService {
   async validateUser(
     loginOrEmail: string,
     password: string,
-  ): Promise<UserPayloadDTO | null> {
+  ): Promise<AccessTokenPayloadType | null> {
     const user: UserDocumentType | null =
       await this.userRepository.findUserByLoginOrEmail(loginOrEmail);
     if (!user) {
       return null;
     }
 
-    const isPasswordCorrect: boolean = await hashHelper.comparePassword(
+    const isPasswordCorrect: boolean = await hashHelper.compare(
       user.password,
       password,
     );
@@ -74,10 +76,6 @@ export class AuthService {
     }
 
     return { sub: user._id.toString(), login: user.login };
-  }
-
-  login(user: UserPayloadDTO): string {
-    return this.jwtService.sign({ sub: user.sub, login: user.login });
   }
 
   async confirmEmail(code: string): Promise<void> {
@@ -135,11 +133,32 @@ export class AuthService {
       throw new DomainException('Invalid recovery code', 400, 'newPassword');
     }
 
-    const newHashedPassword: string = await hashHelper.hashNewPassword(
+    const newHashedPassword: string = await hashHelper.hash(
       newPasswordDTO.newPassword,
     );
     neededUser.setNewPassword(newPasswordDTO.recoveryCode, newHashedPassword);
 
     return true;
+  }
+
+  tokenPairGen(
+    accessTokenPayload: AccessTokenPayloadType,
+    refreshTokenPayload: RefreshTokenPayloadType,
+  ): TokenPairType {
+    const accessToken: string = this.jwtService.sign({
+      sub: accessTokenPayload.sub,
+      login: accessTokenPayload.login,
+    });
+
+    const refreshToken: string = this.jwtService.sign(
+      {
+        sub: refreshTokenPayload.sub,
+        login: refreshTokenPayload.login,
+        deviceId: refreshTokenPayload.deviceId,
+      },
+      { expiresIn: '20s' },
+    );
+
+    return { accessToken: accessToken, refreshToken: refreshToken };
   }
 }
