@@ -20,6 +20,7 @@ export class UserService {
       newUserData,
       hashedPassword,
     );
+    console.log(newUser.password);
     await this.userRepository.save(newUser);
     return newUser._id.toString();
   }

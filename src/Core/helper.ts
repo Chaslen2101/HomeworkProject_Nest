@@ -15,8 +15,8 @@ import { PostDocumentType } from '../Domain/post.schema';
 import { BlogDocumentType } from '../Domain/blog.schema';
 import { CommentDocumentType } from '../Domain/comment.schema';
 import { UserDocumentType } from '../Domain/user.schema';
-import bcrypt from 'bcrypt';
 import { SessionDocumentType } from '../Domain/session.schema';
+import * as argon2 from 'argon2';
 
 export const queryHelper: QueryHelperType = {
   blogPostQuery(query: InputQueryType): BlogPostQueryType {
@@ -52,11 +52,17 @@ export const queryHelper: QueryHelperType = {
 
 export const hashHelper = {
   async hash(smthToHash: string): Promise<string> {
-    return await bcrypt.hash(smthToHash, 10);
+    return await argon2.hash(smthToHash, {
+      type: argon2.argon2id, // Лучший вариант - защита от GPU и side-channel атак
+      memoryCost: 2 ** 16, // 64 MB памяти
+      timeCost: 3, // 3 итерации
+      parallelism: 1, // 1 поток
+      hashLength: 32, // 32 байта хеш
+    });
   },
 
-  async compare(hashedString: string, someStringToComp: string) {
-    return await bcrypt.compare(someStringToComp, hashedString);
+  async compare(someStringToComp: string, hashedString: string) {
+    return await argon2.verify(hashedString, someStringToComp);
   },
 };
 

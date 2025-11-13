@@ -66,10 +66,9 @@ export class AuthService {
     if (!user) {
       return null;
     }
-
     const isPasswordCorrect: boolean = await hashHelper.compare(
-      user.password,
       password,
+      user.password,
     );
     if (!isPasswordCorrect) {
       return null;
@@ -156,7 +155,7 @@ export class AuthService {
         login: refreshTokenPayload.login,
         deviceId: refreshTokenPayload.deviceId,
       },
-      { expiresIn: '20s' },
+      { expiresIn: '20m' },
     );
 
     return { accessToken: accessToken, refreshToken: refreshToken };

@@ -113,8 +113,8 @@ export class AuthController {
     );
   }
 
-  @Post('refresh-token')
   @UseGuards(JwtRefreshGuard)
+  @Post('refresh-token')
   @HttpCode(200)
   async refreshToken(
     @Request() req: Express.Request,
@@ -123,7 +123,6 @@ export class AuthController {
     const tokenPair: TokenPairType = await this.commandBus.execute(
       new RefreshTokenCommand(req.user as RefreshTokenPayloadType),
     );
-    console.log('Send cookie:', tokenPair.refreshToken);
     response.setCookie('refreshToken', tokenPair.refreshToken, {
       httpOnly: true,
       secure: true,

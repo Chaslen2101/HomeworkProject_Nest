@@ -1,10 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { AuthService } from '../../../Application/auth.service';
-import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { AuthService } from 'src/Application/auth.service';
+import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
 
-import { AccessTokenPayloadType } from '../../../Types/Types';
+import { AccessTokenPayloadType } from 'src/Types/Types';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -23,7 +23,6 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     if (!user) {
       throw new DomainException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
-
     return user;
   }
 }

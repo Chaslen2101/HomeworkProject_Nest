@@ -7,7 +7,7 @@ export class Session {
   @Prop({ type: String, required: true })
   ip: string;
 
-  @Prop({ type: String, required: true })
+  @Prop({ type: String })
   title: string;
 
   @Prop({ type: MongooseSchema.Types.Date, required: true })

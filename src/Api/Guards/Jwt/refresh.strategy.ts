@@ -31,16 +31,17 @@ export class JwtRefreshStrategy extends PassportStrategy(
     payload: RefreshTokenPayloadType,
   ): Promise<RefreshTokenPayloadType> {
     const refreshToken: string = req.cookies.refreshToken as string;
-    console.log('Recived cookie:', refreshToken);
+
     const neededSession: SessionDocumentType | null =
       await this.sessionRepository.findByDeviceId(payload.deviceId);
     if (!neededSession) {
       throw new DomainException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
     const isValid: boolean = await hashHelper.compare(
-      neededSession.refreshToken,
       refreshToken,
+      neededSession.refreshToken,
     );
+
     if (!isValid) {
       throw new DomainException('Unauthorized', HttpStatus.UNAUTHORIZED);
     }
