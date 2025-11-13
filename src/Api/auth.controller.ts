@@ -67,8 +67,8 @@ export class AuthController {
     return;
   }
 
-  @Post('login')
   @UseGuards(ThrottlerGuard)
+  @Post('login')
   @UseGuards(LocalGuard)
   @HttpCode(200)
   async login(

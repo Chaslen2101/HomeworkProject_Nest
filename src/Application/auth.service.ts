@@ -155,7 +155,7 @@ export class AuthService {
         login: refreshTokenPayload.login,
         deviceId: refreshTokenPayload.deviceId,
       },
-      { expiresIn: '20m' },
+      { expiresIn: '20s' },
     );
 
     return { accessToken: accessToken, refreshToken: refreshToken };
