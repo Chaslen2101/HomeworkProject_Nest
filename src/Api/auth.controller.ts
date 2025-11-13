@@ -67,9 +67,8 @@ export class AuthController {
     return;
   }
 
-  @UseGuards(ThrottlerGuard)
   @Post('login')
-  @UseGuards(LocalGuard)
+  @UseGuards(ThrottlerGuard, LocalGuard)
   @HttpCode(200)
   async login(
     @Request() nestReq: Express.Request,
