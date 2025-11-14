@@ -47,6 +47,7 @@ import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.u
 import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
 import { DeleteSessionUseCase } from './Application/UseCases/Security/delete-session.usecase';
 import { SecurityController } from './Api/security.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
 dotenv.config();
 
 const strategies = [
@@ -93,16 +94,26 @@ const useCases = [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: '10m' },
     }),
     CqrsModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
-          ttl: 10000,
-          limit: 5,
+          ttl: 10,
+          limit: 100,
         },
       ],
+    }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'p',
+      database: 'startUser',
+      autoLoadEntities: true,
+      synchronize: true,
     }),
   ],
   controllers: [

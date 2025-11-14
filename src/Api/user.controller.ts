@@ -24,7 +24,7 @@ import { queryHelper } from '../Core/helper';
 import { CreateUserInputDTO } from './Input-dto/user.input-dto';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 
-@Controller('users')
+@Controller('sa/users')
 export class UserController {
   constructor(
     @Inject(UserService) protected userService: UserService,
