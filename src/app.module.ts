@@ -47,7 +47,7 @@ import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.u
 import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
 import { DeleteSessionUseCase } from './Application/UseCases/Security/delete-session.usecase';
 import { SecurityController } from './Api/security.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
+// import { TypeOrmModule } from '@nestjs/typeorm';
 dotenv.config();
 
 const strategies = [
@@ -105,16 +105,16 @@ const useCases = [
         },
       ],
     }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'p',
-      database: 'startUser',
-      autoLoadEntities: true,
-      synchronize: true,
-    }),
+    // TypeOrmModule.forRoot({
+    //   type: 'postgres',
+    //   host: 'localhost',
+    //   port: 5432,
+    //   username: 'postgres',
+    //   password: 'p',
+    //   database: 'startUser',
+    //   autoLoadEntities: true,
+    //   synchronize: true,
+    // }),
   ],
   controllers: [
     AppController,
