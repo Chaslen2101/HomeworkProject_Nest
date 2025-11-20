@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID, Length, Matches } from 'class-validator';
 import { Trim } from '../../Core/Decorators/Transform/trim';
 
 export class LoginInputDTO {
@@ -14,6 +14,7 @@ export class LoginInputDTO {
 export class ConfirmEmailInputDTO {
   @IsString()
   @IsNotEmpty()
+  @IsUUID()
   code: string;
 }
 
