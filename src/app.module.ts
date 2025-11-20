@@ -108,14 +108,14 @@ const useCases = [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: '10m' },
     }),
     CqrsModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
           ttl: 10000,
-          limit: 5,
+          limit: 5000000,
         },
       ],
     }),
