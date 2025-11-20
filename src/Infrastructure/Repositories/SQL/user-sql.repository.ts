@@ -187,7 +187,7 @@ export class UserSqlRepository {
       `
       UPDATE email_confirmation_info 
       SET confirmation_code = $1, expiration_date = $2, is_confirmed=$3
-      WHERE e.user_id = $4
+      WHERE user_id = $4
           `,
       [
         emailConfirmInfo.confirmationCode,

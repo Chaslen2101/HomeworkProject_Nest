@@ -34,8 +34,8 @@ export const queryHelper: QueryHelperType = {
       pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
       sortBy: query.sortBy ? query.sortBy : 'created_at',
       sortDirection: query.sortDirection ? query.sortDirection : 'desc',
-      searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
-      searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null,
+      searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : '%%',
+      searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : '%%',
     };
   },
 
@@ -128,7 +128,7 @@ export const mapToView = {
   mapUsers(users: any[]): UserViewType[] {
     return users.map((user: any) => {
       return {
-        id: user._id.toString(),
+        id: user.id,
         login: user.login,
         email: user.email,
         createdAt: user.createdAt,
