@@ -61,7 +61,7 @@ export class UserSqlQueryRepository {
         FROM "user"
         `,
     );
-    const totalCount: number = dbCount[0].count.toNumber();
+    const totalCount: number = Number(dbCount[0].count);
     const mappedUsers: UserViewType[] = mapToView.mapUsers(result);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
