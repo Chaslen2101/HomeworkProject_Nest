@@ -36,13 +36,22 @@ export class UserSqlRepository {
 
   async deleteUser(userId: string): Promise<boolean> {
     await this.dataSource.query(
-      `
-        DELETE FROM "user"
-        WHERE id = $1
-        `,
+      `DELETE FROM email_confirmation_info WHERE user_id = $1`,
       [userId],
     );
-    return true;
+    await this.dataSource.query(
+      `DELETE FROM password_recovery_info WHERE user_id = $1`,
+      [userId],
+    );
+    await this.dataSource.query(`DELETE FROM "session" WHERE user_id = $1`, [
+      userId,
+    ]);
+    const result = await this.dataSource.query(
+      `DELETE FROM "user" WHERE id = $1`,
+      [userId],
+    );
+
+    return result[1];
   }
 
   async findUserByLoginOrEmail(loginOrEmail: string): Promise<User | null> {

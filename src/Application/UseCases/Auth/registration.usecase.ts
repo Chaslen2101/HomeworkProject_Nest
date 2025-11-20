@@ -47,7 +47,7 @@ export class RegistrationUseCase
 
     const newEmailConfirmInfo: EmailConfirmationInfo =
       EmailConfirmationInfo.createNew(newUser.id);
-    console.log(newEmailConfirmInfo.confirmationCode);
+
     await this.userRepository.createNewUser(newUser, newEmailConfirmInfo);
     await this.emailService.sendEmailConfirmCode(
       dto.registrationInputDTO.email,

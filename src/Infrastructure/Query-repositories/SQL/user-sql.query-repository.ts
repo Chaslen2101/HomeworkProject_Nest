@@ -55,7 +55,12 @@ export class UserSqlQueryRepository {
       offsetValue,
     ]);
 
-    const totalCount: number = result.length;
+    const totalCount: number = await this.dataSource.query(
+      `
+        SELECT COUNT(*)
+        FROM "user"
+        `,
+    );
     const mappedUsers: UserViewType[] = mapToView.mapUsers(result);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
