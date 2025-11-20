@@ -34,6 +34,14 @@ import { JwtRefreshGuard } from './Guards/Jwt/refresh.guard';
 import { RefreshTokenCommand } from '../Application/UseCases/Auth/refresh-token.usecase';
 import { LogoutCommand } from '../Application/UseCases/Auth/logout.usecase';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { RegistrationCommand } from 'src/Application/UseCases/Auth/registration.usecase';
+import {
+  ConfirmRegistrationCommand,
+  ConfirmRegistrationUseCase,
+} from 'src/Application/UseCases/Auth/confirm-registration.usecase';
+import { ResendEmailConfirmCommand } from 'src/Application/UseCases/Auth/resend-email-confirm.usecase';
+import { PasswordRecoveryCommand } from 'src/Application/UseCases/Auth/password-recovery.usecase';
+import { ConfirmPasswordRecoveryCommand } from 'src/Application/UseCases/Auth/confirm-password-recovery.usecase';
 
 @Controller('auth')
 export class AuthController {
@@ -47,7 +55,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(204)
   async registration(@Body() reqBody: RegistrationInputDTO) {
-    await this.authService.registration(reqBody);
+    await this.commandBus.execute(new RegistrationCommand(reqBody));
     return;
   }
 
@@ -55,7 +63,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(204)
   async confirmEmail(@Body() reqBody: ConfirmEmailInputDTO): Promise<void> {
-    await this.authService.confirmEmail(reqBody.code);
+    await this.commandBus.execute(new ConfirmRegistrationCommand(reqBody));
     return;
   }
 
@@ -63,7 +71,7 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(204)
   async resendEmail(@Body() reqBody: ResendConfirmCodeInputDTO): Promise<void> {
-    await this.authService.resendConfirmCode(reqBody.email);
+    await this.commandBus.execute(new ResendEmailConfirmCommand(reqBody));
     return;
   }
 
@@ -92,14 +100,15 @@ export class AuthController {
   @UseGuards(ThrottlerGuard)
   @HttpCode(204)
   async passwordRecovery(@Body() reqBody: PasswordRecoveryInputDTO) {
-    await this.authService.passwordRecovery(reqBody.email);
+    await this.commandBus.execute(new PasswordRecoveryCommand(reqBody));
+    return;
   }
 
   @Post('new-password')
   @UseGuards(ThrottlerGuard)
   @HttpCode(204)
   async newPassword(@Body() reqBody: newPasswordInputDTO) {
-    await this.authService.setNewPassword(reqBody);
+    await this.commandBus.execute(new ConfirmPasswordRecoveryCommand(reqBody));
     return;
   }
 

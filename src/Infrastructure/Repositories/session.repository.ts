@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import type { SessionModelType } from '../../Domain/session.schema';
-import { Session, SessionDocumentType } from '../../Domain/session.schema';
+import type { SessionModelType } from '../../Domain/session.entity';
+import { Session, SessionDocumentType } from '../../Domain/session.entity';
 import { DeleteResult } from 'mongodb';
-import { RefreshTokenPayloadType, SessionsViewType } from '../../Types/Types';
+import { RefreshTokenPayloadType } from '../../Types/Types';
 import { mapToView } from '../../Core/helper';
 
 @Injectable()

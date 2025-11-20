@@ -6,10 +6,11 @@ import {
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { SessionRepository } from 'src/Infrastructure/Repositories/session.repository';
-import { SessionDocumentType } from 'src/Domain/session.schema';
+import { Session, SessionDocumentType } from 'src/Domain/session.entity';
 import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
 import { AuthService } from '../../auth.service';
 import { hashHelper } from 'src/Core/helper';
+import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/session-sql.repository';
 
 export class RefreshTokenCommand {
   constructor(public refreshTokenPayload: RefreshTokenPayloadType) {}
@@ -20,12 +21,13 @@ export class RefreshTokenUseCase
   implements ICommandHandler<RefreshTokenCommand, TokenPairType>
 {
   constructor(
-    @Inject(SessionRepository) private sessionRepository: SessionRepository,
+    @Inject(SessionSqlRepository)
+    private sessionRepository: SessionSqlRepository,
     @Inject(AuthService) private authService: AuthService,
   ) {}
 
   async execute(dto: RefreshTokenCommand): Promise<TokenPairType> {
-    const neededSession: SessionDocumentType | null =
+    const neededSession: Session | null =
       await this.sessionRepository.findByDeviceId(
         dto.refreshTokenPayload.deviceId,
       );
@@ -47,7 +49,7 @@ export class RefreshTokenUseCase
       tokenPair.refreshToken,
     );
     neededSession.updateRefreshToken(hashedRefreshToken);
-    await this.sessionRepository.save(neededSession);
+    await this.sessionRepository.updateSession(neededSession);
 
     return tokenPair;
   }

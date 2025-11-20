@@ -14,8 +14,8 @@ import {
 import { PostDocumentType } from '../Domain/post.schema';
 import { BlogDocumentType } from '../Domain/blog.schema';
 import { CommentDocumentType } from '../Domain/comment.schema';
-import { UserDocumentType } from '../Domain/user.schema';
-import { SessionDocumentType } from '../Domain/session.schema';
+import { UserDocumentType } from '../Domain/user.entity';
+import { SessionDocumentType } from '../Domain/session.entity';
 import * as argon2 from 'argon2';
 
 export const queryHelper: QueryHelperType = {
@@ -126,8 +126,8 @@ export const mapToView = {
     };
   },
 
-  mapUsers(users: UserDocumentType[]): UserViewType[] {
-    return users.map((user: UserDocumentType) => {
+  mapUsers(users: any[]): UserViewType[] {
+    return users.map((user: any) => {
       return {
         id: user._id.toString(),
         login: user.login,
@@ -137,12 +137,12 @@ export const mapToView = {
     });
   },
 
-  mapUser(userData: UserDocumentType): UserViewType {
+  mapUser(userData: any): UserViewType {
     return {
-      id: userData._id.toString(),
+      id: userData.id,
       login: userData.login,
       email: userData.email,
-      createdAt: userData.createdAt,
+      createdAt: userData.created_at,
     };
   },
 

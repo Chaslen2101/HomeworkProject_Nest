@@ -2,11 +2,11 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { RefreshTokenPayloadType } from '../../../Types/Types';
-import { SessionRepository } from '../../../Infrastructure/Repositories/session.repository';
-import { SessionDocumentType } from '../../../Domain/session.schema';
-import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { hashHelper } from '../../../Core/helper';
+import { RefreshTokenPayloadType } from 'src/Types/Types';
+import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
+import { hashHelper } from 'src/Core/helper';
+import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/session-sql.repository';
+import { Session } from 'src/Domain/session.entity';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
@@ -14,7 +14,8 @@ export class JwtRefreshStrategy extends PassportStrategy(
   'jwt-refresh',
 ) {
   constructor(
-    @Inject(SessionRepository) private sessionRepository: SessionRepository,
+    @Inject(SessionSqlRepository)
+    private sessionRepository: SessionSqlRepository,
   ) {
     super({
       secretOrKey: process.env.JWT_SECRET as string,
@@ -32,7 +33,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
   ): Promise<RefreshTokenPayloadType> {
     const refreshToken: string = req.cookies.refreshToken as string;
 
-    const neededSession: SessionDocumentType | null =
+    const neededSession: Session | null =
       await this.sessionRepository.findByDeviceId(payload.deviceId);
     if (!neededSession) {
       throw new DomainException('Unauthorized', HttpStatus.UNAUTHORIZED);

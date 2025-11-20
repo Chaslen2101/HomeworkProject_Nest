@@ -2,7 +2,7 @@ import { RefreshTokenPayloadType } from '../../../Types/Types';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { SessionRepository } from '../../../Infrastructure/Repositories/session.repository';
-import { SessionDocumentType } from '../../../Domain/session.schema';
+import { SessionDocumentType } from '../../../Domain/session.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 
 export class DeleteSessionCommand {

@@ -16,7 +16,7 @@ import { CommentQueryRep } from './Infrastructure/Query-repositories/comment.que
 import { CommentController } from './Api/comment.controller';
 import { Comment, CommentSchema } from './Domain/comment.schema';
 import { TestingController } from './Api/testing.controller';
-import { User, UserSchema } from './Domain/user.schema';
+import { User, UserEntity } from './Domain/user.entity';
 import { UserQueryRep } from './Infrastructure/Query-repositories/user.query-repository';
 import { UserService } from './Application/user.service';
 import { UserRepository } from './Infrastructure/Repositories/user.repository';
@@ -41,12 +41,21 @@ import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { LoginUseCase } from './Application/UseCases/Auth/login.usecase';
 import { SessionRepository } from './Infrastructure/Repositories/session.repository';
-import { Session, SessionSchema } from './Domain/session.schema';
+import { Session, SessionEntity } from './Domain/session.entity';
 import { JwtRefreshStrategy } from './Api/Guards/Jwt/refresh.strategy';
 import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.usecase';
 import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
 import { DeleteSessionUseCase } from './Application/UseCases/Security/delete-session.usecase';
 import { SecurityController } from './Api/security.controller';
+import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
+import { RegistrationUseCase } from 'src/Application/UseCases/Auth/registration.usecase';
+import { ConfirmRegistrationUseCase } from 'src/Application/UseCases/Auth/confirm-registration.usecase';
+import { ResendEmailConfirmUseCase } from 'src/Application/UseCases/Auth/resend-email-confirm.usecase';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/session-sql.repository';
+import { PasswordRecoveryUseCase } from 'src/Application/UseCases/Auth/password-recovery.usecase';
+import { ConfirmPasswordRecoveryUseCase } from 'src/Application/UseCases/Auth/confirm-password-recovery.usecase';
+import { UserSqlQueryRepository } from 'src/Infrastructure/Query-repositories/SQL/user-sql.query-repository';
 // import { TypeOrmModule } from '@nestjs/typeorm';
 dotenv.config();
 
@@ -66,6 +75,11 @@ const useCases = [
   RefreshTokenUseCase,
   LogoutUseCase,
   DeleteSessionUseCase,
+  RegistrationUseCase,
+  ConfirmRegistrationUseCase,
+  ResendEmailConfirmUseCase,
+  PasswordRecoveryUseCase,
+  ConfirmPasswordRecoveryUseCase,
 ];
 @Module({
   imports: [
@@ -73,8 +87,8 @@ const useCases = [
     MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
     MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
-    MongooseModule.forFeature([{ name: Session.name, schema: SessionSchema }]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserEntity }]),
+    MongooseModule.forFeature([{ name: Session.name, schema: SessionEntity }]),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -105,16 +119,13 @@ const useCases = [
         },
       ],
     }),
-    // TypeOrmModule.forRoot({
-    //   type: 'postgres',
-    //   host: 'localhost',
-    //   port: 5432,
-    //   username: 'postgres',
-    //   password: 'p',
-    //   database: 'startUser',
-    //   autoLoadEntities: true,
-    //   synchronize: true,
-    // }),
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      url: process.env.NEON_URL,
+      autoLoadEntities: true,
+      synchronize: true,
+      ssl: { rejectUnauthorized: false },
+    }),
   ],
   controllers: [
     AppController,
@@ -137,11 +148,13 @@ const useCases = [
     CommentRepository,
     CommentQueryRep,
     UserService,
-    UserRepository,
+    UserSqlRepository,
+    UserSqlQueryRepository,
     UserQueryRep,
     EmailService,
     AuthService,
     SessionRepository,
+    SessionSqlRepository,
     ...strategies,
     ...useCases,
   ],

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocumentType } from '../../Domain/user.schema';
-import type { UserModelType } from '../../Domain/user.schema';
+import { User, UserDocumentType } from '../../Domain/user.entity';
+import type { UserModelType } from '../../Domain/user.entity';
 import {
   UserQueryType,
   UserPagesType,

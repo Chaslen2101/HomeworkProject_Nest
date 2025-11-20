@@ -1,7 +1,7 @@
 import { RefreshTokenPayloadType } from '../../../Types/Types';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { SessionRepository } from '../../../Infrastructure/Repositories/session.repository';
+import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/session-sql.repository';
 
 export class LogoutCommand {
   constructor(public refreshTokenPayload: RefreshTokenPayloadType) {}
@@ -10,7 +10,8 @@ export class LogoutCommand {
 @CommandHandler(LogoutCommand)
 export class LogoutUseCase implements ICommandHandler<LogoutCommand, void> {
   constructor(
-    @Inject(SessionRepository) private sessionRepository: SessionRepository,
+    @Inject(SessionSqlRepository)
+    private sessionRepository: SessionSqlRepository,
   ) {}
 
   async execute(dto: LogoutCommand): Promise<void> {

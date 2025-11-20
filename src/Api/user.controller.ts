@@ -20,24 +20,31 @@ import {
 } from '@nestjs/common';
 import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
 import { UserService } from '../Application/user.service';
-import { queryHelper } from '../Core/helper';
-import { CreateUserInputDTO } from './Input-dto/user.input-dto';
 import { BasicGuard } from './Guards/Basic/basic.guard';
+import { CommandBus } from '@nestjs/cqrs';
+import { RegistrationCommand } from 'src/Application/UseCases/Auth/registration.usecase';
+import { RegistrationInputDTO } from 'src/Api/Input-dto/auth.input-dto';
+import { UserSqlQueryRepository } from 'src/Infrastructure/Query-repositories/SQL/user-sql.query-repository';
+import { queryHelper } from 'src/Core/helper';
 
 @Controller('sa/users')
 export class UserController {
   constructor(
     @Inject(UserService) protected userService: UserService,
-    @Inject(UserQueryRep) protected userQueryRep: UserQueryRep,
+    @Inject(UserSqlQueryRepository)
+    protected userQueryRep: UserSqlQueryRepository,
+    @Inject(CommandBus) protected commandBus: CommandBus,
   ) {}
 
   @Post()
   @UseGuards(BasicGuard)
   @HttpCode(201)
   async createUser(
-    @Body() reqBody: CreateUserInputDTO,
+    @Body() reqBody: RegistrationInputDTO,
   ): Promise<UserViewType | null> {
-    const newUserId: string = await this.userService.createUser(reqBody);
+    const newUserId: string = await this.commandBus.execute(
+      new RegistrationCommand(reqBody),
+    );
 
     return await this.userQueryRep.findUserById(newUserId);
   }
