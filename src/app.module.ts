@@ -19,7 +19,6 @@ import { TestingController } from './Api/testing.controller';
 import { User, UserEntity } from './Domain/user.entity';
 import { UserQueryRep } from './Infrastructure/Query-repositories/user.query-repository';
 import { UserService } from './Application/user.service';
-import { UserRepository } from './Infrastructure/Repositories/user.repository';
 import { UserController } from './Api/user.controller';
 import dotenv from 'dotenv';
 import { MailerModule } from '@nestjs-modules/mailer';
@@ -56,7 +55,6 @@ import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/sessio
 import { PasswordRecoveryUseCase } from 'src/Application/UseCases/Auth/password-recovery.usecase';
 import { ConfirmPasswordRecoveryUseCase } from 'src/Application/UseCases/Auth/confirm-password-recovery.usecase';
 import { UserSqlQueryRepository } from 'src/Infrastructure/Query-repositories/SQL/user-sql.query-repository';
-// import { TypeOrmModule } from '@nestjs/typeorm';
 dotenv.config();
 
 const strategies = [
