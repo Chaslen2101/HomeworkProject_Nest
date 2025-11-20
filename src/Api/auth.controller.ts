@@ -34,14 +34,11 @@ import { JwtRefreshGuard } from './Guards/Jwt/refresh.guard';
 import { RefreshTokenCommand } from '../Application/UseCases/Auth/refresh-token.usecase';
 import { LogoutCommand } from '../Application/UseCases/Auth/logout.usecase';
 import { ThrottlerGuard } from '@nestjs/throttler';
-import { RegistrationCommand } from 'src/Application/UseCases/Auth/registration.usecase';
-import {
-  ConfirmRegistrationCommand,
-  ConfirmRegistrationUseCase,
-} from 'src/Application/UseCases/Auth/confirm-registration.usecase';
-import { ResendEmailConfirmCommand } from 'src/Application/UseCases/Auth/resend-email-confirm.usecase';
-import { PasswordRecoveryCommand } from 'src/Application/UseCases/Auth/password-recovery.usecase';
-import { ConfirmPasswordRecoveryCommand } from 'src/Application/UseCases/Auth/confirm-password-recovery.usecase';
+import { RegistrationCommand } from '../Application/UseCases/Auth/registration.usecase';
+import { ConfirmRegistrationCommand } from '../Application/UseCases/Auth/confirm-registration.usecase';
+import { ResendEmailConfirmCommand } from '../Application/UseCases/Auth/resend-email-confirm.usecase';
+import { PasswordRecoveryCommand } from '../Application/UseCases/Auth/password-recovery.usecase';
+import { ConfirmPasswordRecoveryCommand } from '../Application/UseCases/Auth/confirm-password-recovery.usecase';
 
 @Controller('auth')
 export class AuthController {

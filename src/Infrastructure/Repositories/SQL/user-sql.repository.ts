@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import {
   EmailConfirmationInfo,
   PasswordRecoveryInfo,
   User,
-} from 'src/Domain/user.entity';
-import { DataSource } from 'typeorm';
-import { InjectDataSource } from '@nestjs/typeorm';
+} from '../../../Domain/user.entity';
 
 @Injectable()
 export class UserSqlRepository {

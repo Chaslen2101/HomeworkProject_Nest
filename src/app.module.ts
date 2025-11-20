@@ -46,15 +46,17 @@ import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.u
 import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
 import { DeleteSessionUseCase } from './Application/UseCases/Security/delete-session.usecase';
 import { SecurityController } from './Api/security.controller';
-import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
-import { RegistrationUseCase } from 'src/Application/UseCases/Auth/registration.usecase';
-import { ConfirmRegistrationUseCase } from 'src/Application/UseCases/Auth/confirm-registration.usecase';
-import { ResendEmailConfirmUseCase } from 'src/Application/UseCases/Auth/resend-email-confirm.usecase';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/session-sql.repository';
-import { PasswordRecoveryUseCase } from 'src/Application/UseCases/Auth/password-recovery.usecase';
-import { ConfirmPasswordRecoveryUseCase } from 'src/Application/UseCases/Auth/confirm-password-recovery.usecase';
-import { UserSqlQueryRepository } from 'src/Infrastructure/Query-repositories/SQL/user-sql.query-repository';
+import { RegistrationUseCase } from './Application/UseCases/Auth/registration.usecase';
+import { ConfirmRegistrationUseCase } from './Application/UseCases/Auth/confirm-registration.usecase';
+import { ResendEmailConfirmUseCase } from './Application/UseCases/Auth/resend-email-confirm.usecase';
+import { PasswordRecoveryUseCase } from './Application/UseCases/Auth/password-recovery.usecase';
+import { ConfirmPasswordRecoveryUseCase } from './Application/UseCases/Auth/confirm-password-recovery.usecase';
+import { UserSqlRepository } from './Infrastructure/Repositories/SQL/user-sql.repository';
+import { UserSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/user-sql.query-repository';
+import { SessionSqlRepository } from './Infrastructure/Repositories/SQL/session-sql.repository';
+
 dotenv.config();
 
 const strategies = [

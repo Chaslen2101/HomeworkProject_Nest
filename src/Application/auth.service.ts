@@ -1,23 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
 import { hashHelper } from '../Core/helper';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocumentType } from '../Domain/user.entity';
-import type { UserModelType } from '../Domain/user.entity';
-import { UserRepository } from '../Infrastructure/Repositories/user.repository';
-import { DomainException } from '../Domain/Exceptions/domain-exceptions';
+import { User } from '../Domain/user.entity';
 import { EmailService } from '../Infrastructure/MailService/email.service';
 import { JwtService } from '@nestjs/jwt';
-import {
-  newPasswordInputDTO,
-  RegistrationInputDTO,
-} from '../Api/Input-dto/auth.input-dto';
 import {
   AccessTokenPayloadType,
   RefreshTokenPayloadType,
   TokenPairType,
 } from '../Types/Types';
-import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
+import { UserSqlRepository } from '../Infrastructure/Repositories/SQL/user-sql.repository';
 
 @Injectable()
 export class AuthService {

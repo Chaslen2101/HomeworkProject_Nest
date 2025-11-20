@@ -1,12 +1,11 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { RegistrationInputDTO } from 'src/Api/Input-dto/auth.input-dto';
-import { EmailConfirmationInfo, User } from 'src/Domain/user.entity';
-import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
-import { randomUUID } from 'node:crypto';
-import { hashHelper } from 'src/Core/helper';
 import { Inject } from '@nestjs/common';
-import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
-import { EmailService } from 'src/Infrastructure/MailService/email.service';
+import { RegistrationInputDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { EmailService } from '../../../Infrastructure/MailService/email.service';
+import { EmailConfirmationInfo, User } from '../../../Domain/user.entity';
+import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { hashHelper } from '../../../Core/helper';
 
 export class RegistrationCommand {
   constructor(public registrationInputDTO: RegistrationInputDTO) {}

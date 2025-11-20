@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { newPasswordInputDTO } from 'src/Api/Input-dto/auth.input-dto';
-import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
 import { HttpStatus, Inject } from '@nestjs/common';
-import { PasswordRecoveryInfo, User } from 'src/Domain/user.entity';
-import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
-import { hashHelper } from 'src/Core/helper';
+import { newPasswordInputDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { PasswordRecoveryInfo, User } from '../../../Domain/user.entity';
+import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { hashHelper } from '../../../Core/helper';
 
 export class ConfirmPasswordRecoveryCommand {
   constructor(public confirmPasswordRecoveryDTO: newPasswordInputDTO) {}

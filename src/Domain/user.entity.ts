@@ -2,7 +2,7 @@ import { SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Model } from 'mongoose';
 import { DomainException } from './Exceptions/domain-exceptions';
 import { randomUUID } from 'node:crypto';
-import { RegistrationInputDTO } from 'src/Api/Input-dto/auth.input-dto';
+import { RegistrationInputDTO } from '../Api/Input-dto/auth.input-dto';
 
 export class EmailConfirmationInfo {
   constructor(

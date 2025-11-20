@@ -1,9 +1,9 @@
-import { ConfirmEmailInputDTO } from 'src/Api/Input-dto/auth.input-dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { EmailConfirmationInfo } from 'src/Domain/user.entity';
-import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
 import { Inject } from '@nestjs/common';
-import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
+import { ConfirmEmailInputDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { EmailConfirmationInfo } from '../../../Domain/user.entity';
+import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 
 export class ConfirmRegistrationCommand {
   constructor(public confirmEmailInputDTO: ConfirmEmailInputDTO) {}

@@ -1,10 +1,10 @@
-import { ResendConfirmCodeInputDTO } from 'src/Api/Input-dto/auth.input-dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { EmailConfirmationInfo, User } from 'src/Domain/user.entity';
-import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
-import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
 import { HttpStatus, Inject } from '@nestjs/common';
-import { EmailService } from 'src/Infrastructure/MailService/email.service';
+import { ResendConfirmCodeInputDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { EmailService } from '../../../Infrastructure/MailService/email.service';
+import { EmailConfirmationInfo, User } from '../../../Domain/user.entity';
+import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 
 export class ResendEmailConfirmCommand {
   constructor(public resendConfirmCodeDTO: ResendConfirmCodeInputDTO) {}

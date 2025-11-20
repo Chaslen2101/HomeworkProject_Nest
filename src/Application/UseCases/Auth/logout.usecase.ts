@@ -1,7 +1,7 @@
 import { RefreshTokenPayloadType } from '../../../Types/Types';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/session-sql.repository';
+import { SessionSqlRepository } from '../../../Infrastructure/Repositories/SQL/session-sql.repository';
 
 export class LogoutCommand {
   constructor(public refreshTokenPayload: RefreshTokenPayloadType) {}

@@ -22,10 +22,10 @@ import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-re
 import { UserService } from '../Application/user.service';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { RegistrationCommand } from 'src/Application/UseCases/Auth/registration.usecase';
-import { RegistrationInputDTO } from 'src/Api/Input-dto/auth.input-dto';
-import { UserSqlQueryRepository } from 'src/Infrastructure/Query-repositories/SQL/user-sql.query-repository';
-import { queryHelper } from 'src/Core/helper';
+import { UserSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/user-sql.query-repository';
+import { RegistrationInputDTO } from './Input-dto/auth.input-dto';
+import { RegistrationCommand } from '../Application/UseCases/Auth/registration.usecase';
+import { queryHelper } from '../Core/helper';
 
 @Controller('sa/users')
 export class UserController {

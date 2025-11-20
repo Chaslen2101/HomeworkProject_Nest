@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import {
-  UserQueryType,
-  UserPagesType,
-  UserViewType,
-  MyInfoType,
-  AccessTokenPayloadType,
-} from 'src/Types/Types';
-import { mapToView } from 'src/Core/helper';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import format from 'pg-format';
+import {
+  AccessTokenPayloadType,
+  MyInfoType,
+  UserPagesType,
+  UserQueryType,
+  UserViewType,
+} from '../../../Types/Types';
+import { mapToView } from '../../../Core/helper';
 
 @Injectable()
 export class UserSqlQueryRepository {

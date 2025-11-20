@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, Length, Matches } from 'class-validator';
-import { Trim } from 'src/Core/Decorators/Transform/trim';
+import { Trim } from '../../Core/Decorators/Transform/trim';
 
 export class LoginInputDTO {
   @IsString()

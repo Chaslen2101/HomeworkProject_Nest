@@ -1,9 +1,9 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { PasswordRecoveryInputDTO } from 'src/Api/Input-dto/auth.input-dto';
-import { PasswordRecoveryInfo, User } from 'src/Domain/user.entity';
 import { Inject } from '@nestjs/common';
-import { UserSqlRepository } from 'src/Infrastructure/Repositories/SQL/user-sql.repository';
-import { EmailService } from 'src/Infrastructure/MailService/email.service';
+import { PasswordRecoveryInputDTO } from '../../../Api/Input-dto/auth.input-dto';
+import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { EmailService } from '../../../Infrastructure/MailService/email.service';
+import { PasswordRecoveryInfo, User } from '../../../Domain/user.entity';
 
 export class PasswordRecoveryCommand {
   constructor(public passwordRecoveryDTO: PasswordRecoveryInputDTO) {}

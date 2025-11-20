@@ -2,11 +2,11 @@ import { HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
-import { RefreshTokenPayloadType } from 'src/Types/Types';
-import { DomainException } from 'src/Domain/Exceptions/domain-exceptions';
-import { hashHelper } from 'src/Core/helper';
-import { SessionSqlRepository } from 'src/Infrastructure/Repositories/SQL/session-sql.repository';
-import { Session } from 'src/Domain/session.entity';
+import { SessionSqlRepository } from '../../../Infrastructure/Repositories/SQL/session-sql.repository';
+import { RefreshTokenPayloadType } from '../../../Types/Types';
+import { Session } from '../../../Domain/session.entity';
+import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { hashHelper } from '../../../Core/helper';
 
 @Injectable()
 export class JwtRefreshStrategy extends PassportStrategy(
