@@ -38,7 +38,7 @@ export class UserSqlQueryRepository {
            SELECT *
         FROM "user" u
         WHERE u.login ILIKE $1 OR u.email ILIKE $2
-        ORDER BY $I $s
+        ORDER BY %I %s
         LIMIT $3
         OFFSET $4
     `,

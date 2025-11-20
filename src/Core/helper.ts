@@ -14,7 +14,6 @@ import {
 import { PostDocumentType } from '../Domain/post.schema';
 import { BlogDocumentType } from '../Domain/blog.schema';
 import { CommentDocumentType } from '../Domain/comment.schema';
-import { UserDocumentType } from '../Domain/user.entity';
 import { SessionDocumentType } from '../Domain/session.entity';
 import * as argon2 from 'argon2';
 
@@ -23,7 +22,7 @@ export const queryHelper: QueryHelperType = {
     return {
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
-      sortBy: query.sortBy ? query.sortBy : 'createdAt',
+      sortBy: query.sortBy ? query.sortBy : 'created_at',
       sortDirection: query.sortDirection ? query.sortDirection : 'desc',
       searchNameTerm: query.searchNameTerm ? query.searchNameTerm : null,
     };
@@ -33,7 +32,7 @@ export const queryHelper: QueryHelperType = {
     return {
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
-      sortBy: query.sortBy ? query.sortBy : 'createdAt',
+      sortBy: query.sortBy ? query.sortBy : 'created_at',
       sortDirection: query.sortDirection ? query.sortDirection : 'desc',
       searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
       searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null,
@@ -44,7 +43,7 @@ export const queryHelper: QueryHelperType = {
     return {
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
-      sortBy: query.sortBy ? query.sortBy : 'createdAt',
+      sortBy: query.sortBy ? query.sortBy : 'created_at',
       sortDirection: query.sortDirection ? query.sortDirection : 'desc',
     };
   },
