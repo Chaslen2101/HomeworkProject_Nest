@@ -1,16 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { SortDirection } from 'mongodb';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import {
-  AccessTokenPayloadType,
-  BlogQueryType,
-  BlogViewType,
   PostPagesType,
   PostQueryType,
   PostViewType,
 } from '../../../Types/Types';
-import { mapToView, queryHelper } from '../../../Core/helper';
+import { mapToView } from '../../../Core/helper';
 import format from 'pg-format';
 
 @Injectable()
@@ -56,7 +52,7 @@ export class PostSqlQueryRepository {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: totalCount,
+      totalCount: result.length,
       items: mappedUsers,
     };
   }

@@ -37,7 +37,7 @@ export class UserSqlQueryRepository {
       `
            SELECT *
         FROM "user" u
-        WHERE u.login ILIKE $1 OR u.email ILIKE $2
+        WHERE u.login ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $2 || '%'
         ORDER BY %I %s
         LIMIT $3
         OFFSET $4
@@ -67,7 +67,7 @@ export class UserSqlQueryRepository {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: totalCount,
+      totalCount: result.length,
       items: mappedUsers,
     };
   }

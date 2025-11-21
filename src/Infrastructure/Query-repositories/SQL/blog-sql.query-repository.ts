@@ -18,7 +18,7 @@ export class BlogSqlQueryRepository {
       `
            SELECT *
         FROM "blog" b
-        WHERE b.name ILIKE $1 
+        WHERE b.name ILIKE '%' || $1 || '%'
         ORDER BY %I %s
         LIMIT $2
         OFFSET $3
@@ -48,7 +48,7 @@ export class BlogSqlQueryRepository {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: totalCount,
+      totalCount: result.length,
       items: mappedUsers,
     };
   }
