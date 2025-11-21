@@ -40,7 +40,7 @@ export class PostSqlQueryRepository {
     const result = await this.dataSource.query(beforeQuery, [
       sanitizedQuery.blogId,
       sanitizedQuery.pageSize,
-      2,
+      offsetValue,
     ]);
 
     const dbCount = await this.dataSource.query(
@@ -49,7 +49,7 @@ export class PostSqlQueryRepository {
         FROM "post"
         `,
     );
-    result.reverse();
+
     const totalCount: number = Number(dbCount[0].count);
     const mappedUsers: PostViewType[] = mapToView.mapPosts(result);
     return {

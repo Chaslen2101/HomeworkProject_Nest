@@ -32,7 +32,7 @@ export class BlogSqlQueryRepository {
     const result = await this.dataSource.query(beforeQuery, [
       sanitizedQuery.searchNameTerm,
       sanitizedQuery.pageSize,
-      2,
+      offsetValue,
     ]);
 
     const dbCount = await this.dataSource.query(
@@ -41,7 +41,7 @@ export class BlogSqlQueryRepository {
         FROM "blog"
         `,
     );
-    result.reverse();
+
     const totalCount: number = Number(dbCount[0].count);
     const mappedUsers: BlogViewType[] = mapToView.mapBlogs(result);
     return {
