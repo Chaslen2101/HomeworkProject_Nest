@@ -25,7 +25,6 @@ export class BlogSqlQueryRepository {
     `,
       sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
-      sanitizedQuery.sortDirection,
     );
 
     const offsetValue: number =
@@ -33,7 +32,7 @@ export class BlogSqlQueryRepository {
     const result = await this.dataSource.query(beforeQuery, [
       sanitizedQuery.searchNameTerm,
       sanitizedQuery.pageSize,
-      offsetValue,
+      2,
     ]);
 
     const dbCount = await this.dataSource.query(

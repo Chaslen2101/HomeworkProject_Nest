@@ -32,15 +32,15 @@ export class PostSqlQueryRepository {
     `,
       sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
-      sanitizedQuery.sortDirection,
     );
 
     const offsetValue: number =
       (sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize;
+
     const result = await this.dataSource.query(beforeQuery, [
       sanitizedQuery.blogId,
       sanitizedQuery.pageSize,
-      offsetValue,
+      2,
     ]);
 
     const dbCount = await this.dataSource.query(
