@@ -10,7 +10,6 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
 import { AuthService } from '../Application/auth.service';
 import {
   ConfirmEmailInputDTO,
@@ -25,6 +24,7 @@ import type { FastifyReply } from 'fastify';
 import { LocalGuard } from './Guards/Local/local.guard';
 import {
   AccessTokenPayloadType,
+  MyInfoType,
   RefreshTokenPayloadType,
   TokenPairType,
 } from '../Types/Types';
@@ -39,11 +39,13 @@ import { ConfirmRegistrationCommand } from '../Application/UseCases/Auth/confirm
 import { ResendEmailConfirmCommand } from '../Application/UseCases/Auth/resend-email-confirm.usecase';
 import { PasswordRecoveryCommand } from '../Application/UseCases/Auth/password-recovery.usecase';
 import { ConfirmPasswordRecoveryCommand } from '../Application/UseCases/Auth/confirm-password-recovery.usecase';
+import { UserSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/user-sql.query-repository';
 
 @Controller('auth')
 export class AuthController {
   constructor(
-    @Inject(UserQueryRep) protected usersQueryRep: UserQueryRep,
+    @Inject(UserSqlQueryRepository)
+    protected usersQueryRep: UserSqlQueryRepository,
     @Inject(AuthService) protected authService: AuthService,
     @Inject(CommandBus) protected commandBus: CommandBus,
   ) {}
@@ -112,7 +114,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtGuard)
   @HttpCode(200)
-  async getMe(@Request() req: Express.Request) {
+  async getMe(@Request() req: Express.Request): Promise<MyInfoType | null> {
     return await this.usersQueryRep.getMyInfo(
       req.user as AccessTokenPayloadType,
     );

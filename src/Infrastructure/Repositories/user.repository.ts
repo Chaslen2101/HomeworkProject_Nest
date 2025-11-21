@@ -1,41 +1,41 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocumentType } from '../../Domain/user.entity';
-import type { UserModelType } from '../../Domain/user.entity';
-
-@Injectable()
-export class UserRepository {
-  constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
-
-  async save(newUser: UserDocumentType): Promise<UserDocumentType> {
-    return await newUser.save();
-  }
-
-  async deleteUser(userId: string): Promise<boolean> {
-    const result = await this.UserModel.deleteOne({ _id: userId });
-    return result.deletedCount !== 0;
-  }
-
-  async findUserByLoginOrEmail(
-    loginOrEmail: string,
-  ): Promise<UserDocumentType | null> {
-    return await this.UserModel.findOne({
-      $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
-    });
-  }
-
-  async findUserByEmailConfirmCode(
-    code: string,
-  ): Promise<UserDocumentType | null> {
-    const neededUser: UserDocumentType | null = await this.UserModel.findOne({
-      'emailConfirmationInfo.confirmationCode': code,
-    });
-    if (!neededUser) {
-      return null;
-    }
-    return neededUser;
-  }
-}
+// import { Injectable } from '@nestjs/common';
+// import { InjectModel } from '@nestjs/mongoose';
+// import { User, UserDocumentType } from '../../Domain/user.entity';
+// import type { UserModelType } from '../../Domain/user.entity';
+//
+// @Injectable()
+// export class UserRepository {
+//   constructor(@InjectModel(User.name) private UserModel: UserModelType) {}
+//
+//   async save(newUser: UserDocumentType): Promise<UserDocumentType> {
+//     return await newUser.save();
+//   }
+//
+//   async deleteUser(userId: string): Promise<boolean> {
+//     const result = await this.UserModel.deleteOne({ _id: userId });
+//     return result.deletedCount !== 0;
+//   }
+//
+//   async findUserByLoginOrEmail(
+//     loginOrEmail: string,
+//   ): Promise<UserDocumentType | null> {
+//     return await this.UserModel.findOne({
+//       $or: [{ login: loginOrEmail }, { email: loginOrEmail }],
+//     });
+//   }
+//
+//   async findUserByEmailConfirmCode(
+//     code: string,
+//   ): Promise<UserDocumentType | null> {
+//     const neededUser: UserDocumentType | null = await this.UserModel.findOne({
+//       'emailConfirmationInfo.confirmationCode': code,
+//     });
+//     if (!neededUser) {
+//       return null;
+//     }
+//     return neededUser;
+//   }
+// }
 
 //   async confirmEmail(userId: string): Promise<boolean> {
 //     const result = await this.UserModel.updateOne(

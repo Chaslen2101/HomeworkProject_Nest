@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Session } from '../../../Domain/session.entity';
+import { RefreshTokenPayloadType, SessionViewType } from '../../../Types/Types';
+import { mapToView } from '../../../Core/helper';
 
 @Injectable()
 export class SessionSqlRepository {
@@ -64,27 +66,39 @@ export class SessionSqlRepository {
   }
 
   async deleteSession(deviceId: string): Promise<boolean> {
-    await this.dataSource.query(
+    const result = await this.dataSource.query(
       `
         DELETE FROM session
         WHERE device_id = $1
         `,
       [deviceId],
     );
-    return true;
+    return result[1] === 1;
   }
 
-  // async deleteAllSessions(sessionsInfo: RefreshTokenPayloadType) {
-  //   return await this.sessionModel.deleteMany({
-  //     userId: sessionsInfo.sub,
-  //     deviceId: { $ne: sessionsInfo.deviceId },
-  //   });
-  // }
-  //
-  // async findAllMySessions(sessionsInfo: RefreshTokenPayloadType) {
-  //   const sessions: SessionDocumentType[] = await this.sessionModel.find({
-  //     userId: sessionsInfo.sub,
-  //   });
-  //   return mapToView.mapSessionsInfo(sessions);
-  // }
+  async findAllMySessions(
+    sessionsInfo: RefreshTokenPayloadType,
+  ): Promise<SessionViewType[]> {
+    const result = await this.dataSource.query(
+      `
+        SELECT *
+        FROM "session"
+        WHERE user_id = $1
+        `,
+      [sessionsInfo.sub],
+    );
+
+    return mapToView.mapSessionsInfo(result);
+  }
+
+  async deleteAllSessions(sessionsInfo: RefreshTokenPayloadType) {
+    const result = await this.dataSource.query(
+      `
+        DELETE FROM "session"
+        WHERE user_id = $1 AND device_id != $2
+        `,
+      [sessionsInfo.sub, sessionsInfo.deviceId],
+    );
+    return result[1] === 1;
+  }
 }

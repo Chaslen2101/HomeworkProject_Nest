@@ -58,8 +58,4 @@ export class UpdatePostDTO {
   @Trim()
   @IsNotEmpty()
   content: string;
-
-  @IsString()
-  @IsNotEmpty()
-  blogId: string;
 }

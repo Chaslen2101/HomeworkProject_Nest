@@ -18,7 +18,6 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UserQueryRep } from '../Infrastructure/Query-repositories/user.query-repository';
 import { UserService } from '../Application/user.service';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 import { CommandBus } from '@nestjs/cqrs';

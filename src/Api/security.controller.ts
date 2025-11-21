@@ -9,22 +9,25 @@ import {
   Param,
 } from '@nestjs/common';
 import { JwtRefreshGuard } from './Guards/Jwt/refresh.guard';
-import { SessionRepository } from '../Infrastructure/Repositories/session.repository';
-import { RefreshTokenPayloadType } from '../Types/Types';
+import { RefreshTokenPayloadType, SessionViewType } from '../Types/Types';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeleteSessionCommand } from '../Application/UseCases/Security/delete-session.usecase';
+import { SessionSqlRepository } from '../Infrastructure/Repositories/SQL/session-sql.repository';
 
 @Controller('security')
 export class SecurityController {
   constructor(
-    @Inject(SessionRepository) protected sessionRepository: SessionRepository,
+    @Inject(SessionSqlRepository)
+    protected sessionRepository: SessionSqlRepository,
     @Inject(CommandBus) protected commandBus: CommandBus,
   ) {}
 
   @Get('devices')
   @UseGuards(JwtRefreshGuard)
   @HttpCode(200)
-  async getDevices(@Request() req: Express.Request) {
+  async getDevices(
+    @Request() req: Express.Request,
+  ): Promise<SessionViewType[] | null> {
     return await this.sessionRepository.findAllMySessions(
       req.user as RefreshTokenPayloadType,
     );

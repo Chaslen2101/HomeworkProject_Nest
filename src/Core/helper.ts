@@ -2,29 +2,37 @@ import {
   CommentViewType,
   InputQueryType,
   UserViewType,
-  SessionsViewType,
+  SessionViewType,
   PostViewType,
   BlogViewType,
-  BlogPostQueryType,
+  BlogQueryType,
   UserQueryType,
   CommentQueryType,
   QueryHelperType,
   NewestLikesType,
+  PostQueryType,
 } from '../Types/Types';
-import { PostDocumentType } from '../Domain/post.schema';
-import { BlogDocumentType } from '../Domain/blog.schema';
 import { CommentDocumentType } from '../Domain/comment.schema';
-import { SessionDocumentType } from '../Domain/session.entity';
 import * as argon2 from 'argon2';
 
 export const queryHelper: QueryHelperType = {
-  blogPostQuery(query: InputQueryType): BlogPostQueryType {
+  blogQuery(query: InputQueryType): BlogQueryType {
     return {
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
       sortBy: query.sortBy ? query.sortBy : 'created_at',
       sortDirection: query.sortDirection ? query.sortDirection : 'desc',
-      searchNameTerm: query.searchNameTerm ? query.searchNameTerm : null,
+      searchNameTerm: query.searchNameTerm ? query.searchNameTerm : '%%',
+    };
+  },
+
+  postQuery(query: InputQueryType, blogId?: string): PostQueryType {
+    return {
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize ? +query.pageSize : 10,
+      sortBy: query.sortBy ? query.sortBy : 'created_at',
+      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      blogId: blogId ? blogId : null,
     };
   },
 
@@ -145,13 +153,13 @@ export const mapToView = {
     };
   },
 
-  mapSessionsInfo(sessions: SessionDocumentType[]): SessionsViewType[] {
-    return sessions.map((sessionInfo: SessionDocumentType) => {
+  mapSessionsInfo(sessions: any[]): SessionViewType[] {
+    return sessions.map((sessionInfo: any) => {
       return {
         ip: sessionInfo.ip,
         title: sessionInfo.title,
-        lastActiveDate: sessionInfo.lastActiveDate,
-        deviceId: sessionInfo.deviceId,
+        lastActiveDate: sessionInfo.last_active_date,
+        deviceId: sessionInfo.device_id,
       };
     });
   },
@@ -165,103 +173,103 @@ export const mapToView = {
   //   };
   // },
 
-  mapPost(post: PostDocumentType, userId?: string): PostViewType {
-    let status: string = 'None';
-
-    if (userId) {
-      if (post.likesInfo.likedBy.includes(userId)) {
-        status = 'Like';
-      }
-      if (post.likesInfo.dislikedBy.includes(userId)) {
-        status = 'Dislike';
-      }
-    }
-
-    const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
-      (newestLike) => {
-        return {
-          addedAt: newestLike.addedAt,
-          userId: newestLike.userId,
-          login: newestLike.login,
-        };
-      },
-    );
+  mapPost(post: any, userId?: string): PostViewType {
+    // let status: string = 'None';
+    //
+    // if (userId) {
+    //   if (post.likesInfo.likedBy.includes(userId)) {
+    //     status = 'Like';
+    //   }
+    //   if (post.likesInfo.dislikedBy.includes(userId)) {
+    //     status = 'Dislike';
+    //   }
+    // }
+    //
+    // const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
+    //   (newestLike) => {
+    //     return {
+    //       addedAt: newestLike.addedAt,
+    //       userId: newestLike.userId,
+    //       login: newestLike.login,
+    //     };
+    //   },
+    // );
     return {
-      id: post._id.toString(),
+      id: post.id,
       title: post.title,
-      shortDescription: post.shortDescription,
+      shortDescription: post.short_description,
       content: post.content,
-      blogId: post.blogId,
-      blogName: post.blogName,
-      createdAt: post.createdAt,
+      blogId: post.blog_id,
+      blogName: post.blog_name,
+      createdAt: post.created_at,
       extendedLikesInfo: {
-        likesCount: post.likesInfo.likedBy.length,
-        dislikesCount: post.likesInfo.dislikedBy.length,
-        myStatus: status,
-        newestLikes: newestLikes,
+        likesCount: 0, //post.likesInfo.likedBy.length,
+        dislikesCount: 0, //post.likesInfo.dislikedBy.length,
+        myStatus: 'None', //status,
+        newestLikes: [], //newestLikes,
       },
     };
   },
 
-  mapPosts(posts: PostDocumentType[], userId?: string): PostViewType[] {
-    return posts.map((post) => {
-      let status: string = 'None';
-
-      if (userId) {
-        if (post.likesInfo.likedBy.includes(userId)) {
-          status = 'Like';
-        }
-        if (post.likesInfo.dislikedBy.includes(userId)) {
-          status = 'Dislike';
-        }
-      }
-      const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
-        (newestLike) => {
-          return {
-            addedAt: newestLike.addedAt,
-            userId: newestLike.userId,
-            login: newestLike.login,
-          };
-        },
-      );
+  mapPosts(posts: any[], userId?: string): PostViewType[] {
+    return posts.map((post): any => {
+      // let status: string = 'None';
+      //
+      // if (userId) {
+      //   if (post.likesInfo.likedBy.includes(userId)) {
+      //     status = 'Like';
+      //   }
+      //   if (post.likesInfo.dislikedBy.includes(userId)) {
+      //     status = 'Dislike';
+      //   }
+      // }
+      // const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
+      //   (newestLike) => {
+      //     return {
+      //       addedAt: newestLike.addedAt,
+      //       userId: newestLike.userId,
+      //       login: newestLike.login,
+      //     };
+      //   },
+      // );
       return {
-        id: post._id.toString(),
+        id: post.id,
         title: post.title,
-        shortDescription: post.shortDescription,
+        shortDescription: post.short_description,
         content: post.content,
-        blogId: post.blogId,
-        blogName: post.blogName,
-        createdAt: post.createdAt,
+        blogId: post.blog_id,
+        blogName: post.blog_name,
+        createdAt: post.created_at,
         extendedLikesInfo: {
-          likesCount: post.likesInfo.likedBy.length,
-          dislikesCount: post.likesInfo.dislikedBy.length,
-          myStatus: status,
-          newestLikes: newestLikes,
+          likesCount: 0, //post.likesInfo.likedBy.length,
+          dislikesCount: 0, //post.likesInfo.dislikedBy.length,
+          myStatus: 'None', //status,
+          newestLikes: [], //newestLikes,
         },
       };
     });
   },
 
-  mapBlog(blog: BlogDocumentType): BlogViewType {
+  mapBlog(blog: any): BlogViewType {
     return {
-      id: blog._id.toString(),
+      id: blog.id,
       name: blog.name,
       description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
-      isMembership: blog.isMembership,
+      websiteUrl: blog.website_url,
+      createdAt: blog.created_at,
+      isMembership: blog.is_membership,
     };
   },
 
-  mapBlogs(blogs: BlogDocumentType[]): BlogViewType[] {
-    return blogs.map((blog: BlogDocumentType) => {
+  mapBlogs(blogs: any[]): BlogViewType[] {
+    return blogs.map((blog: any) => {
       return {
-        id: blog._id.toString(),
+        id: blog.id,
         name: blog.name,
         description: blog.description,
-        websiteUrl: blog.websiteUrl,
-        createdAt: blog.createdAt,
-        isMembership: blog.isMembership,
+        websiteUrl: blog.website_url,
+        createdAt: blog.created_at,
+        isMembership: blog.is_membership,
       };
     });
   },

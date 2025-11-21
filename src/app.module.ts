@@ -2,22 +2,12 @@ import { Module } from '@nestjs/common';
 import { AppController } from './Api/app.controller';
 import { AppService } from './Application/app.service';
 import { BlogController } from './Api/blog.contoller';
-import { BlogService } from './Application/blog.service';
-import { BlogQueryRep } from './Infrastructure/Query-repositories/blog.query-repository';
-import { BlogRepository } from './Infrastructure/Repositories/blog.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Blog, BlogSchema } from './Domain/blog.schema';
-import { Post, PostSchema } from './Domain/post.schema';
 import { PostService } from './Application/post.service';
-import { PostRepository } from './Infrastructure/Repositories/post.repository';
-import { PostQueryRep } from './Infrastructure/Query-repositories/post.query-repository';
 import { PostController } from './Api/post.controller';
 import { CommentQueryRep } from './Infrastructure/Query-repositories/comment.query-repository';
-import { CommentController } from './Api/comment.controller';
 import { Comment, CommentSchema } from './Domain/comment.schema';
 import { TestingController } from './Api/testing.controller';
-import { User, UserEntity } from './Domain/user.entity';
-import { UserQueryRep } from './Infrastructure/Query-repositories/user.query-repository';
 import { UserService } from './Application/user.service';
 import { UserController } from './Api/user.controller';
 import dotenv from 'dotenv';
@@ -30,17 +20,10 @@ import { AuthService } from './Application/auth.service';
 import { AuthController } from './Api/auth.controller';
 import { JwtStrategy } from './Api/Guards/Jwt/jwt.strategy';
 import { BasicStrategy } from './Api/Guards/Basic/basic.strategy';
-import { DeleteCommentCommandUseCase } from './Application/UseCases/Comment/delete-comment.usecase';
-import { UpdateCommentUseCase } from './Application/UseCases/Comment/update-comment.usecase';
-import { UpdateCommentLikeStatusUseCase } from './Application/UseCases/Comment/update-likestatus.usecase';
-import { CreateCommentForPostUseCase } from './Application/UseCases/Post/create-comment-for-post.usecase';
-import { UpdatePostLikeStatusUseCase } from './Application/UseCases/Post/update-likestatus.usecase';
 import { CommentRepository } from './Infrastructure/Repositories/comment.repository';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { LoginUseCase } from './Application/UseCases/Auth/login.usecase';
-import { SessionRepository } from './Infrastructure/Repositories/session.repository';
-import { Session, SessionEntity } from './Domain/session.entity';
 import { JwtRefreshStrategy } from './Api/Guards/Jwt/refresh.strategy';
 import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.usecase';
 import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
@@ -56,6 +39,18 @@ import { ConfirmPasswordRecoveryUseCase } from './Application/UseCases/Auth/conf
 import { UserSqlRepository } from './Infrastructure/Repositories/SQL/user-sql.repository';
 import { UserSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/user-sql.query-repository';
 import { SessionSqlRepository } from './Infrastructure/Repositories/SQL/session-sql.repository';
+import { BlogSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/blog-sql.query-repository';
+import { PostSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/post-sql.query-repository';
+import { BlogSqlRepository } from './Infrastructure/Repositories/SQL/blog-sql.repository';
+import { CreateBlogUseCase } from './Application/UseCases/Blog/create-blog.usecase';
+import { UpdateBlogUseCase } from './Application/UseCases/Blog/update-blog.usecase';
+import { DeleteBlogUseCase } from './Application/UseCases/Blog/delete-blog.usecase';
+import { PostSqlRepository } from './Infrastructure/Repositories/SQL/post-sql.repository';
+import { CreatePostUseCase } from './Application/UseCases/Post/create-post.usecase';
+import { BlogSAController } from './Api/blog.sa.controller';
+import { UpdatePostUseCase } from './Application/UseCases/Post/update-post.usecase';
+import { DeletePostUseCase } from './Application/UseCases/Post/delete-post.usecase';
+import { BlogService } from './Application/blog.service';
 
 dotenv.config();
 
@@ -66,11 +61,6 @@ const strategies = [
   JwtRefreshStrategy,
 ];
 const useCases = [
-  DeleteCommentCommandUseCase,
-  UpdateCommentUseCase,
-  UpdateCommentLikeStatusUseCase,
-  CreateCommentForPostUseCase,
-  UpdatePostLikeStatusUseCase,
   LoginUseCase,
   RefreshTokenUseCase,
   LogoutUseCase,
@@ -80,15 +70,17 @@ const useCases = [
   ResendEmailConfirmUseCase,
   PasswordRecoveryUseCase,
   ConfirmPasswordRecoveryUseCase,
+  CreateBlogUseCase,
+  UpdateBlogUseCase,
+  DeleteBlogUseCase,
+  CreatePostUseCase,
+  UpdatePostUseCase,
+  DeletePostUseCase,
 ];
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGO_URL!),
-    MongooseModule.forFeature([{ name: Blog.name, schema: BlogSchema }]),
-    MongooseModule.forFeature([{ name: Post.name, schema: PostSchema }]),
     MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
-    MongooseModule.forFeature([{ name: User.name, schema: UserEntity }]),
-    MongooseModule.forFeature([{ name: Session.name, schema: SessionEntity }]),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -130,8 +122,8 @@ const useCases = [
   controllers: [
     AppController,
     BlogController,
+    BlogSAController,
     PostController,
-    CommentController,
     TestingController,
     UserController,
     AuthController,
@@ -140,20 +132,18 @@ const useCases = [
   providers: [
     AppService,
     BlogService,
-    BlogRepository,
-    BlogQueryRep,
+    BlogSqlRepository,
+    BlogSqlQueryRepository,
     PostService,
-    PostRepository,
-    PostQueryRep,
+    PostSqlRepository,
+    PostSqlQueryRepository,
     CommentRepository,
     CommentQueryRep,
     UserService,
     UserSqlRepository,
     UserSqlQueryRepository,
-    UserQueryRep,
     EmailService,
     AuthService,
-    SessionRepository,
     SessionSqlRepository,
     ...strategies,
     ...useCases,

@@ -1,5 +1,3 @@
-import { SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model } from 'mongoose';
 import { DomainException } from './Exceptions/domain-exceptions';
 import { randomUUID } from 'node:crypto';
 import { RegistrationInputDTO } from '../Api/Input-dto/auth.input-dto';
@@ -120,8 +118,3 @@ export class User {
     return true;
   }
 }
-
-export type UserDocumentType = HydratedDocument<User>;
-export type UserModelType = Model<UserDocumentType> & typeof User;
-export const UserEntity = SchemaFactory.createForClass(User);
-UserEntity.loadClass(User);

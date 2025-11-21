@@ -1,9 +1,9 @@
 import { RefreshTokenPayloadType } from '../../../Types/Types';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { HttpStatus, Inject } from '@nestjs/common';
-import { SessionRepository } from '../../../Infrastructure/Repositories/session.repository';
-import { SessionDocumentType } from '../../../Domain/session.entity';
+import { Session } from '../../../Domain/session.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { SessionSqlRepository } from '../../../Infrastructure/Repositories/SQL/session-sql.repository';
 
 export class DeleteSessionCommand {
   constructor(
@@ -17,11 +17,12 @@ export class DeleteSessionUseCase
   implements ICommandHandler<DeleteSessionCommand, void>
 {
   constructor(
-    @Inject(SessionRepository) protected sessionRepository: SessionRepository,
+    @Inject(SessionSqlRepository)
+    protected sessionRepository: SessionSqlRepository,
   ) {}
 
   async execute(dto: DeleteSessionCommand): Promise<void> {
-    const neededSession: SessionDocumentType | null =
+    const neededSession: Session | null =
       await this.sessionRepository.findByDeviceId(dto.deviceId);
 
     if (!neededSession) {

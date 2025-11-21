@@ -21,7 +21,7 @@ export type BlogPagesType = {
   items: BlogViewType[];
 };
 
-export type BlogPostQueryType = {
+export type BlogQueryType = {
   pageNumber: number;
   pageSize: number;
   sortBy: string;
@@ -55,6 +55,14 @@ export type PostPagesType = {
   pageSize: number;
   totalCount: number;
   items: PostViewType[];
+};
+
+export type PostQueryType = {
+  pageNumber: number;
+  pageSize: number;
+  sortBy: string;
+  sortDirection: string;
+  blogId: string | null;
 };
 
 export type UserPagesType = {
@@ -124,7 +132,7 @@ export type NewestLikesType = {
   login: string;
 };
 
-export type SessionsViewType = {
+export type SessionViewType = {
   ip: string | undefined;
   title: string | undefined;
   lastActiveDate: Date;
@@ -147,7 +155,9 @@ export const ApiRequestsInfoSchema: Schema<ApiRequestsInfoClass> =
   });
 
 export type QueryHelperType = {
-  blogPostQuery(query: InputQueryType): BlogPostQueryType;
+  blogQuery(query: InputQueryType): BlogQueryType;
+
+  postQuery(query: InputQueryType, blogId?: string): PostQueryType;
 
   userQuery(query: InputQueryType): UserQueryType;
 

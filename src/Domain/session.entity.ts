@@ -1,6 +1,3 @@
-import { SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Model, Schema as MongooseSchema } from 'mongoose';
-
 export class Session {
   constructor(
     public userId: string,
@@ -39,9 +36,3 @@ export class Session {
     return true;
   }
 }
-
-export type SessionDocumentType = HydratedDocument<Session>;
-export type SessionModelType = Model<SessionDocumentType> & typeof Session;
-export const SessionEntity: MongooseSchema<Session> =
-  SchemaFactory.createForClass(Session);
-SessionEntity.loadClass(Session);
