@@ -19,7 +19,7 @@ export class BlogSqlQueryRepository {
            SELECT *
         FROM "blog" b
         WHERE b.name ILIKE $1 
-        ORDER BY %I %s, id ASC
+        ORDER BY %I %s, id %s
         LIMIT $2
         OFFSET $3
     `,

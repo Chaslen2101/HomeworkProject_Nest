@@ -26,7 +26,7 @@ export class PostSqlQueryRepository {
            SELECT *
         FROM "post" p
         WHERE p.blog_id = $1 OR $1 IS NULL
-        ORDER BY %I %s
+        ORDER BY %I %s, id %s
         LIMIT $2
         OFFSET $3
     `,
