@@ -32,6 +32,7 @@ export class PostSqlQueryRepository {
     `,
       sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
+      sanitizedQuery.sortDirection,
     );
 
     const offsetValue: number =

@@ -25,6 +25,7 @@ export class BlogSqlQueryRepository {
     `,
       sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
+      sanitizedQuery.sortDirection,
     );
 
     const offsetValue: number =
