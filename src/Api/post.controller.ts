@@ -51,10 +51,10 @@ export class PostController {
     return await this.postQueryRep.findManyPosts(queryHelper.postQuery(query));
   }
 
-  @Get(':postId')
+  @Get(':id')
   @HttpCode(200)
   async findPostById(
-    @Param('postId') postId: string,
+    @Param('id') postId: string,
     @Req() request: Request,
   ): Promise<PostViewType> {
     // const jwtToken: string | null = request.headers['authorization']

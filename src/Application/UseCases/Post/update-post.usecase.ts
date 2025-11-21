@@ -4,11 +4,14 @@ import { HttpStatus, Inject } from '@nestjs/common';
 import { PostSqlRepository } from '../../../Infrastructure/Repositories/SQL/post-sql.repository';
 import { UpdatePostDTO } from '../../../Api/Input-dto/post.input-dto';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { BlogSqlRepository } from '../../../Infrastructure/Repositories/SQL/blog-sql.repository';
+import { Blog } from '../../../Domain/blog.entity';
 
 export class UpdatePostCommand {
   constructor(
     public postId: string,
     public updatePostDTO: UpdatePostDTO,
+    public blogId: string,
   ) {}
 }
 
@@ -18,9 +21,16 @@ export class UpdatePostUseCase
 {
   constructor(
     @Inject(PostSqlRepository) protected postRepository: PostSqlRepository,
+    @Inject(BlogSqlRepository) protected blogRepository: BlogSqlRepository,
   ) {}
 
   async execute(dto: UpdatePostCommand): Promise<void> {
+    const neededBlog: Blog | null = await this.blogRepository.findById(
+      dto.blogId,
+    );
+    if (!neededBlog) {
+      throw new DomainException('Blog not found', HttpStatus.NOT_FOUND);
+    }
     const neededPost: Post | null = await this.postRepository.findById(
       dto.postId,
     );

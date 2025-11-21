@@ -140,9 +140,12 @@ export class BlogSAController {
   @HttpCode(204)
   async updatePostByID(
     @Param('postId') postId: string,
+    @Param('blogId') blogId: string,
     @Body() reqBody: UpdatePostDTO,
   ): Promise<void> {
-    await this.commandBus.execute(new UpdatePostCommand(postId, reqBody));
+    await this.commandBus.execute(
+      new UpdatePostCommand(postId, reqBody, blogId),
+    );
     return;
   }
 

@@ -71,6 +71,9 @@ export class PostSqlQueryRepository {
           `,
       [postId],
     );
+    if (result.length === 0) {
+      return null;
+    }
     return mapToView.mapPost(result[0]);
   }
 }
