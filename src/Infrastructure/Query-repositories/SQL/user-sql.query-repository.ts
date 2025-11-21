@@ -60,7 +60,7 @@ export class UserSqlQueryRepository {
       pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: result[0].count,
+      totalCount: Number(result[0].count),
       items: mappedUsers,
     };
   }
