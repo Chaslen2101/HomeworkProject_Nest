@@ -35,7 +35,7 @@ export class UserSqlQueryRepository {
   ): Promise<UserPagesType | null> {
     const beforeQuery = format(
       `
-           SELECT *
+           SELECT u.*, COUNT(*) OVER() as count
         FROM "user" u
         WHERE u.login ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $2 || '%'
         ORDER BY %I %s
@@ -55,19 +55,12 @@ export class UserSqlQueryRepository {
       offsetValue,
     ]);
 
-    const dbCount = await this.dataSource.query(
-      `
-        SELECT COUNT(*)
-        FROM "user"
-        `,
-    );
-    const totalCount: number = Number(dbCount[0].count);
     const mappedUsers: UserViewType[] = mapToView.mapUsers(result);
     return {
-      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
+      pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: result.length,
+      totalCount: result[0].count,
       items: mappedUsers,
     };
   }

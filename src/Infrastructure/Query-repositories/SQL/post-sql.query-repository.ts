@@ -19,7 +19,7 @@ export class PostSqlQueryRepository {
   ): Promise<PostPagesType> {
     const beforeQuery = format(
       `
-           SELECT *
+           SELECT p.*, COUNT(*) OVER() AS count
         FROM "post" p
         WHERE p.blog_id = $1 OR $1 IS NULL
         ORDER BY %I %s
@@ -39,20 +39,12 @@ export class PostSqlQueryRepository {
       offsetValue,
     ]);
 
-    const dbCount = await this.dataSource.query(
-      `
-        SELECT COUNT(*)
-        FROM "post"
-        `,
-    );
-
-    const totalCount: number = Number(dbCount[0].count);
     const mappedUsers: PostViewType[] = mapToView.mapPosts(result);
     return {
-      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
+      pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: result.length,
+      totalCount: result[0].count,
       items: mappedUsers,
     };
   }

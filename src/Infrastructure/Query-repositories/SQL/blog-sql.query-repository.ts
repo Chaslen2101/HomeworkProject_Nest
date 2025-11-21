@@ -16,7 +16,7 @@ export class BlogSqlQueryRepository {
   async findManyBlogs(sanitizedQuery: BlogQueryType): Promise<BlogPagesType> {
     const beforeQuery = format(
       `
-           SELECT *
+           SELECT b.*, COUNT(*) OVER() AS count
         FROM "blog" b
         WHERE b.name ILIKE '%' || $1 || '%'
         ORDER BY %I %s
@@ -34,21 +34,13 @@ export class BlogSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-
-    const dbCount = await this.dataSource.query(
-      `
-        SELECT COUNT(*)
-        FROM "blog"
-        `,
-    );
-
-    const totalCount: number = Number(dbCount[0].count);
+    console.log(result);
     const mappedUsers: BlogViewType[] = mapToView.mapBlogs(result);
     return {
-      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
+      pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: result.length,
+      totalCount: result[0].count,
       items: mappedUsers,
     };
   }
