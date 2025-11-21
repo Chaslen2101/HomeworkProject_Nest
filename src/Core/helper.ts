@@ -21,7 +21,7 @@ export const queryHelper: QueryHelperType = {
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
       sortBy: query.sortBy ? query.sortBy : 'created_at',
-      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      sortDirection: query.sortDirection ? query.sortDirection : 'asc',
       searchNameTerm: query.searchNameTerm ? query.searchNameTerm : '%%',
     };
   },
@@ -31,7 +31,7 @@ export const queryHelper: QueryHelperType = {
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
       sortBy: query.sortBy ? query.sortBy : 'created_at',
-      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      sortDirection: query.sortDirection ? query.sortDirection : 'asc',
       blogId: blogId ? blogId : null,
     };
   },

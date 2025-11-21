@@ -73,7 +73,7 @@ export class BlogController {
       //   ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
       //   : undefined;
       return await this.postQueryRep.findManyPosts(
-        queryHelper.postQuery(query, blogId),
+        queryHelper.postQuery(query),
       );
     }
   }

@@ -149,8 +149,11 @@ export class BlogSAController {
   @Delete(':blogId/posts/:postId')
   @UseGuards(BasicGuard)
   @HttpCode(204)
-  async deletePostById(@Param('postId') postId: string): Promise<void> {
-    await this.commandBus.execute(new DeletePostCommand(postId));
+  async deletePostById(
+    @Param('postId') postId: string,
+    @Param('blogId') blogId: string,
+  ): Promise<void> {
+    await this.commandBus.execute(new DeletePostCommand(postId, blogId));
     return;
   }
 }
