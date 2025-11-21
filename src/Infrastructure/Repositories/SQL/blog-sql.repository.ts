@@ -55,7 +55,7 @@ export class BlogSqlRepository {
     await this.dataSource.query(
       `
           UPDATE "blog"
-          SET name = $1, description = $2, websiteUrl = $3
+          SET name = $1, description = $2, website_url = $3
           WHERE id = $4
           `,
       [blog.name, blog.description, blog.websiteUrl, blog.id],

@@ -27,8 +27,8 @@ export class PostSqlQueryRepository {
         FROM "post" p
         WHERE p.blog_id = $1 OR $1 IS NULL
         ORDER BY %I %s
-        LIMIT $3
-        OFFSET $4
+        LIMIT $2
+        OFFSET $3
     `,
       sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
