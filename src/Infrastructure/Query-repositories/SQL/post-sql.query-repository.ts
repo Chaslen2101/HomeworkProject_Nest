@@ -26,7 +26,7 @@ export class PostSqlQueryRepository {
            SELECT *
         FROM "post" p
         WHERE p.blog_id = $1 OR $1 IS NULL
-        ORDER BY %I %s, id %s
+        ORDER BY %I %s
         LIMIT $2
         OFFSET $3
     `,
@@ -49,6 +49,7 @@ export class PostSqlQueryRepository {
         FROM "post"
         `,
     );
+    result.reverse();
     const totalCount: number = Number(dbCount[0].count);
     const mappedUsers: PostViewType[] = mapToView.mapPosts(result);
     return {

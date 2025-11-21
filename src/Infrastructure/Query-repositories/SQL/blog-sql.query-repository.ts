@@ -19,7 +19,7 @@ export class BlogSqlQueryRepository {
            SELECT *
         FROM "blog" b
         WHERE b.name ILIKE $1 
-        ORDER BY %I %s, id %s
+        ORDER BY %I %s
         LIMIT $2
         OFFSET $3
     `,
@@ -42,6 +42,7 @@ export class BlogSqlQueryRepository {
         FROM "blog"
         `,
     );
+    result.reverse();
     const totalCount: number = Number(dbCount[0].count);
     const mappedUsers: BlogViewType[] = mapToView.mapBlogs(result);
     return {
