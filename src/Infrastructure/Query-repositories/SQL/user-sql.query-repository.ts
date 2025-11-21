@@ -9,7 +9,7 @@ import {
   UserQueryType,
   UserViewType,
 } from '../../../Types/Types';
-import { mapToView } from '../../../Core/helper';
+import { mapToView, queryHelper } from '../../../Core/helper';
 
 @Injectable()
 export class UserSqlQueryRepository {
@@ -42,7 +42,7 @@ export class UserSqlQueryRepository {
         LIMIT $3
         OFFSET $4
     `,
-      sanitizedQuery.sortBy,
+      queryHelper.toSnake(sanitizedQuery.sortBy),
       sanitizedQuery.sortDirection,
     );
 

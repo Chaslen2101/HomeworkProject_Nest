@@ -162,6 +162,8 @@ export type QueryHelperType = {
   userQuery(query: InputQueryType): UserQueryType;
 
   commentsQuery(query: InputQueryType): CommentQueryType;
+
+  toSnake(str: string): string;
 };
 
 export type ExceptionResponseType = {

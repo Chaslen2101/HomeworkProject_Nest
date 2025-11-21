@@ -6,7 +6,7 @@ import {
   PostQueryType,
   PostViewType,
 } from '../../../Types/Types';
-import { mapToView } from '../../../Core/helper';
+import { mapToView, queryHelper } from '../../../Core/helper';
 import format from 'pg-format';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class PostSqlQueryRepository {
         LIMIT $2
         OFFSET $3
     `,
-      sanitizedQuery.sortBy,
+      queryHelper.toSnake(sanitizedQuery.sortBy),
       sanitizedQuery.sortDirection,
     );
 

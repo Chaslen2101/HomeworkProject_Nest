@@ -6,9 +6,8 @@ import {
   BlogPagesType,
   BlogQueryType,
   BlogViewType,
-  UserViewType,
 } from '../../../Types/Types';
-import { mapToView } from '../../../Core/helper';
+import { mapToView, queryHelper } from '../../../Core/helper';
 
 @Injectable()
 export class BlogSqlQueryRepository {
@@ -23,7 +22,7 @@ export class BlogSqlQueryRepository {
         LIMIT $2
         OFFSET $3
     `,
-      sanitizedQuery.sortBy,
+      queryHelper.toSnake(sanitizedQuery.sortBy),
       sanitizedQuery.sortDirection,
     );
 

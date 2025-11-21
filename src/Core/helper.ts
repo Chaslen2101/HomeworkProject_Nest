@@ -55,6 +55,10 @@ export const queryHelper: QueryHelperType = {
       sortDirection: query.sortDirection ? query.sortDirection : 'desc',
     };
   },
+
+  toSnake(str: string): string {
+    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  },
 };
 
 export const hashHelper = {
