@@ -66,8 +66,8 @@ export class PostSqlQueryRepository {
     const result = await this.dataSource.query(
       `
           SELECT *
-          FROM "post" p
-          WHERE p.id = $1
+          FROM "post"
+          WHERE id = $1
           `,
       [postId],
     );

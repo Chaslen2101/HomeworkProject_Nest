@@ -14,6 +14,8 @@ export class TestingController {
         TRUNCATE TABLE "password_recovery_info" CASCADE;
         TRUNCATE TABLE "session" CASCADE;
         TRUNCATE TABLE "user" CASCADE;
+        TRUNCATE TABLE "post" CASCADE;
+        TRUNCATE TABLE "blog" CASCADE;
         `,
     );
     return;

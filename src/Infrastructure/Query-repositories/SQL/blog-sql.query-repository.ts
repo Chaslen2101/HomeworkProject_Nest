@@ -20,8 +20,8 @@ export class BlogSqlQueryRepository {
         FROM "blog" b
         WHERE b.name ILIKE $1 
         ORDER BY %I %s
-        LIMIT $3
-        OFFSET $4
+        LIMIT $2
+        OFFSET $3
     `,
       sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
