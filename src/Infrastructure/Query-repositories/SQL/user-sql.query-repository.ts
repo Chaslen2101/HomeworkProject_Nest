@@ -33,6 +33,7 @@ export class UserSqlQueryRepository {
   async findManyUsersByLoginOrEmail(
     sanitizedQuery: UserQueryType,
   ): Promise<UserPagesType | null> {
+    const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
            SELECT u.*, COUNT(*) OVER() as count
@@ -42,7 +43,7 @@ export class UserSqlQueryRepository {
         LIMIT $3
         OFFSET $4
     `,
-      queryHelper.toSnake(sanitizedQuery.sortBy),
+      sortBy,
       sanitizedQuery.sortDirection,
     );
 

@@ -17,6 +17,7 @@ export class PostSqlQueryRepository {
     sanitizedQuery: PostQueryType,
     // user?: AccessTokenPayloadType,
   ): Promise<PostPagesType> {
+    const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
            SELECT p.*, COUNT(*) OVER() AS count
@@ -26,7 +27,7 @@ export class PostSqlQueryRepository {
         LIMIT $2
         OFFSET $3
     `,
-      queryHelper.toSnake(sanitizedQuery.sortBy),
+      sortBy,
       sanitizedQuery.sortDirection,
     );
 

@@ -13,6 +13,7 @@ import { mapToView, queryHelper } from '../../../Core/helper';
 export class BlogSqlQueryRepository {
   constructor(@InjectDataSource() protected dataSource: DataSource) {}
   async findManyBlogs(sanitizedQuery: BlogQueryType): Promise<BlogPagesType> {
+    const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
            SELECT b.*, COUNT(*) OVER() AS count
@@ -22,7 +23,7 @@ export class BlogSqlQueryRepository {
         LIMIT $2
         OFFSET $3
     `,
-      queryHelper.toSnake(sanitizedQuery.sortBy),
+      sortBy,
       sanitizedQuery.sortDirection,
     );
 
