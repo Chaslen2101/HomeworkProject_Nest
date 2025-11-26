@@ -80,10 +80,17 @@ export class CommentSqlQueryRepository {
     const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
-      WITH comment_with_likes AS (SELECT *
+      WITH comment_with_likes AS (
+          SELECT 
+                c.*, 
+                ls.user_id AS like_user_id, 
+                ls.user_login AS like_user_login, 
+                ls.status, 
+                ls.entity_id, 
+                ls.added_at
         FROM comment c 
         LEFT JOIN LATERAL(
-        SELECT c.*, ls.user_id AS like_user_id, ls.user_login AS like_user_login, ls.status, ls.entity_id, ls.added_at
+        SELECT *
         FROM like_status ls
         WHERE ls.entity_id = c.id
         ORDER BY added_at DESC
