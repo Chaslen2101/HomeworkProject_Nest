@@ -80,13 +80,13 @@ export class PostSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-
+    const totalCount: number = result[0] ? Number(result[0].count) : 0;
     const mappedPosts: PostViewType[] = mapToView.mapPosts(result);
     return {
       pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: Number(result[0].count),
+      totalCount: totalCount,
       items: mappedPosts,
     };
   }

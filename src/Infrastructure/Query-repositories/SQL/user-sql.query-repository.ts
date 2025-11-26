@@ -55,13 +55,13 @@ export class UserSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-
+    const totalCount: number = result[0] ? Number(result[0].count) : 0;
     const mappedUsers: UserViewType[] = mapToView.mapUsers(result);
     return {
-      pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
+      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
-      totalCount: Number(result[0].count),
+      totalCount: totalCount,
       items: mappedUsers,
     };
   }
