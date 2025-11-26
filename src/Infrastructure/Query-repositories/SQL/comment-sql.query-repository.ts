@@ -83,7 +83,7 @@ export class CommentSqlQueryRepository {
       WITH comment_with_likes AS (SELECT *
         FROM comment c 
         LEFT JOIN LATERAL(
-        SELECT *
+        SELECT c.*, ls.user_id AS like_user_id, ls.user_login AS like_user_login, ls.status, ls.entity_id, ls.added_at
         FROM like_status ls
         WHERE ls.entity_id = c.id
         ORDER BY added_at DESC
