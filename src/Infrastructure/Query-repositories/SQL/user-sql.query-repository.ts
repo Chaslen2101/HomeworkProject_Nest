@@ -36,7 +36,7 @@ export class UserSqlQueryRepository {
     const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
-           SELECT u.*, COUNT(*) OVER() as count
+        SELECT u.*, COUNT(*) OVER() AS count
         FROM "user" u
         WHERE u.login ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $2 || '%'
         ORDER BY %I %s
