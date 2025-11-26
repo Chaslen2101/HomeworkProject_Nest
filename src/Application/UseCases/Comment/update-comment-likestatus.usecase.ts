@@ -1,11 +1,12 @@
 import { UpdateCommentLikeStatusDTO } from '../../../Api/Input-dto/comment.input-dto';
 import { CommandHandler } from '@nestjs/cqrs';
 import { HttpStatus, Inject } from '@nestjs/common';
-import { CommentRepository } from '../../../Infrastructure/Repositories/comment.repository';
-import { CommentDocumentType } from '../../../Domain/comment.schema';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 
 import { AccessTokenPayloadType } from '../../../Types/Types';
+import { CommentSqlRepository } from '../../../Infrastructure/Repositories/SQL/comment-sql.repository';
+import { LikeStatusSqlRepository } from '../../../Infrastructure/Repositories/SQL/like-status-sql.repository';
+import { Comment } from '../../../Domain/comment.entity';
 
 export class UpdateCommentLikeStatusCommand {
   constructor(
@@ -18,25 +19,25 @@ export class UpdateCommentLikeStatusCommand {
 @CommandHandler(UpdateCommentLikeStatusCommand)
 export class UpdateCommentLikeStatusUseCase {
   constructor(
-    @Inject(CommentRepository) protected commentRepository: CommentRepository,
+    @Inject(CommentSqlRepository)
+    protected commentRepository: CommentSqlRepository,
+    @Inject(LikeStatusSqlRepository)
+    protected likeStatusRepository: LikeStatusSqlRepository,
   ) {}
 
   async execute(dto: UpdateCommentLikeStatusCommand) {
-    const neededComment: CommentDocumentType | null =
-      await this.commentRepository.findById(dto.commentId);
+    const neededComment: Comment | null = await this.commentRepository.findById(
+      dto.commentId,
+    );
     if (!neededComment) {
       throw new DomainException('Comment not found', HttpStatus.NOT_FOUND);
     }
 
-    const isUpdated: boolean = neededComment.updateLikeStatus(
+    await this.likeStatusRepository.updateLikeStatus(
       dto.updateLikeStatusDTO.likeStatus,
-      dto.user.sub,
+      dto.user,
+      dto.commentId,
     );
-    if (!isUpdated) {
-      throw new DomainException('Invalid like status', HttpStatus.FORBIDDEN);
-    }
-
-    await this.commentRepository.save(neededComment);
     return true;
   }
 }

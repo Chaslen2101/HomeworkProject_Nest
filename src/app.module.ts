@@ -2,11 +2,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './Api/app.controller';
 import { AppService } from './Application/app.service';
 import { BlogController } from './Api/blog.contoller';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PostService } from './Application/post.service';
 import { PostController } from './Api/post.controller';
-import { CommentQueryRep } from './Infrastructure/Query-repositories/comment.query-repository';
-import { Comment, CommentSchema } from './Domain/comment.schema';
+import { Comment } from './Domain/comment.entity';
 import { TestingController } from './Api/testing.controller';
 import { UserService } from './Application/user.service';
 import { UserController } from './Api/user.controller';
@@ -20,7 +18,6 @@ import { AuthService } from './Application/auth.service';
 import { AuthController } from './Api/auth.controller';
 import { JwtStrategy } from './Api/Guards/Jwt/jwt.strategy';
 import { BasicStrategy } from './Api/Guards/Basic/basic.strategy';
-import { CommentRepository } from './Infrastructure/Repositories/comment.repository';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { LoginUseCase } from './Application/UseCases/Auth/login.usecase';
@@ -51,6 +48,14 @@ import { BlogSAController } from './Api/blog.sa.controller';
 import { UpdatePostUseCase } from './Application/UseCases/Post/update-post.usecase';
 import { DeletePostUseCase } from './Application/UseCases/Post/delete-post.usecase';
 import { BlogService } from './Application/blog.service';
+import { UpdatePostLikeStatusUseCase } from './Application/UseCases/Post/update-post-likestatus.usecase';
+import { LikeStatusSqlRepository } from './Infrastructure/Repositories/SQL/like-status-sql.repository';
+import { CommentSqlRepository } from './Infrastructure/Repositories/SQL/comment-sql.repository';
+import { CreateCommentForPostUseCase } from './Application/UseCases/Comment/create-comment-for-post.usecase';
+import { CommentSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/comment-sql.query-repository';
+import { UpdateCommentLikeStatusUseCase } from './Application/UseCases/Comment/update-comment-likestatus.usecase';
+import { UpdateCommentUseCase } from './Application/UseCases/Comment/update-comment.usecase';
+import { DeleteCommentUseCase } from './Application/UseCases/Comment/delete-comment.usecase';
 
 dotenv.config();
 
@@ -76,11 +81,16 @@ const useCases = [
   CreatePostUseCase,
   UpdatePostUseCase,
   DeletePostUseCase,
+  UpdatePostLikeStatusUseCase,
+  CreateCommentForPostUseCase,
+  UpdateCommentLikeStatusUseCase,
+  UpdateCommentUseCase,
+  DeleteCommentUseCase,
 ];
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGO_URL!),
-    MongooseModule.forFeature([{ name: Comment.name, schema: CommentSchema }]),
+    // MongooseModule.forRoot(process.env.MONGO_URL!),
+    // MongooseModule.forFeature([{ name: Comment.name, schema: CommentEntity }]),
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
@@ -137,14 +147,15 @@ const useCases = [
     PostService,
     PostSqlRepository,
     PostSqlQueryRepository,
-    CommentRepository,
-    CommentQueryRep,
+    CommentSqlRepository,
+    CommentSqlQueryRepository,
     UserService,
     UserSqlRepository,
     UserSqlQueryRepository,
     EmailService,
     AuthService,
     SessionSqlRepository,
+    LikeStatusSqlRepository,
     ...strategies,
     ...useCases,
   ],

@@ -1,13 +1,11 @@
 import { CreateUpdateCommentInputDTO } from '../../../Api/Input-dto/comment.input-dto';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
-import { CommentDocumentType } from '../../../Domain/comment.schema';
-import { CommentRepository } from '../../../Infrastructure/Repositories/comment.repository';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { ObjectId } from 'mongodb';
-import { Types } from 'mongoose';
 
 import { AccessTokenPayloadType } from '../../../Types/Types';
+import { CommentSqlRepository } from '../../../Infrastructure/Repositories/SQL/comment-sql.repository';
+import { Comment } from '../../../Domain/comment.entity';
 
 export class UpdateCommentCommand {
   constructor(
@@ -22,30 +20,21 @@ export class UpdateCommentUseCase
   implements ICommandHandler<UpdateCommentCommand, boolean>
 {
   constructor(
-    @Inject(CommentRepository) protected commentRepository: CommentRepository,
+    @Inject(CommentSqlRepository)
+    protected commentRepository: CommentSqlRepository,
   ) {}
   async execute(dto: UpdateCommentCommand) {
-    const neededComment: CommentDocumentType | null =
-      await this.commentRepository.findById(dto.commentId);
+    const neededComment: Comment | null = await this.commentRepository.findById(
+      dto.commentId,
+    );
     if (!neededComment) {
       throw new DomainException('Comment not found', HttpStatus.NOT_FOUND);
     }
-
-    if (
-      neededComment.commentatorInfo.userId.toString() !==
-      dto.user.sub.toString()
-    ) {
-      throw new DomainException(
-        'You cant update not yours comment',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-
     neededComment.updateCommentContent(
       dto.updateCommentData.content,
       dto.user.sub,
     );
-    await this.commentRepository.save(neededComment);
+    await this.commentRepository.update(neededComment);
 
     return true;
   }

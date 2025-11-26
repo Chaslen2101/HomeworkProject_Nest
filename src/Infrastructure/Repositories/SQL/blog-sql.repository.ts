@@ -8,6 +8,7 @@ import { Blog } from '../../../Domain/blog.entity';
 @Injectable()
 export class BlogSqlRepository {
   constructor(@InjectDataSource() protected dataSource: DataSource) {}
+
   async createNewBlog(blog: Blog): Promise<string> {
     const result = await this.dataSource.query(
       `

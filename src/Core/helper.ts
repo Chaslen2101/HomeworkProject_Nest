@@ -9,10 +9,8 @@ import {
   UserQueryType,
   CommentQueryType,
   QueryHelperType,
-  NewestLikesType,
   PostQueryType,
 } from '../Types/Types';
-import { CommentDocumentType } from '../Domain/comment.schema';
 import * as argon2 from 'argon2';
 
 export const queryHelper: QueryHelperType = {
@@ -78,60 +76,39 @@ export const hashHelper = {
 };
 
 export const mapToView = {
-  mapComments(
-    comments: CommentDocumentType[],
-    userId?: string,
-  ): CommentViewType[] {
-    return comments.map((comment: CommentDocumentType) => {
-      let status: string = 'None';
-
-      if (userId) {
-        if (comment.likesInfo.likedBy.includes(userId)) {
-          status = 'Like';
-        }
-        if (comment.likesInfo.dislikedBy.includes(userId)) {
-          status = 'Dislike';
-        }
-      }
+  mapComments(comments: any[]): CommentViewType[] {
+    return comments.map((comment: any) => {
+      const status: string = comment.status ? comment.status : 'None';
       return {
-        id: comment._id.toString(),
+        id: comment.id,
         content: comment.content,
         commentatorInfo: {
-          userId: comment.commentatorInfo.userId,
-          userLogin: comment.commentatorInfo.userLogin,
+          userId: comment.user_id,
+          userLogin: comment.user_login,
         },
-        createdAt: comment.createdAt,
+        createdAt: comment.created_at,
         likesInfo: {
-          likesCount: comment.likesInfo.likedBy.length,
-          dislikesCount: comment.likesInfo.dislikedBy.length,
+          likesCount: comment.likes_count,
+          dislikesCount: comment.dislikes_count,
           myStatus: status,
         },
       };
     });
   },
 
-  mapComment(comment: CommentDocumentType, userId?: string): CommentViewType {
-    let status: string = 'None';
-
-    if (userId) {
-      if (comment.likesInfo.likedBy.includes(userId)) {
-        status = 'Like';
-      }
-      if (comment.likesInfo.dislikedBy.includes(userId)) {
-        status = 'Dislike';
-      }
-    }
+  mapComment(comment: any): CommentViewType {
+    const status = comment.status ? comment.status : 'None';
     return {
-      id: comment._id.toString(),
+      id: comment.id,
       content: comment.content,
       commentatorInfo: {
-        userId: comment.commentatorInfo.userId,
-        userLogin: comment.commentatorInfo.userLogin,
+        userId: comment.user_id,
+        userLogin: comment.user_login,
       },
-      createdAt: comment.createdAt,
+      createdAt: comment.created_at,
       likesInfo: {
-        likesCount: comment.likesInfo.likedBy.length,
-        dislikesCount: comment.likesInfo.dislikedBy.length,
+        likesCount: comment.likes_count,
+        dislikesCount: comment.dislikes_count,
         myStatus: status,
       },
     };
@@ -177,27 +154,9 @@ export const mapToView = {
   //   };
   // },
 
-  mapPost(post: any, userId?: string): PostViewType {
-    // let status: string = 'None';
-    //
-    // if (userId) {
-    //   if (post.likesInfo.likedBy.includes(userId)) {
-    //     status = 'Like';
-    //   }
-    //   if (post.likesInfo.dislikedBy.includes(userId)) {
-    //     status = 'Dislike';
-    //   }
-    // }
-    //
-    // const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
-    //   (newestLike) => {
-    //     return {
-    //       addedAt: newestLike.addedAt,
-    //       userId: newestLike.userId,
-    //       login: newestLike.login,
-    //     };
-    //   },
-    // );
+  mapPost(post: any): PostViewType {
+    const status = post.status ? post.status : 'None';
+    const newestLikes = post.newest_likes ? post.newest_likes : [];
     return {
       id: post.id,
       title: post.title,
@@ -207,35 +166,18 @@ export const mapToView = {
       blogName: post.blog_name,
       createdAt: post.created_at,
       extendedLikesInfo: {
-        likesCount: 0, //post.likesInfo.likedBy.length,
-        dislikesCount: 0, //post.likesInfo.dislikedBy.length,
-        myStatus: 'None', //status,
-        newestLikes: [], //newestLikes,
+        likesCount: post.likes_count,
+        dislikesCount: post.dislikes_count,
+        myStatus: status,
+        newestLikes: newestLikes,
       },
     };
   },
 
-  mapPosts(posts: any[], userId?: string): PostViewType[] {
+  mapPosts(posts: any[]): PostViewType[] {
     return posts.map((post): any => {
-      // let status: string = 'None';
-      //
-      // if (userId) {
-      //   if (post.likesInfo.likedBy.includes(userId)) {
-      //     status = 'Like';
-      //   }
-      //   if (post.likesInfo.dislikedBy.includes(userId)) {
-      //     status = 'Dislike';
-      //   }
-      // }
-      // const newestLikes: NewestLikesType[] = post.likesInfo.newestLikes.map(
-      //   (newestLike) => {
-      //     return {
-      //       addedAt: newestLike.addedAt,
-      //       userId: newestLike.userId,
-      //       login: newestLike.login,
-      //     };
-      //   },
-      // );
+      const status = post.status ? post.status : 'None';
+      const newestLikes = post.newest_likes ? post.newest_likes : [];
       return {
         id: post.id,
         title: post.title,
@@ -245,10 +187,10 @@ export const mapToView = {
         blogName: post.blog_name,
         createdAt: post.created_at,
         extendedLikesInfo: {
-          likesCount: 0, //post.likesInfo.likedBy.length,
-          dislikesCount: 0, //post.likesInfo.dislikedBy.length,
-          myStatus: 'None', //status,
-          newestLikes: [], //newestLikes,
+          likesCount: post.likes_count,
+          dislikesCount: post.dislikes_count,
+          myStatus: status,
+          newestLikes: newestLikes,
         },
       };
     });

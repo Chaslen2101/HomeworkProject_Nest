@@ -21,6 +21,7 @@ import { BlogService } from '../Application/blog.service';
 import { PostService } from '../Application/post.service';
 import { JwtService } from '@nestjs/jwt';
 import type {
+  AccessTokenPayloadType,
   BlogPagesType,
   BlogViewType,
   InputQueryType,
@@ -49,8 +50,6 @@ export class BlogSAController {
     @Inject(PostSqlQueryRepository)
     protected postQueryRep: PostSqlQueryRepository,
     @Inject(CommandBus) protected commandBus: CommandBus,
-    protected blogService: BlogService,
-    protected postService: PostService,
     protected jwtService: JwtService,
   ) {}
 
@@ -123,12 +122,12 @@ export class BlogSAController {
     if (!neededBlog) {
       throw new HttpException('Blog not found', HttpStatus.NOT_FOUND);
     } else {
-      // const jwtToken: string | null = request.headers['authorization']
-      //   ? (request.headers['authorization'] as string)
-      //   : null;
-      // const user: AccessTokenPayloadType | undefined = jwtToken
-      //   ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
-      //   : undefined;
+      const jwtToken: string | null = request.headers['authorization']
+        ? (request.headers['authorization'] as string)
+        : null;
+      const user: AccessTokenPayloadType | undefined = jwtToken
+        ? this.jwtService.verify<AccessTokenPayloadType>(jwtToken.slice(7))
+        : undefined;
       return await this.postQueryRep.findManyPosts(
         queryHelper.postQuery(query, blogId),
       );

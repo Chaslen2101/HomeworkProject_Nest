@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import {
+  AccessTokenPayloadType,
   PostPagesType,
   PostQueryType,
   PostViewType,
@@ -15,17 +16,56 @@ export class PostSqlQueryRepository {
 
   async findManyPosts(
     sanitizedQuery: PostQueryType,
-    // user?: AccessTokenPayloadType,
+    user?: AccessTokenPayloadType,
   ): Promise<PostPagesType> {
     const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
-           SELECT p.*, COUNT(*) OVER() AS count
-        FROM "post" p
-        WHERE p.blog_id = $1 OR $1 IS NULL
+      WITH post_with_likes AS (SELECT *
+        FROM post p 
+        LEFT JOIN LATERAL(
+        SELECT *
+        FROM like_status ls
+        WHERE ls.entity_id = p.id
+        ORDER BY added_at DESC
+        LIMIT 3
+        ) newest_likes_table ON TRUE
+        WHERE p.blog_id = $1 OR $1 IS NOT DISTINCT FROM NULL
+          ),
+        agregated_likes AS (
+        SELECT 
+              pwl.id,
+              jsonb_agg(
+                  jsonb_build_object(
+                  'addedAt', pwl.added_at,
+                  'userId', pwl.user_id,
+                  'login', pwl.user_login
+                  )
+              ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
+        FROM post_with_likes pwl
+        GROUP BY pwl.id
+        )
+    SELECT 
+        p.*,
+        ls.status,
+        al.newest_likes, 
+         (
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likes_count
+             FROM like_status
+             WHERE entity_id = p.id
+         ),
+         (
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
+             FROM like_status
+             WHERE entity_id = p.id
+         ),
+        COUNT(*) OVER() AS total_count                   
+    FROM post p
+    LEFT JOIN agregated_likes al ON al.id = p.id
+    LEFT JOIN like_status ls ON ls.entity_id = p.id AND ls.user_id IS NOT DISTINCT FROM $2    
         ORDER BY %I %s
-        LIMIT $2
-        OFFSET $3
+        LIMIT $3
+        OFFSET $4
     `,
       sortBy,
       sanitizedQuery.sortDirection,
@@ -36,31 +76,70 @@ export class PostSqlQueryRepository {
 
     const result = await this.dataSource.query(beforeQuery, [
       sanitizedQuery.blogId,
+      user?.sub,
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
 
-    const mappedUsers: PostViewType[] = mapToView.mapPosts(result);
+    const mappedPosts: PostViewType[] = mapToView.mapPosts(result);
     return {
       pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
       totalCount: Number(result[0].count),
-      items: mappedUsers,
+      items: mappedPosts,
     };
   }
 
   async findPostById(
     postId: string,
-    // user?: AccessTokenPayloadType,
+    user?: AccessTokenPayloadType,
   ): Promise<PostViewType | null> {
     const result = await this.dataSource.query(
       `
-          SELECT *
-          FROM "post"
-          WHERE id = $1
+      WITH post_with_likes AS (SELECT *
+        FROM post p 
+        LEFT JOIN LATERAL(
+        SELECT *
+        FROM like_status ls
+        WHERE ls.entity_id = p.id
+        ORDER BY added_at DESC
+        LIMIT 3
+        ) newest_likes_table ON TRUE
+        WHERE p.id = $1
+          ),
+        agregated_likes AS (
+        SELECT 
+              jsonb_agg(
+                  jsonb_build_object(
+                  'addedAt', pwl.added_at,
+                  'userId', pwl.user_id,
+                  'login', pwl.user_login
+                  )
+              ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
+        FROM post_with_likes pwl
+        )
+    SELECT 
+        p.*,
+        ls.status,
+        al.newest_likes, 
+         (
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likes_count
+             FROM like_status
+             WHERE entity_id = p.id
+         ),
+         (
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
+             FROM like_status
+             WHERE entity_id = p.id
+         ),
+        COUNT(*) OVER() AS total_count                   
+    FROM post p
+    LEFT JOIN agregated_likes al ON TRUE
+    LEFT JOIN like_status ls ON ls.entity_id = p.id AND ls.user_id IS NOT DISTINCT FROM $2
+    WHERE p.id = $1 
           `,
-      [postId],
+      [postId, user?.sub],
     );
     if (result.length === 0) {
       return null;
