@@ -18,8 +18,8 @@ export class LikeStatusSqlRepository {
           VALUES ($1,$2,$3,$4,$5)
           ON CONFLICT (user_id, entity_id)
           DO UPDATE SET
-                status = $2
-          WHERE "like_status".status != $2
+                status = $3
+          WHERE "like_status".status != $3
           `,
       [user.sub, user.login, likeStatus, id, new Date()],
     );
