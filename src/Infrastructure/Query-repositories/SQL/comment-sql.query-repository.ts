@@ -29,7 +29,7 @@ export class CommentSqlQueryRepository {
                 ls.entity_id, 
                 ls.added_at  
         FROM like_status ls
-        WHERE ls.entity_id = c.id
+        WHERE ls.entity_id = c.id AND ls.status = 'Like'
         ORDER BY added_at DESC
         LIMIT 3
         ) newest_likes_table ON TRUE
@@ -92,7 +92,7 @@ export class CommentSqlQueryRepository {
                 ls.entity_id, 
                 ls.added_at  
         FROM like_status ls
-        WHERE ls.entity_id = c.id
+        WHERE ls.entity_id = c.id AND ls.status = 'Like'
         ORDER BY added_at DESC
         LIMIT 3
         ) newest_likes_table ON TRUE

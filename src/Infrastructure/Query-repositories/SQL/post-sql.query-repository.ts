@@ -26,7 +26,7 @@ export class PostSqlQueryRepository {
         LEFT JOIN LATERAL(
         SELECT *
         FROM like_status ls
-        WHERE ls.entity_id = p.id
+        WHERE ls.entity_id = p.id AND ls.status = 'Like'
         ORDER BY added_at DESC
         LIMIT 3
         ) newest_likes_table ON TRUE
@@ -102,7 +102,7 @@ export class PostSqlQueryRepository {
         LEFT JOIN LATERAL(
         SELECT *
         FROM like_status ls
-        WHERE ls.entity_id = p.id
+        WHERE ls.entity_id = p.id AND ls.status = 'Like'
         ORDER BY added_at DESC
         LIMIT 3
         ) newest_likes_table ON TRUE
