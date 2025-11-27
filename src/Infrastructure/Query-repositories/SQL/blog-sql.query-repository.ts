@@ -37,7 +37,7 @@ export class BlogSqlQueryRepository {
     const totalCount: number = result[0] ? Number(result[0].count) : 0;
     const mappedUsers: BlogViewType[] = mapToView.mapBlogs(result);
     return {
-      pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
+      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
       totalCount: totalCount,

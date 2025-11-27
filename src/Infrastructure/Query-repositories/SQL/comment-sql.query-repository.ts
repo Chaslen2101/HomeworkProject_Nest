@@ -84,11 +84,11 @@ export class CommentSqlQueryRepository {
           SELECT *
         FROM comment c 
         LEFT JOIN LATERAL(
-        SELECT  newest_likes_table.user_id AS like_user_id, 
-                newest_likes_table.user_login AS like_user_login, 
-                newest_likes_table.status, 
-                newest_likes_table.entity_id, 
-                newest_likes_table.added_at  
+        SELECT  ls.user_id AS like_user_id, 
+                ls.user_login AS like_user_login, 
+                ls.status, 
+                ls.entity_id, 
+                ls.added_at  
         FROM like_status ls
         WHERE ls.entity_id = c.id
         ORDER BY added_at DESC
@@ -148,7 +148,7 @@ export class CommentSqlQueryRepository {
     const totalCount: number = result[0] ? Number(result[0].count) : 0;
     const mappedComments: CommentViewType[] = mapToView.mapComments(result);
     return {
-      pagesCount: Math.ceil(result[0].count / sanitizedQuery.pageSize),
+      pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
       pageSize: sanitizedQuery.pageSize,
       totalCount: totalCount,
