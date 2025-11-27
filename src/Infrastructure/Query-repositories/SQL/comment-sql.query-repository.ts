@@ -25,7 +25,11 @@ export class CommentSqlQueryRepository {
       WITH comment_with_likes AS (SELECT *
         FROM comment c 
         LEFT JOIN LATERAL(
-        SELECT *
+        SELECT ls.user_id AS like_user_id, 
+                ls.user_login AS like_user_login, 
+                ls.status, 
+                ls.entity_id, 
+                ls.added_at  
         FROM like_status ls
         WHERE ls.entity_id = c.id
         ORDER BY added_at DESC
@@ -38,8 +42,8 @@ export class CommentSqlQueryRepository {
               jsonb_agg(
                   jsonb_build_object(
                   'addedAt', cwl.added_at,
-                  'userId', cwl.user_id,
-                  'login', cwl.user_login
+                  'userId', cwl.like_user_id,
+                  'login', cwl.like_user_login
                   )
               ) FILTER (WHERE cwl.added_at IS NOT NULL) as newest_likes
         FROM comment_with_likes cwl
