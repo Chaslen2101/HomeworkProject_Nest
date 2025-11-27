@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { SortDirection } from 'mongodb';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import {
@@ -7,7 +6,6 @@ import {
   CommentPagesType,
   CommentQueryType,
   CommentViewType,
-  PostViewType,
 } from '../../../Types/Types';
 import { mapToView, queryHelper } from '../../../Core/helper';
 import format from 'pg-format';

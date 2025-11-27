@@ -88,8 +88,8 @@ export const mapToView = {
         },
         createdAt: comment.created_at,
         likesInfo: {
-          likesCount: comment.likes_count,
-          dislikesCount: comment.dislikes_count,
+          likesCount: Number(comment.likes_count),
+          dislikesCount: Number(comment.dislikes_count),
           myStatus: status,
         },
       };
@@ -107,8 +107,8 @@ export const mapToView = {
       },
       createdAt: comment.created_at,
       likesInfo: {
-        likesCount: comment.likes_count,
-        dislikesCount: comment.dislikes_count,
+        likesCount: Number(comment.likes_count),
+        dislikesCount: Number(comment.dislikes_count),
         myStatus: status,
       },
     };
@@ -166,8 +166,8 @@ export const mapToView = {
       blogName: post.blog_name,
       createdAt: post.created_at,
       extendedLikesInfo: {
-        likesCount: post.likes_count,
-        dislikesCount: post.dislikes_count,
+        likesCount: Number(post.likes_count),
+        dislikesCount: Number(post.dislikes_count),
         myStatus: status,
         newestLikes: newestLikes,
       },
@@ -187,8 +187,8 @@ export const mapToView = {
         blogName: post.blog_name,
         createdAt: post.created_at,
         extendedLikesInfo: {
-          likesCount: post.likes_count,
-          dislikesCount: post.dislikes_count,
+          likesCount: Number(post.likes_count),
+          dislikesCount: Number(post.dislikes_count),
           myStatus: status,
           newestLikes: newestLikes,
         },
