@@ -53,7 +53,6 @@ export class CommentController {
 
     const neededComment: CommentViewType | null =
       await this.commentsQueryRep.findById(commentId, user);
-
     if (!neededComment) {
       throw new HttpException('Comment not found', HttpStatus.NOT_FOUND);
     }

@@ -56,6 +56,7 @@ import { CommentSqlQueryRepository } from './Infrastructure/Query-repositories/S
 import { UpdateCommentLikeStatusUseCase } from './Application/UseCases/Comment/update-comment-likestatus.usecase';
 import { UpdateCommentUseCase } from './Application/UseCases/Comment/update-comment.usecase';
 import { DeleteCommentUseCase } from './Application/UseCases/Comment/delete-comment.usecase';
+import { CommentController } from './Api/comment.controller';
 
 dotenv.config();
 
@@ -134,6 +135,7 @@ const useCases = [
     BlogController,
     BlogSAController,
     PostController,
+    CommentController,
     TestingController,
     UserController,
     AuthController,
