@@ -121,7 +121,7 @@ export class PostSqlQueryRepository {
         )
     SELECT 
         p.*,
-        ls.status,
+        ls2.status,
         al.newest_likes, 
          (
              SELECT COUNT (*) FILTER (WHERE status = 'Like') as likes_count
@@ -136,7 +136,7 @@ export class PostSqlQueryRepository {
         COUNT(*) OVER() AS total_count                   
     FROM post p
     LEFT JOIN agregated_likes al ON TRUE
-    LEFT JOIN like_status ls ON ls.entity_id = p.id AND ls.user_id IS NOT DISTINCT FROM $2
+    LEFT JOIN like_status ls2 ON ls2.entity_id = p.id AND ls2.user_id IS NOT DISTINCT FROM $2
     WHERE p.id = $1 
           `,
       [postId, user?.sub],
