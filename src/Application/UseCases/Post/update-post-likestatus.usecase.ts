@@ -32,7 +32,7 @@ export class UpdatePostLikeStatusUseCase
     if (!neededPost) {
       throw new DomainException('Post not found', HttpStatus.NOT_FOUND);
     }
-
+    console.log(dto.updateLikeStatusDTO.likeStatus);
     if (dto.updateLikeStatusDTO.likeStatus === 'None') {
       await this.likeStatusRepository.deleteLikeStatus(
         dto.user.sub,
