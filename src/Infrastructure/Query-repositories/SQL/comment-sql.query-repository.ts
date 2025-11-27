@@ -41,7 +41,7 @@ export class CommentSqlQueryRepository {
                   jsonb_build_object(
                   'login', cwl.like_user_login,
                   'userId', cwl.like_user_id,    
-                  'addedAt', cwl.added_at,
+                  'addedAt', cwl.added_at
                   )
               ) FILTER (WHERE cwl.added_at IS NOT NULL) as newest_likes
         FROM comment_with_likes cwl
@@ -104,7 +104,7 @@ export class CommentSqlQueryRepository {
                   jsonb_build_object(
                   'login', cwl.like_user_login,
                   'userId', cwl.like_user_id,    
-                  'addedAt', cwl.added_at,
+                  'addedAt', cwl.added_at
                   )
               ) FILTER (WHERE cwl.added_at IS NOT NULL) as newest_likes
         FROM comment_with_likes cwl

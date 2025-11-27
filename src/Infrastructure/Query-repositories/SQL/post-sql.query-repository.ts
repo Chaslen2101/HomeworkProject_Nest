@@ -39,7 +39,7 @@ export class PostSqlQueryRepository {
                   jsonb_build_object(
                   'login', pwl.user_login,
                   'userId', pwl.user_id,    
-                  'addedAt', pwl.added_at,
+                  'addedAt', pwl.added_at
                   )
               ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
         FROM post_with_likes pwl
@@ -115,7 +115,7 @@ export class PostSqlQueryRepository {
                   jsonb_build_object(
                   'login', pwl.user_login,
                   'userId', pwl.user_id,    
-                  'addedAt', pwl.added_at,
+                  'addedAt', pwl.added_at
                   )
               ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
         FROM post_with_likes pwl
