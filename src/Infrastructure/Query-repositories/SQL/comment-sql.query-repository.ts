@@ -81,8 +81,7 @@ export class CommentSqlQueryRepository {
     const beforeQuery = format(
       `
       WITH comment_with_likes AS (
-          SELECT 
-                c.*, 
+          SELECT c.*, 
                 ls.user_id AS like_user_id, 
                 ls.user_login AS like_user_login, 
                 ls.status, 
