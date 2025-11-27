@@ -43,6 +43,7 @@ export class CommentSqlQueryRepository {
                   'userId', cwl.like_user_id,    
                   'login', cwl.like_user_login
                   )
+                  ORDER BY cwl.added_at DESC
               ) FILTER (WHERE cwl.added_at IS NOT NULL) as newest_likes
         FROM comment_with_likes cwl
         )
@@ -106,6 +107,7 @@ export class CommentSqlQueryRepository {
                   'userId', cwl.like_user_id,    
                   'login', cwl.like_user_login
                   )
+                  ORDER BY cwl.added_at DESC
               ) FILTER (WHERE cwl.added_at IS NOT NULL) as newest_likes
         FROM comment_with_likes cwl
         GROUP BY cwl.id

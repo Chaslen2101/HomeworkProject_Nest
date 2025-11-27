@@ -40,7 +40,8 @@ export class PostSqlQueryRepository {
                   'addedAt', pwl.added_at,
                   'userId', pwl.user_id,    
                   'login', pwl.user_login
-                  )
+                  ) 
+                  ORDER BY pwl.added_at DESC
               ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
         FROM post_with_likes pwl
         GROUP BY pwl.id
@@ -116,6 +117,7 @@ export class PostSqlQueryRepository {
                   'userId', pwl.user_id,   
                   'login', pwl.user_login
                   )
+                  ORDER BY pwl.added_at DESC
               ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
         FROM post_with_likes pwl
         )
