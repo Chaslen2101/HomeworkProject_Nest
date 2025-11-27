@@ -87,7 +87,7 @@ export class CommentSqlQueryRepository {
                 ls.user_login AS like_user_login, 
                 ls.status, 
                 ls.entity_id, 
-                ls.added_at
+                ls.added_at 
         FROM comment c 
         LEFT JOIN LATERAL(
         SELECT *
