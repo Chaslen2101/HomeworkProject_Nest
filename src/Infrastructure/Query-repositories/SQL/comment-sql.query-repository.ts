@@ -59,8 +59,7 @@ export class CommentSqlQueryRepository {
              SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
              FROM like_status
              WHERE entity_id = c.id
-         ),
-        COUNT(*) OVER() AS total_count                   
+         )                 
     FROM comment c
     LEFT JOIN agregated_likes al ON TRUE
     LEFT JOIN like_status ls ON ls.entity_id = c.id AND ls.user_id IS NOT DISTINCT FROM $2
@@ -147,7 +146,7 @@ export class CommentSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-    const totalCount: number = result[0] ? Number(result[0].count) : 0;
+    const totalCount: number = result[0] ? Number(result[0].totla_count) : 0;
     const mappedComments: CommentViewType[] = mapToView.mapComments(result);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),

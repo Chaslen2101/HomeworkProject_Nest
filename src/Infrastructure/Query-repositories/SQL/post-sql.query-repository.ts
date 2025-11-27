@@ -80,7 +80,7 @@ export class PostSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-    const totalCount: number = result[0] ? Number(result[0].count) : 0;
+    const totalCount: number = result[0] ? Number(result[0].total_count) : 0;
     const mappedPosts: PostViewType[] = mapToView.mapPosts(result);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
@@ -132,8 +132,7 @@ export class PostSqlQueryRepository {
              SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
              FROM like_status
              WHERE entity_id = p.id
-         ),
-        COUNT(*) OVER() AS total_count                   
+         )                 
     FROM post p
     LEFT JOIN agregated_likes al ON TRUE
     LEFT JOIN like_status ls2 ON ls2.entity_id = p.id AND ls2.user_id IS NOT DISTINCT FROM $2

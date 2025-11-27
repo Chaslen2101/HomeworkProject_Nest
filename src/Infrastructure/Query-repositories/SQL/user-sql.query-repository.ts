@@ -36,7 +36,7 @@ export class UserSqlQueryRepository {
     const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
-        SELECT u.*, COUNT(*) OVER() AS count
+        SELECT u.*, COUNT(*) OVER() AS total_count
         FROM "user" u
         WHERE u.login ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $2 || '%'
         ORDER BY %I %s
@@ -55,7 +55,7 @@ export class UserSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-    const totalCount: number = result[0] ? Number(result[0].count) : 0;
+    const totalCount: number = result[0] ? Number(result[0].total_count) : 0;
     const mappedUsers: UserViewType[] = mapToView.mapUsers(result);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
