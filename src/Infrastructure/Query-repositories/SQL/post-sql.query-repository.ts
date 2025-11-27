@@ -35,11 +35,11 @@ export class PostSqlQueryRepository {
         agregated_likes AS (
         SELECT 
               pwl.id,
-              jsonb_agg(
-                  jsonb_build_object(
-                  'login', pwl.user_login,
+              json_agg(
+                  json_build_object(
+                  'addedAt', pwl.added_at,
                   'userId', pwl.user_id,    
-                  'addedAt', pwl.added_at
+                  'login', pwl.user_login
                   )
               ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
         FROM post_with_likes pwl
@@ -71,7 +71,6 @@ export class PostSqlQueryRepository {
       sortBy,
       sanitizedQuery.sortDirection,
     );
-
     const offsetValue: number =
       (sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize;
 
@@ -111,11 +110,11 @@ export class PostSqlQueryRepository {
           ),
         agregated_likes AS (
         SELECT 
-              jsonb_agg(
-                  jsonb_build_object(
-                  'login', pwl.user_login,
-                  'userId', pwl.user_id,    
-                  'addedAt', pwl.added_at
+              json_agg(
+                  json_build_object(
+                  'addedAt', pwl.added_at,
+                  'userId', pwl.user_id,   
+                  'login', pwl.user_login
                   )
               ) FILTER (WHERE pwl.added_at IS NOT NULL) as newest_likes
         FROM post_with_likes pwl
@@ -144,7 +143,6 @@ export class PostSqlQueryRepository {
     if (result.length === 0) {
       return null;
     }
-    console.log(result);
     return mapToView.mapPost(result[0]);
   }
 }
