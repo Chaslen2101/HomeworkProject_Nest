@@ -146,7 +146,7 @@ export class CommentSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-    const totalCount: number = result[0] ? Number(result[0].totla_count) : 0;
+    const totalCount: number = result[0] ? Number(result[0].total_count) : 0;
     const mappedComments: CommentViewType[] = mapToView.mapComments(result);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),

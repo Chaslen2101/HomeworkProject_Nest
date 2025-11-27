@@ -62,7 +62,8 @@ export class PostSqlQueryRepository {
         COUNT(*) OVER() AS total_count                   
     FROM post p
     LEFT JOIN agregated_likes al ON al.id = p.id
-    LEFT JOIN like_status ls ON ls.entity_id = p.id AND ls.user_id IS NOT DISTINCT FROM $2    
+    LEFT JOIN like_status ls ON ls.entity_id = p.id AND ls.user_id IS NOT DISTINCT FROM $2
+    WHERE p.blog_id = $1 OR $1 IS NOT DISTINCT FROM NULL    
         ORDER BY %I %s
         LIMIT $3
         OFFSET $4
@@ -143,6 +144,7 @@ export class PostSqlQueryRepository {
     if (result.length === 0) {
       return null;
     }
+    console.log(result);
     return mapToView.mapPost(result[0]);
   }
 }
