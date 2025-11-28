@@ -1,25 +1,31 @@
 import { Controller, Delete, HttpCode } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { UserTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/user-typeorm.entity';
+import { SessionTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/session-typeorm.entity';
+import { EmailConfirmInfoTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/emailConfirmInfo-typeorm.entity';
+import { PasswordRecoveryInfoTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/passwordRecoveryInfo-typeorm.entity';
 
 @Controller('testing')
 export class TestingController {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(UserTypeormEntity)
+    protected userRepository: Repository<UserTypeormEntity>,
+    @InjectRepository(SessionTypeormEntity)
+    protected sessionRepository: Repository<SessionTypeormEntity>,
+    @InjectRepository(EmailConfirmInfoTypeormEntity)
+    protected emailConfirmRepository: Repository<EmailConfirmInfoTypeormEntity>,
+    @InjectRepository(PasswordRecoveryInfoTypeormEntity)
+    protected passwordRecoveryRepository: Repository<PasswordRecoveryInfoTypeormEntity>,
+  ) {}
   @Delete('all-data')
   @HttpCode(204)
   async deleteAllData(): Promise<void> {
-    await this.dataSource.query(
-      `
-        TRUNCATE TABLE "like_status" CASCADE;
-        TRUNCATE TABLE "email_confirmation_info" CASCADE;
-        TRUNCATE TABLE "password_recovery_info" CASCADE;
-        TRUNCATE TABLE "session" CASCADE;
-        TRUNCATE TABLE "user" CASCADE;
-        TRUNCATE TABLE "comment" CASCADE;
-        TRUNCATE TABLE "post" CASCADE;
-        TRUNCATE TABLE "blog" CASCADE;
-        `,
-    );
+    await this.emailConfirmRepository.deleteAll();
+    await this.passwordRecoveryRepository.deleteAll();
+    await this.sessionRepository.deleteAll();
+    await this.userRepository.deleteAll();
     return;
   }
 }
