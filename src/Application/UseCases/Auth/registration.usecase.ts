@@ -53,7 +53,6 @@ export class RegistrationUseCase
       dto.registrationInputDTO.email,
       newEmailConfirmInfo.confirmationCode,
     );
-    console.log(newEmailConfirmInfo.confirmationCode);
     return newUser.id;
   }
 }

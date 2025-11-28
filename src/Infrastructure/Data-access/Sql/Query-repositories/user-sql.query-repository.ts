@@ -62,7 +62,7 @@ export class UserSqlQueryRepository {
         `u.${sanitizedQuery.sortBy}`,
         `${(sanitizedQuery.sortDirection as 'ASC') || 'DESC'}`,
       )
-      .limit(sanitizedQuery.pageSize)
+      .take(sanitizedQuery.pageSize)
       .skip(offsetValue)
       .getManyAndCount();
 
