@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Blog } from '../../../Domain/blog.entity';
+import { Blog } from '../../../../Domain/blog.entity';
 
 @Injectable()
 export class BlogSqlRepository {

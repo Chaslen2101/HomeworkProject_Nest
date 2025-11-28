@@ -1,6 +1,6 @@
 import { CommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { BlogSqlRepository } from '../../../Infrastructure/Repositories/SQL/blog-sql.repository';
+import { BlogSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/blog-sql.repository';
 
 export class DeleteBlogCommand {
   constructor(public blogId: string) {}

@@ -1,7 +1,7 @@
-import { RefreshTokenPayloadType } from '../../../Types/Types';
+import { RefreshTokenPayloadType } from '../../../Domain/Types/Types';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
-import { SessionSqlRepository } from '../../../Infrastructure/Repositories/SQL/session-sql.repository';
+import { SessionSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/session-sql.repository';
 
 export class LogoutCommand {
   constructor(public refreshTokenPayload: RefreshTokenPayloadType) {}
@@ -18,7 +18,6 @@ export class LogoutUseCase implements ICommandHandler<LogoutCommand, void> {
     await this.sessionRepository.deleteSession(
       dto.refreshTokenPayload.deviceId,
     );
-
     return;
   }
 }

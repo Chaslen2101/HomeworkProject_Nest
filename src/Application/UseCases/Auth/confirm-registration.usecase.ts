@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { ConfirmEmailInputDTO } from '../../../Api/Input-dto/auth.input-dto';
-import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { UserSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
 import { EmailConfirmationInfo } from '../../../Domain/user.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 

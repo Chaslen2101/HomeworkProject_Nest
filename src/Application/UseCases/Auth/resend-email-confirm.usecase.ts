@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { ResendConfirmCodeInputDTO } from '../../../Api/Input-dto/auth.input-dto';
-import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { UserSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
 import { EmailService } from '../../../Infrastructure/MailService/email.service';
 import { EmailConfirmationInfo, User } from '../../../Domain/user.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';

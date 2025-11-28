@@ -7,12 +7,16 @@ import {
   Inject,
   Delete,
   Param,
+  HttpException,
 } from '@nestjs/common';
 import { JwtRefreshGuard } from './Guards/Jwt/refresh.guard';
-import { RefreshTokenPayloadType, SessionViewType } from '../Types/Types';
+import {
+  RefreshTokenPayloadType,
+  SessionViewType,
+} from '../Domain/Types/Types';
 import { CommandBus } from '@nestjs/cqrs';
 import { DeleteSessionCommand } from '../Application/UseCases/Security/delete-session.usecase';
-import { SessionSqlRepository } from '../Infrastructure/Repositories/SQL/session-sql.repository';
+import { SessionSqlRepository } from '../Infrastructure/Data-access/Sql/Repositories/session-sql.repository';
 
 @Controller('security')
 export class SecurityController {
@@ -28,9 +32,14 @@ export class SecurityController {
   async getDevices(
     @Request() req: Express.Request,
   ): Promise<SessionViewType[] | null> {
-    return await this.sessionRepository.findAllMySessions(
-      req.user as RefreshTokenPayloadType,
-    );
+    const sessions: SessionViewType[] | null =
+      await this.sessionRepository.findAllMySessions(
+        req.user as RefreshTokenPayloadType,
+      );
+    if (!sessions) {
+      throw new HttpException('No such session found', 404);
+    }
+    return sessions;
   }
 
   @Delete('devices')

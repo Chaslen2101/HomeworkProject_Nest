@@ -27,7 +27,7 @@ import {
   MyInfoType,
   RefreshTokenPayloadType,
   TokenPairType,
-} from '../Types/Types';
+} from '../Domain/Types/Types';
 import { LoginCommand } from '../Application/UseCases/Auth/login.usecase';
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtRefreshGuard } from './Guards/Jwt/refresh.guard';
@@ -39,7 +39,7 @@ import { ConfirmRegistrationCommand } from '../Application/UseCases/Auth/confirm
 import { ResendEmailConfirmCommand } from '../Application/UseCases/Auth/resend-email-confirm.usecase';
 import { PasswordRecoveryCommand } from '../Application/UseCases/Auth/password-recovery.usecase';
 import { ConfirmPasswordRecoveryCommand } from '../Application/UseCases/Auth/confirm-password-recovery.usecase';
-import { UserSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/user-sql.query-repository';
+import { UserSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/user-sql.query-repository';
 
 @Controller('auth')
 export class AuthController {
@@ -126,7 +126,7 @@ export class AuthController {
   async refreshToken(
     @Request() req: Express.Request,
     @Res({ passthrough: true }) response: FastifyReply,
-  ) {
+  ): Promise<{ accessToken: string }> {
     const tokenPair: TokenPairType = await this.commandBus.execute(
       new RefreshTokenCommand(req.user as RefreshTokenPayloadType),
     );

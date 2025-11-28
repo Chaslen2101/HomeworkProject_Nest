@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { newPasswordInputDTO } from '../../../Api/Input-dto/auth.input-dto';
-import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { UserSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
 import { PasswordRecoveryInfo, User } from '../../../Domain/user.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { hashHelper } from '../../../Core/helper';
+import { hashHelper } from '../../../Infrastructure/Utils/helper';
 
 export class ConfirmPasswordRecoveryCommand {
   constructor(public confirmPasswordRecoveryDTO: newPasswordInputDTO) {}
@@ -42,7 +42,10 @@ export class ConfirmPasswordRecoveryUseCase
     );
 
     neededUser.setNewPassword(newHashedPassword);
-
+    await this.userRepository.changePassword(
+      neededUser.password,
+      neededUser.id,
+    );
     return;
   }
 }

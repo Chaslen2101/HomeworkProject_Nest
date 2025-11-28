@@ -1,10 +1,10 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Post } from '../../../Domain/post.entity';
 import { HttpStatus, Inject } from '@nestjs/common';
-import { PostSqlRepository } from '../../../Infrastructure/Repositories/SQL/post-sql.repository';
+import { PostSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/post-sql.repository';
 import { UpdatePostDTO } from '../../../Api/Input-dto/post.input-dto';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { BlogSqlRepository } from '../../../Infrastructure/Repositories/SQL/blog-sql.repository';
+import { BlogSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/blog-sql.repository';
 import { Blog } from '../../../Domain/blog.entity';
 
 export class UpdatePostCommand {

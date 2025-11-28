@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Comment } from '../../../Domain/comment.entity';
+import { Comment } from '../../../../Domain/comment.entity';
 
 @Injectable()
 export class CommentSqlRepository {

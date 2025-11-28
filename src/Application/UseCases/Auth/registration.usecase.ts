@@ -1,11 +1,11 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { RegistrationInputDTO } from '../../../Api/Input-dto/auth.input-dto';
-import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { UserSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
 import { EmailService } from '../../../Infrastructure/MailService/email.service';
 import { EmailConfirmationInfo, User } from '../../../Domain/user.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
-import { hashHelper } from '../../../Core/helper';
+import { hashHelper } from '../../../Infrastructure/Utils/helper';
 
 export class RegistrationCommand {
   constructor(public registrationInputDTO: RegistrationInputDTO) {}
@@ -53,6 +53,7 @@ export class RegistrationUseCase
       dto.registrationInputDTO.email,
       newEmailConfirmInfo.confirmationCode,
     );
+    console.log(newEmailConfirmInfo.confirmationCode);
     return newUser.id;
   }
 }

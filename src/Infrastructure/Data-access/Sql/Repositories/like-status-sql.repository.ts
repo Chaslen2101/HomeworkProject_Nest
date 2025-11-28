@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { AccessTokenPayloadType } from '../../../Types/Types';
+import { AccessTokenPayloadType } from '../../../../Domain/Types/Types';
 
 @Injectable()
 export class LikeStatusSqlRepository {

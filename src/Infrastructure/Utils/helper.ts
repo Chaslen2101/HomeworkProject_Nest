@@ -1,0 +1,71 @@
+import {
+  BlogQueryType,
+  CommentQueryType,
+  InputQueryType,
+  PostQueryType,
+  QueryHelperType,
+  UserQueryType,
+} from '../../Domain/Types/Types';
+import * as argon2 from 'argon2';
+
+export const queryHelper: QueryHelperType = {
+  blogQuery(query: InputQueryType): BlogQueryType {
+    return {
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize ? +query.pageSize : 10,
+      sortBy: query.sortBy ? query.sortBy : 'created_at',
+      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      searchNameTerm: query.searchNameTerm ? query.searchNameTerm : '%%',
+    };
+  },
+
+  postQuery(query: InputQueryType, blogId?: string): PostQueryType {
+    return {
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize ? +query.pageSize : 10,
+      sortBy: query.sortBy ? query.sortBy : 'created_at',
+      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      blogId: blogId ? blogId : null,
+    };
+  },
+
+  userQuery(query: InputQueryType): UserQueryType {
+    return {
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
+      sortBy: query.sortBy ? query.sortBy : 'createdAt',
+      sortDirection: query.sortDirection ? query.sortDirection : 'DESC',
+      searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
+      searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null,
+    };
+  },
+
+  commentsQuery(query: InputQueryType): CommentQueryType {
+    return {
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize ? +query.pageSize : 10,
+      sortBy: query.sortBy ? query.sortBy : 'created_at',
+      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+    };
+  },
+
+  toSnake(str: string): string {
+    return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
+  },
+};
+
+export const hashHelper = {
+  async hash(smthToHash: string): Promise<string> {
+    return await argon2.hash(smthToHash, {
+      type: argon2.argon2id, // Лучший вариант - защита от GPU и side-channel атак
+      memoryCost: 2 ** 16, // 64 MB памяти
+      timeCost: 3, // 3 итерации
+      parallelism: 1, // 1 поток
+      hashLength: 32, // 32 байта хеш
+    });
+  },
+
+  async compare(someStringToComp: string, hashedString: string) {
+    return await argon2.verify(hashedString, someStringToComp);
+  },
+};

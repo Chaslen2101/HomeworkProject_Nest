@@ -2,9 +2,9 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Post } from '../../../Domain/post.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 import { HttpStatus, Inject } from '@nestjs/common';
-import { PostSqlRepository } from '../../../Infrastructure/Repositories/SQL/post-sql.repository';
+import { PostSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/post-sql.repository';
 import { Blog } from '../../../Domain/blog.entity';
-import { BlogSqlRepository } from '../../../Infrastructure/Repositories/SQL/blog-sql.repository';
+import { BlogSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/blog-sql.repository';
 
 export class DeletePostCommand {
   constructor(

@@ -4,7 +4,7 @@ import type {
   BlogViewType,
   InputQueryType,
   PostPagesType,
-} from '../Types/Types';
+} from '../Domain/Types/Types';
 import {
   Controller,
   Get,
@@ -17,9 +17,9 @@ import {
   Req,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { queryHelper } from '../Core/helper';
-import { BlogSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/blog-sql.query-repository';
-import { PostSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/post-sql.query-repository';
+import { queryHelper } from '../Infrastructure/Utils/helper';
+import { BlogSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/blog-sql.query-repository';
+import { PostSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/post-sql.query-repository';
 import { CommandBus } from '@nestjs/cqrs';
 
 @Controller('blogs')

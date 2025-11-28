@@ -6,9 +6,10 @@ import {
   CommentPagesType,
   CommentQueryType,
   CommentViewType,
-} from '../../../Types/Types';
-import { mapToView, queryHelper } from '../../../Core/helper';
+} from '../../../../Domain/Types/Types';
+import { queryHelper } from '../../../Utils/helper';
 import format from 'pg-format';
+import { mapToView } from '../../../Mapper/view-model.mapper';
 
 @Injectable()
 export class CommentSqlQueryRepository {

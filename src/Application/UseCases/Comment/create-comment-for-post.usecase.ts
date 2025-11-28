@@ -4,9 +4,9 @@ import { HttpStatus, Inject } from '@nestjs/common';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 import { Comment } from '../../../Domain/comment.entity';
 import { CreateCommentForPostDTO } from '../../../Api/Input-dto/post.input-dto';
-import { AccessTokenPayloadType } from '../../../Types/Types';
-import { PostSqlRepository } from '../../../Infrastructure/Repositories/SQL/post-sql.repository';
-import { CommentSqlRepository } from '../../../Infrastructure/Repositories/SQL/comment-sql.repository';
+import { AccessTokenPayloadType } from '../../../Domain/Types/Types';
+import { PostSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/post-sql.repository';
+import { CommentSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/comment-sql.repository';
 
 export class CreateCommentForPostCommand {
   constructor(

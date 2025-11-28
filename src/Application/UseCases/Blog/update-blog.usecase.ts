@@ -3,7 +3,7 @@ import { CreateUpdateBlogInputDTO } from '../../../Api/Input-dto/blog.input-dto'
 import { Blog } from '../../../Domain/blog.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 import { HttpStatus, Inject } from '@nestjs/common';
-import { BlogSqlRepository } from '../../../Infrastructure/Repositories/SQL/blog-sql.repository';
+import { BlogSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/blog-sql.repository';
 
 export class UpdateBlogCommand {
   constructor(

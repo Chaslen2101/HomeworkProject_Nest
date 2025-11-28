@@ -1,6 +1,6 @@
 import { DomainException } from './Exceptions/domain-exceptions';
 import { CreateCommentForPostDTO } from '../Api/Input-dto/post.input-dto';
-import { AccessTokenPayloadType } from '../Types/Types';
+import { AccessTokenPayloadType } from './Types/Types';
 import { randomUUID } from 'node:crypto';
 
 export class Comment {

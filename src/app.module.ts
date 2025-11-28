@@ -1,14 +1,13 @@
+import dotenv from 'dotenv';
 import { Module } from '@nestjs/common';
 import { AppController } from './Api/app.controller';
 import { AppService } from './Application/app.service';
 import { BlogController } from './Api/blog.contoller';
 import { PostService } from './Application/post.service';
 import { PostController } from './Api/post.controller';
-import { Comment } from './Domain/comment.entity';
 import { TestingController } from './Api/testing.controller';
 import { UserService } from './Application/user.service';
 import { UserController } from './Api/user.controller';
-import dotenv from 'dotenv';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EmailService } from './Infrastructure/MailService/email.service';
 import { PassportModule } from '@nestjs/passport';
@@ -26,37 +25,41 @@ import { RefreshTokenUseCase } from './Application/UseCases/Auth/refresh-token.u
 import { LogoutUseCase } from './Application/UseCases/Auth/logout.usecase';
 import { DeleteSessionUseCase } from './Application/UseCases/Security/delete-session.usecase';
 import { SecurityController } from './Api/security.controller';
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { RegistrationUseCase } from './Application/UseCases/Auth/registration.usecase';
 import { ConfirmRegistrationUseCase } from './Application/UseCases/Auth/confirm-registration.usecase';
 import { ResendEmailConfirmUseCase } from './Application/UseCases/Auth/resend-email-confirm.usecase';
 import { PasswordRecoveryUseCase } from './Application/UseCases/Auth/password-recovery.usecase';
 import { ConfirmPasswordRecoveryUseCase } from './Application/UseCases/Auth/confirm-password-recovery.usecase';
-import { UserSqlRepository } from './Infrastructure/Repositories/SQL/user-sql.repository';
-import { UserSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/user-sql.query-repository';
-import { SessionSqlRepository } from './Infrastructure/Repositories/SQL/session-sql.repository';
-import { BlogSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/blog-sql.query-repository';
-import { PostSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/post-sql.query-repository';
-import { BlogSqlRepository } from './Infrastructure/Repositories/SQL/blog-sql.repository';
+import { UserSqlRepository } from './Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
+import { UserSqlQueryRepository } from './Infrastructure/Data-access/Sql/Query-repositories/user-sql.query-repository';
+import { SessionSqlRepository } from './Infrastructure/Data-access/Sql/Repositories/session-sql.repository';
+import { BlogSqlQueryRepository } from './Infrastructure/Data-access/Sql/Query-repositories/blog-sql.query-repository';
+import { PostSqlQueryRepository } from './Infrastructure/Data-access/Sql/Query-repositories/post-sql.query-repository';
+import { BlogSqlRepository } from './Infrastructure/Data-access/Sql/Repositories/blog-sql.repository';
 import { CreateBlogUseCase } from './Application/UseCases/Blog/create-blog.usecase';
 import { UpdateBlogUseCase } from './Application/UseCases/Blog/update-blog.usecase';
 import { DeleteBlogUseCase } from './Application/UseCases/Blog/delete-blog.usecase';
-import { PostSqlRepository } from './Infrastructure/Repositories/SQL/post-sql.repository';
+import { PostSqlRepository } from './Infrastructure/Data-access/Sql/Repositories/post-sql.repository';
 import { CreatePostUseCase } from './Application/UseCases/Post/create-post.usecase';
 import { BlogSAController } from './Api/blog.sa.controller';
 import { UpdatePostUseCase } from './Application/UseCases/Post/update-post.usecase';
 import { DeletePostUseCase } from './Application/UseCases/Post/delete-post.usecase';
 import { BlogService } from './Application/blog.service';
 import { UpdatePostLikeStatusUseCase } from './Application/UseCases/Post/update-post-likestatus.usecase';
-import { LikeStatusSqlRepository } from './Infrastructure/Repositories/SQL/like-status-sql.repository';
-import { CommentSqlRepository } from './Infrastructure/Repositories/SQL/comment-sql.repository';
+import { LikeStatusSqlRepository } from './Infrastructure/Data-access/Sql/Repositories/like-status-sql.repository';
+import { CommentSqlRepository } from './Infrastructure/Data-access/Sql/Repositories/comment-sql.repository';
 import { CreateCommentForPostUseCase } from './Application/UseCases/Comment/create-comment-for-post.usecase';
-import { CommentSqlQueryRepository } from './Infrastructure/Query-repositories/SQL/comment-sql.query-repository';
+import { CommentSqlQueryRepository } from './Infrastructure/Data-access/Sql/Query-repositories/comment-sql.query-repository';
 import { UpdateCommentLikeStatusUseCase } from './Application/UseCases/Comment/update-comment-likestatus.usecase';
 import { UpdateCommentUseCase } from './Application/UseCases/Comment/update-comment.usecase';
 import { DeleteCommentUseCase } from './Application/UseCases/Comment/delete-comment.usecase';
 import { CommentController } from './Api/comment.controller';
+import { UserTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/user-typeorm.entity';
+import { metadata } from 'reflect-metadata/no-conflict';
+import { EmailConfirmInfoTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/emailConfirmInfo-typeorm.entity';
+import { PasswordRecoveryInfoTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/passwordRecoveryInfo-typeorm.entity';
+import { SessionTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/session-typeorm.entity';
 
 dotenv.config();
 
@@ -129,6 +132,10 @@ const useCases = [
       synchronize: true,
       ssl: { rejectUnauthorized: false },
     }),
+    TypeOrmModule.forFeature([UserTypeormEntity]),
+    TypeOrmModule.forFeature([EmailConfirmInfoTypeormEntity]),
+    TypeOrmModule.forFeature([PasswordRecoveryInfoTypeormEntity]),
+    TypeOrmModule.forFeature([SessionTypeormEntity]),
   ],
   controllers: [
     AppController,

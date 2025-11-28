@@ -1,7 +1,7 @@
 import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
 import { Request, Response } from 'express';
-import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
+import { DomainException } from '../../Domain/Exceptions/domain-exceptions';
 import { FastifyReply } from 'fastify';
 
 @Catch(DomainException)

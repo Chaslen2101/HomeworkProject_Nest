@@ -13,7 +13,7 @@ import {
   Delete,
   Req,
 } from '@nestjs/common';
-import { AccessTokenPayloadType, CommentViewType } from '../Types/Types';
+import { AccessTokenPayloadType, CommentViewType } from '../Domain/Types/Types';
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
 import {
   CreateUpdateCommentInputDTO,
@@ -23,8 +23,8 @@ import { CommandBus } from '@nestjs/cqrs';
 import { UpdateCommentCommand } from '../Application/UseCases/Comment/update-comment.usecase';
 import { DeleteCommentCommand } from '../Application/UseCases/Comment/delete-comment.usecase';
 import { JwtService } from '@nestjs/jwt';
-import { PostSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/post-sql.query-repository';
-import { CommentSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/comment-sql.query-repository';
+import { PostSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/post-sql.query-repository';
+import { CommentSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/comment-sql.query-repository';
 import { UpdateCommentLikeStatusCommand } from '../Application/UseCases/Comment/update-comment-likestatus.usecase';
 
 @Controller('comments')

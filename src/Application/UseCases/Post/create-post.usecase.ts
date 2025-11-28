@@ -4,8 +4,8 @@ import { Blog } from '../../../Domain/blog.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { Post } from '../../../Domain/post.entity';
-import { BlogSqlRepository } from '../../../Infrastructure/Repositories/SQL/blog-sql.repository';
-import { PostSqlRepository } from '../../../Infrastructure/Repositories/SQL/post-sql.repository';
+import { BlogSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/blog-sql.repository';
+import { PostSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/post-sql.repository';
 
 export class CreatePostCommand {
   constructor(

@@ -5,7 +5,7 @@ import {
   HttpException,
 } from '@nestjs/common';
 import { HttpArgumentsHost } from '@nestjs/common/interfaces';
-import { ExceptionResponseType } from '../../../Types/Types';
+import { ExceptionResponseType } from '../../Domain/Types/Types';
 import { FastifyReply } from 'fastify';
 
 @Catch(HttpException)

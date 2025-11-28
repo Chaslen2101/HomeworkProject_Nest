@@ -3,7 +3,7 @@ import type {
   UserQueryType,
   UserPagesType,
   UserViewType,
-} from '../Types/Types';
+} from '../Domain/Types/Types';
 import {
   Body,
   Controller,
@@ -21,10 +21,11 @@ import {
 import { UserService } from '../Application/user.service';
 import { BasicGuard } from './Guards/Basic/basic.guard';
 import { CommandBus } from '@nestjs/cqrs';
-import { UserSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/user-sql.query-repository';
+import { UserSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/user-sql.query-repository';
 import { RegistrationInputDTO } from './Input-dto/auth.input-dto';
 import { RegistrationCommand } from '../Application/UseCases/Auth/registration.usecase';
-import { queryHelper } from '../Core/helper';
+import { queryHelper } from '../Infrastructure/Utils/helper';
+import { UserTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/user-typeorm.entity';
 
 @Controller('sa/users')
 export class UserController {

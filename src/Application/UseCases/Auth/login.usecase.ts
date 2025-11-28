@@ -6,13 +6,13 @@ import {
   AccessTokenPayloadType,
   RefreshTokenPayloadType,
   TokenPairType,
-} from '../../../Types/Types';
-import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
-import { SessionSqlRepository } from '../../../Infrastructure/Repositories/SQL/session-sql.repository';
+} from '../../../Domain/Types/Types';
+import { UserSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
+import { SessionSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/session-sql.repository';
 import { User } from '../../../Domain/user.entity';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 import { Session } from '../../../Domain/session.entity';
-import { hashHelper } from '../../../Core/helper';
+import { hashHelper } from '../../../Infrastructure/Utils/helper';
 
 export class LoginCommand {
   constructor(

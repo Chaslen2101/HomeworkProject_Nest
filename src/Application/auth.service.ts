@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { hashHelper } from '../Core/helper';
+import { hashHelper } from '../Infrastructure/Utils/helper';
 import { User } from '../Domain/user.entity';
 import { EmailService } from '../Infrastructure/MailService/email.service';
 import { JwtService } from '@nestjs/jwt';
@@ -7,8 +7,8 @@ import {
   AccessTokenPayloadType,
   RefreshTokenPayloadType,
   TokenPairType,
-} from '../Types/Types';
-import { UserSqlRepository } from '../Infrastructure/Repositories/SQL/user-sql.repository';
+} from '../Domain/Types/Types';
+import { UserSqlRepository } from '../Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
 
 @Injectable()
 export class AuthService {

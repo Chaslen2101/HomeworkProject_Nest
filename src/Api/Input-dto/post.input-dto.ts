@@ -1,5 +1,5 @@
 import { IsIn, IsNotEmpty, IsString, Length, MaxLength } from 'class-validator';
-import { Trim } from '../../Core/Decorators/Transform/trim';
+import { Trim } from '../Validator/trim';
 
 export class CreatePostDTO {
   @IsString()

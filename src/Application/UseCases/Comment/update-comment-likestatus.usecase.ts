@@ -3,9 +3,9 @@ import { CommandHandler } from '@nestjs/cqrs';
 import { HttpStatus, Inject } from '@nestjs/common';
 import { DomainException } from '../../../Domain/Exceptions/domain-exceptions';
 
-import { AccessTokenPayloadType } from '../../../Types/Types';
-import { CommentSqlRepository } from '../../../Infrastructure/Repositories/SQL/comment-sql.repository';
-import { LikeStatusSqlRepository } from '../../../Infrastructure/Repositories/SQL/like-status-sql.repository';
+import { AccessTokenPayloadType } from '../../../Domain/Types/Types';
+import { CommentSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/comment-sql.repository';
+import { LikeStatusSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/like-status-sql.repository';
 import { Comment } from '../../../Domain/comment.entity';
 
 export class UpdateCommentLikeStatusCommand {

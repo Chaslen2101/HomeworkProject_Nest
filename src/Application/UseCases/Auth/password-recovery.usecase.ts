@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { PasswordRecoveryInputDTO } from '../../../Api/Input-dto/auth.input-dto';
-import { UserSqlRepository } from '../../../Infrastructure/Repositories/SQL/user-sql.repository';
+import { UserSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/user-sql.repository';
 import { EmailService } from '../../../Infrastructure/MailService/email.service';
 import { PasswordRecoveryInfo, User } from '../../../Domain/user.entity';
 

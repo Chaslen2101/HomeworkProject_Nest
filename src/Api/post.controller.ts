@@ -23,12 +23,12 @@ import type {
   InputQueryType,
   PostPagesType,
   PostViewType,
-} from '../Types/Types';
-import { queryHelper } from '../Core/helper';
+} from '../Domain/Types/Types';
+import { queryHelper } from '../Infrastructure/Utils/helper';
 import { CommandBus } from '@nestjs/cqrs';
 import { JwtService } from '@nestjs/jwt';
-import { PostSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/post-sql.query-repository';
-import { BlogSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/blog-sql.query-repository';
+import { PostSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/post-sql.query-repository';
+import { BlogSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/blog-sql.query-repository';
 import { JwtGuard } from './Guards/Jwt/jwt.guard';
 import {
   CreateCommentForPostDTO,
@@ -36,7 +36,7 @@ import {
 } from './Input-dto/post.input-dto';
 import { UpdatePostLikeStatusCommand } from '../Application/UseCases/Post/update-post-likestatus.usecase';
 import { CreateCommentForPostCommand } from '../Application/UseCases/Comment/create-comment-for-post.usecase';
-import { CommentSqlQueryRepository } from '../Infrastructure/Query-repositories/SQL/comment-sql.query-repository';
+import { CommentSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/comment-sql.query-repository';
 
 @Controller('posts')
 export class PostController {

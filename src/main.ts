@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import {
@@ -6,8 +7,8 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
-import { HttpExceptionsFilter } from './Core/Exceptions/Filters/http-exception.filter';
-import { DomainExceptionFilter } from './Core/Exceptions/Filters/domain-exception.filter';
+import { HttpExceptionsFilter } from './Api/Filters/http-exception.filter';
+import { DomainExceptionFilter } from './Api/Filters/domain-exception.filter';
 import cookieParser from 'cookie-parser';
 import fastifyCookie from '@fastify/cookie';
 import {

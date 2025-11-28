@@ -2,7 +2,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { CreateUpdateBlogInputDTO } from '../../../Api/Input-dto/blog.input-dto';
 import { Blog } from '../../../Domain/blog.entity';
 import { Inject } from '@nestjs/common';
-import { BlogSqlRepository } from '../../../Infrastructure/Repositories/SQL/blog-sql.repository';
+import { BlogSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/blog-sql.repository';
 
 export class CreateBlogCommand {
   constructor(public createBlogDTO: CreateUpdateBlogInputDTO) {}
