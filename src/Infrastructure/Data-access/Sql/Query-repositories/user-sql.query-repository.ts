@@ -40,10 +40,10 @@ export class UserSqlQueryRepository {
       .createQueryBuilder('u')
       .where('u.login ILIKE :loginTerm OR u.email ILIKE :emailTerm', {
         loginTerm: sanitizedQuery.searchLoginTerm
-          ? sanitizedQuery.searchLoginTerm
+          ? `%${sanitizedQuery.searchLoginTerm}%`
           : '%%',
         emailTerm: sanitizedQuery.searchEmailTerm
-          ? sanitizedQuery.searchEmailTerm
+          ? `%${sanitizedQuery.searchEmailTerm}%`
           : '%%',
       })
       .orderBy(
