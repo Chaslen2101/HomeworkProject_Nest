@@ -38,7 +38,7 @@ export const queryHelper: QueryHelperType = {
       sortDirection: !query.sortDirection
         ? 'DESC'
         : sortDirAllowedValues.includes(query.sortDirection.toUpperCase())
-          ? query.sortDirection
+          ? query.sortDirection.toUpperCase()
           : 'DESC',
       searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
       searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null,
