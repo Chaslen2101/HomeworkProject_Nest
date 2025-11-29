@@ -33,19 +33,7 @@ export class UserSqlQueryRepository {
   async findManyUsersByLoginOrEmail(
     sanitizedQuery: UserQueryType,
   ): Promise<UserPagesType | null> {
-    // const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
-    // const beforeQuery = format(
-    //   `
-    //     SELECT u.*, COUNT(*) OVER() AS total_count
-    //     FROM "user" u
-    //     WHERE u.login ILIKE '%' || $1 || '%' OR u.email ILIKE '%' || $2 || '%'
-    //     ORDER BY %I %s
-    //     LIMIT $3
-    //     OFFSET $4
-    // `,
-    //   sortBy,
-    //   sanitizedQuery.sortDirection,
-    // );
+    console.log(sanitizedQuery);
     const offsetValue: number =
       (sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize;
     const [items, totalCount] = await this.userRepository
