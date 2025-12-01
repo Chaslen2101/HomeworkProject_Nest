@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import * as process from 'node:process';
 
 @Injectable()
 export class EmailService {
@@ -21,6 +22,7 @@ export class EmailService {
         html: `<h1>Password recovery</h1>
             <p>To confirm email please follow the link below:
             <a href=${confirmLink}>recovery password</a></p>`,
+        headers: { Authorization: `Bearer ${process.env.SENDGREED_PASSWORD}` },
       });
       return true;
     } catch (e) {

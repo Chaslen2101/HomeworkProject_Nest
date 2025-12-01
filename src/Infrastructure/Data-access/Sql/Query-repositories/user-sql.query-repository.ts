@@ -33,7 +33,6 @@ export class UserSqlQueryRepository {
   async findManyUsersByLoginOrEmail(
     sanitizedQuery: UserQueryType,
   ): Promise<UserPagesType | null> {
-    console.log(sanitizedQuery);
     const offsetValue: number =
       (sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize;
     const [items, totalCount] = await this.userRepository

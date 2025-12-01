@@ -56,7 +56,6 @@ import { UpdateCommentUseCase } from './Application/UseCases/Comment/update-comm
 import { DeleteCommentUseCase } from './Application/UseCases/Comment/delete-comment.usecase';
 import { CommentController } from './Api/comment.controller';
 import { UserTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/user-typeorm.entity';
-import { metadata } from 'reflect-metadata/no-conflict';
 import { EmailConfirmInfoTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/emailConfirmInfo-typeorm.entity';
 import { PasswordRecoveryInfoTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/passwordRecoveryInfo-typeorm.entity';
 import { SessionTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/session-typeorm.entity';
@@ -98,7 +97,7 @@ const useCases = [
     MailerModule.forRootAsync({
       useFactory: () => ({
         transport: {
-          host: 'smtp.sendgrid.net',
+          host: 'smtp.gmail.com',
           port: 587,
           secure: false,
           auth: {
@@ -114,14 +113,14 @@ const useCases = [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10m' },
+      signOptions: { expiresIn: '10s' },
     }),
     CqrsModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
           ttl: 10000,
-          limit: 5000000,
+          limit: 5,
         },
       ],
     }),
