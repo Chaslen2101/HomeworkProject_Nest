@@ -7,6 +7,7 @@ import {
   UserViewType,
 } from '../../Domain/Types/Types';
 import { UserTypeormEntity } from '../Data-access/Sql/Entities/user-typeorm.entity';
+import { SessionTypeormEntity } from '../Data-access/Sql/Entities/session-typeorm.entity';
 
 export class mapToView {
   static mapComments(comments: any[]): CommentViewType[] {
@@ -75,13 +76,13 @@ export class mapToView {
     };
   }
 
-  static mapSessionsInfo(sessions: any[]): SessionViewType[] {
-    return sessions.map((sessionInfo: any) => {
+  static mapSessionsInfo(sessions: SessionTypeormEntity[]): SessionViewType[] {
+    return sessions.map((sessionInfo: SessionTypeormEntity) => {
       return {
+        deviceId: sessionInfo.deviceId,
         ip: sessionInfo.ip,
+        lastActiveDate: sessionInfo.lastActiveDate,
         title: sessionInfo.title,
-        lastActiveDate: sessionInfo.last_active_date,
-        deviceId: sessionInfo.device_id,
       };
     });
   }
