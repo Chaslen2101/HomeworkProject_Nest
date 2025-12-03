@@ -5,6 +5,8 @@ import { UserTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/us
 import { SessionTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/session-typeorm.entity';
 import { EmailConfirmInfoTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/emailConfirmInfo-typeorm.entity';
 import { PasswordRecoveryInfoTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/passwordRecoveryInfo-typeorm.entity';
+import { PostTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/post-typeorm.entity';
+import { BlogTypeormEntity } from '../Infrastructure/Data-access/Sql/Entities/blog-typeorm.entity';
 
 @Controller('testing')
 export class TestingController {
@@ -18,6 +20,10 @@ export class TestingController {
     protected emailConfirmRepository: Repository<EmailConfirmInfoTypeormEntity>,
     @InjectRepository(PasswordRecoveryInfoTypeormEntity)
     protected passwordRecoveryRepository: Repository<PasswordRecoveryInfoTypeormEntity>,
+    @InjectRepository(PostTypeormEntity)
+    protected postRepository: Repository<PostTypeormEntity>,
+    @InjectRepository(BlogTypeormEntity)
+    protected blogRepository: Repository<BlogTypeormEntity>,
   ) {}
   @Delete('all-data')
   @HttpCode(204)
@@ -26,6 +32,8 @@ export class TestingController {
     await this.passwordRecoveryRepository.deleteAll();
     await this.sessionRepository.deleteAll();
     await this.userRepository.deleteAll();
+    await this.postRepository.deleteAll();
+    await this.blogRepository.deleteAll();
     return;
   }
 }
