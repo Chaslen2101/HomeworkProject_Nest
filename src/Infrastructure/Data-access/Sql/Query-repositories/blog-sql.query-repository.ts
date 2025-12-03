@@ -1,42 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import format from 'pg-format';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { DataSource, ILike, Repository } from 'typeorm';
 import {
   BlogPagesType,
   BlogQueryType,
   BlogViewType,
 } from '../../../../Domain/Types/Types';
-import { queryHelper } from '../../../Utils/helper';
 import { mapToView } from '../../../Mapper/view-model.mapper';
+import { BlogTypeormEntity } from '../Entities/blog-typeorm.entity';
 
 @Injectable()
 export class BlogSqlQueryRepository {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource() protected dataSource: DataSource,
+    @InjectRepository(BlogTypeormEntity)
+    protected blogRepository: Repository<BlogTypeormEntity>,
+  ) {}
   async findManyBlogs(sanitizedQuery: BlogQueryType): Promise<BlogPagesType> {
-    const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
-    const beforeQuery = format(
-      `
-           SELECT b.*, COUNT(*) OVER() AS count
-        FROM "blog" b
-        WHERE b.name ILIKE '%' || $1 || '%'
-        ORDER BY %I %s
-        LIMIT $2
-        OFFSET $3
-    `,
-      sortBy,
-      sanitizedQuery.sortDirection,
-    );
-
     const offsetValue: number =
       (sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize;
-    const result = await this.dataSource.query(beforeQuery, [
-      sanitizedQuery.searchNameTerm,
-      sanitizedQuery.pageSize,
-      offsetValue,
-    ]);
-    const totalCount: number = result[0] ? Number(result[0].count) : 0;
-    const mappedUsers: BlogViewType[] = mapToView.mapBlogs(result);
+    const [items, totalCount] = await this.blogRepository.findAndCount({
+      where: {
+        name: sanitizedQuery.searchNameTerm
+          ? ILike(`%${sanitizedQuery.searchNameTerm}%`)
+          : undefined,
+      },
+      order: { [sanitizedQuery.sortBy]: sanitizedQuery.sortDirection },
+      take: sanitizedQuery.pageSize,
+      skip: offsetValue,
+    });
+    const mappedUsers: BlogViewType[] = mapToView.mapBlogs(items);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,
@@ -47,17 +40,11 @@ export class BlogSqlQueryRepository {
   }
 
   async findBlogByID(blogId: string): Promise<BlogViewType | null> {
-    const result = await this.dataSource.query(
-      `
-        SELECT *
-        FROM "blog" b
-        WHERE b.id = $1
-        `,
-      [blogId],
-    );
-    if (result.length === 0) {
+    const result: BlogTypeormEntity | null =
+      await this.blogRepository.findOneBy({ id: blogId });
+    if (!result) {
       return null;
     }
-    return mapToView.mapBlog(result[0]);
+    return mapToView.mapBlog(result);
   }
 }

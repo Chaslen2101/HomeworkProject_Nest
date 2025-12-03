@@ -3,7 +3,7 @@ import { UserTypeormEntity } from './user-typeorm.entity';
 
 @Entity()
 export class SessionTypeormEntity {
-  @PrimaryColumn()
+  @PrimaryColumn('uuid')
   deviceId: string;
 
   @Column()

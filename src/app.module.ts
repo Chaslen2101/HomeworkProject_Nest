@@ -59,6 +59,8 @@ import { UserTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/use
 import { EmailConfirmInfoTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/emailConfirmInfo-typeorm.entity';
 import { PasswordRecoveryInfoTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/passwordRecoveryInfo-typeorm.entity';
 import { SessionTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/session-typeorm.entity';
+import { PostTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/post-typeorm.entity';
+import { BlogTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/blog-typeorm.entity';
 
 dotenv.config();
 
@@ -113,14 +115,14 @@ const useCases = [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10s' },
+      signOptions: { expiresIn: '10m' },
     }),
     CqrsModule,
     ThrottlerModule.forRoot({
       throttlers: [
         {
           ttl: 10000,
-          limit: 5,
+          limit: 5000000,
         },
       ],
     }),
@@ -135,6 +137,8 @@ const useCases = [
     TypeOrmModule.forFeature([EmailConfirmInfoTypeormEntity]),
     TypeOrmModule.forFeature([PasswordRecoveryInfoTypeormEntity]),
     TypeOrmModule.forFeature([SessionTypeormEntity]),
+    TypeOrmModule.forFeature([PostTypeormEntity]),
+    TypeOrmModule.forFeature([BlogTypeormEntity]),
   ],
   controllers: [
     AppController,

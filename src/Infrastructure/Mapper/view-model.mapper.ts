@@ -8,6 +8,8 @@ import {
 } from '../../Domain/Types/Types';
 import { UserTypeormEntity } from '../Data-access/Sql/Entities/user-typeorm.entity';
 import { SessionTypeormEntity } from '../Data-access/Sql/Entities/session-typeorm.entity';
+import { PostTypeormEntity } from '../Data-access/Sql/Entities/post-typeorm.entity';
+import { BlogTypeormEntity } from '../Data-access/Sql/Entities/blog-typeorm.entity';
 
 export class mapToView {
   static mapComments(comments: any[]): CommentViewType[] {
@@ -96,68 +98,68 @@ export class mapToView {
   //   };
   // },
 
-  static mapPost(post: any): PostViewType {
-    const status = post.status ? post.status : 'None';
-    const newestLikes = post.newest_likes ? post.newest_likes : [];
+  static mapPost(post: PostTypeormEntity): PostViewType {
+    // const status = post.status ? post.status : 'None';
+    // const newestLikes = post.newest_likes ? post.newest_likes : [];
     return {
       id: post.id,
       title: post.title,
-      shortDescription: post.short_description,
+      shortDescription: post.shortDescription,
       content: post.content,
-      blogId: post.blog_id,
-      blogName: post.blog_name,
-      createdAt: post.created_at,
+      blogId: post.blogId,
+      blogName: post.blogName,
+      createdAt: post.createdAt,
       extendedLikesInfo: {
-        likesCount: Number(post.likes_count),
-        dislikesCount: Number(post.dislikes_count),
-        myStatus: status,
-        newestLikes: newestLikes,
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: 'None',
+        newestLikes: [],
       },
     };
   }
 
-  static mapPosts(posts: any[]): PostViewType[] {
-    return posts.map((post): any => {
-      const status = post.status ? post.status : 'None';
-      const newestLikes = post.newest_likes ? post.newest_likes : [];
+  static mapPosts(posts: PostTypeormEntity[]): PostViewType[] {
+    return posts.map((post: PostTypeormEntity): PostViewType => {
+      // const status = post.status ? post.status : 'None';
+      // const newestLikes = post.newest_likes ? post.newest_likes : [];
       return {
         id: post.id,
         title: post.title,
-        shortDescription: post.short_description,
+        shortDescription: post.shortDescription,
         content: post.content,
-        blogId: post.blog_id,
-        blogName: post.blog_name,
-        createdAt: post.created_at,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt,
         extendedLikesInfo: {
-          likesCount: Number(post.likes_count),
-          dislikesCount: Number(post.dislikes_count),
-          myStatus: status,
-          newestLikes: newestLikes,
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: 'None',
+          newestLikes: [],
         },
       };
     });
   }
 
-  static mapBlog(blog: any): BlogViewType {
+  static mapBlog(blog: BlogTypeormEntity): BlogViewType {
     return {
       id: blog.id,
       name: blog.name,
       description: blog.description,
-      websiteUrl: blog.website_url,
-      createdAt: blog.created_at,
-      isMembership: blog.is_membership,
+      websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
+      isMembership: blog.isMembership,
     };
   }
 
-  static mapBlogs(blogs: any[]): BlogViewType[] {
-    return blogs.map((blog: any) => {
+  static mapBlogs(blogs: BlogTypeormEntity[]): BlogViewType[] {
+    return blogs.map((blog: BlogTypeormEntity): BlogViewType => {
       return {
         id: blog.id,
         name: blog.name,
         description: blog.description,
-        websiteUrl: blog.website_url,
-        createdAt: blog.created_at,
-        isMembership: blog.is_membership,
+        websiteUrl: blog.websiteUrl,
+        createdAt: blog.createdAt,
+        isMembership: blog.isMembership,
       };
     });
   }

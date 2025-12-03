@@ -17,8 +17,6 @@ import {
 import { BlogSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/blog-sql.query-repository';
 import { PostSqlQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/post-sql.query-repository';
 import { CommandBus } from '@nestjs/cqrs';
-import { BlogService } from '../Application/blog.service';
-import { PostService } from '../Application/post.service';
 import { JwtService } from '@nestjs/jwt';
 import type {
   AccessTokenPayloadType,

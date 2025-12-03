@@ -22,10 +22,9 @@ export class CreatePostUseCase implements ICommandHandler<CreatePostCommand> {
   ) {}
 
   async execute(dto: CreatePostCommand): Promise<any> {
-    const neededBlogId: string = dto.blogId;
-
-    const neededBlog: Blog | null =
-      await this.blogRepository.findById(neededBlogId);
+    const neededBlog: Blog | null = await this.blogRepository.findById(
+      dto.blogId,
+    );
 
     if (!neededBlog) {
       throw new DomainException('Blog not found', HttpStatus.NOT_FOUND);

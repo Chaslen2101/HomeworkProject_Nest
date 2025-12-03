@@ -8,6 +8,10 @@ import { EmailConfirmInfoTypeormEntity } from '../Data-access/Sql/Entities/email
 import { SessionTypeormEntity } from '../Data-access/Sql/Entities/session-typeorm.entity';
 import { Session } from '../../Domain/session.entity';
 import { PasswordRecoveryInfoTypeormEntity } from '../Data-access/Sql/Entities/passwordRecoveryInfo-typeorm.entity';
+import { BlogTypeormEntity } from '../Data-access/Sql/Entities/blog-typeorm.entity';
+import { Blog } from '../../Domain/blog.entity';
+import { Post } from '../../Domain/post.entity';
+import { PostTypeormEntity } from '../Data-access/Sql/Entities/post-typeorm.entity';
 
 export class TypeormEntityMapper {
   static userToTypeormEntity(userDomain: User): UserTypeormEntity {
@@ -93,6 +97,52 @@ export class TypeormEntityMapper {
       passwordRecoveryTypeorm.userId,
       passwordRecoveryTypeorm.confirmationCode,
       passwordRecoveryTypeorm.expirationDate,
+    );
+  }
+
+  static blogToTypeormEntity(blogDomain: Blog): BlogTypeormEntity {
+    const typeormEntity: BlogTypeormEntity = new BlogTypeormEntity();
+    typeormEntity.id = blogDomain.id;
+    typeormEntity.name = blogDomain.name;
+    typeormEntity.description = blogDomain.description;
+    typeormEntity.websiteUrl = blogDomain.websiteUrl;
+    typeormEntity.createdAt = blogDomain.createdAt;
+    typeormEntity.isMembership = blogDomain.isMembership;
+    return typeormEntity;
+  }
+
+  static blogToDomainEntity(blogTypeorm: BlogTypeormEntity): Blog {
+    return new Blog(
+      blogTypeorm.id,
+      blogTypeorm.name,
+      blogTypeorm.description,
+      blogTypeorm.websiteUrl,
+      blogTypeorm.createdAt,
+      blogTypeorm.isMembership,
+    );
+  }
+
+  static postToTypeormEntity(postDomain: Post): PostTypeormEntity {
+    const typeormEntity: PostTypeormEntity = new PostTypeormEntity();
+    typeormEntity.id = postDomain.id;
+    typeormEntity.title = postDomain.title;
+    typeormEntity.shortDescription = postDomain.shortDescription;
+    typeormEntity.content = postDomain.content;
+    typeormEntity.blogId = postDomain.blogId;
+    typeormEntity.blogName = postDomain.blogName;
+    typeormEntity.createdAt = postDomain.createdAt;
+    return typeormEntity;
+  }
+
+  static postToDomainEntity(postTypeorm: PostTypeormEntity): Post {
+    return new Post(
+      postTypeorm.id,
+      postTypeorm.title,
+      postTypeorm.shortDescription,
+      postTypeorm.content,
+      postTypeorm.blogId,
+      postTypeorm.blogName,
+      postTypeorm.createdAt,
     );
   }
 }

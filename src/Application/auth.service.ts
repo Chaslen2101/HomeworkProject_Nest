@@ -53,7 +53,7 @@ export class AuthService {
         login: refreshTokenPayload.login,
         deviceId: refreshTokenPayload.deviceId,
       },
-      { expiresIn: '20s' },
+      { expiresIn: '20m' },
     );
 
     return { accessToken: accessToken, refreshToken: refreshToken };
