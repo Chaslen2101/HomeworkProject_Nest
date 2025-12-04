@@ -58,12 +58,12 @@ export class CommentSqlQueryRepository {
         ls.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as "likesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as "dislikesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          )
@@ -74,6 +74,7 @@ export class CommentSqlQueryRepository {
           `,
       [commentId, user?.sub],
     );
+    console.log(result);
     if (result.length === 0) {
       return null;
     }
@@ -123,12 +124,12 @@ export class CommentSqlQueryRepository {
         ls.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as "likesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as "dislikesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          ),
@@ -153,7 +154,6 @@ export class CommentSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
-    console.log(result);
     const totalCount: number = result[0] ? Number(result[0].total_count) : 0;
     const mappedComments: CommentViewType[] = mapToView.mapComments(result);
     return {

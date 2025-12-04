@@ -10,7 +10,6 @@ import {
 import { mapToView } from '../../../Mapper/view-model.mapper';
 import { PostTypeormEntity } from '../Entities/post-typeorm.entity';
 import { LikeStatusTypeormEntity } from '../Entities/likeStatus-typeorm.entity';
-import { queryHelper } from '../../../Utils/helper';
 import format from 'pg-format';
 
 @Injectable()
@@ -59,12 +58,12 @@ export class PostSqlQueryRepository {
         ls.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as "likesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as "dislikesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          ),
@@ -135,12 +134,12 @@ export class PostSqlQueryRepository {
         ls2.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as "likesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as "dislikesCount"
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          )
