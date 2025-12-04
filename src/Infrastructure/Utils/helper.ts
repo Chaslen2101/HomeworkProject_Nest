@@ -56,11 +56,16 @@ export const queryHelper: QueryHelperType = {
   },
 
   commentsQuery(query: InputQueryType): CommentQueryType {
+    const sortDirAllowedValues: string[] = ['ASC', 'DESC'];
     return {
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
-      sortBy: query.sortBy ? query.sortBy : 'created_at',
-      sortDirection: query.sortDirection ? query.sortDirection : 'desc',
+      sortBy: query.sortBy ? query.sortBy : 'createdAt',
+      sortDirection: !query.sortDirection
+        ? 'DESC'
+        : sortDirAllowedValues.includes(query.sortDirection.toUpperCase())
+          ? query.sortDirection.toUpperCase()
+          : 'DESC',
     };
   },
 

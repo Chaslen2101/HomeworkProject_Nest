@@ -61,6 +61,8 @@ import { PasswordRecoveryInfoTypeormEntity } from './Infrastructure/Data-access/
 import { SessionTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/session-typeorm.entity';
 import { PostTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/post-typeorm.entity';
 import { BlogTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/blog-typeorm.entity';
+import { CommentTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/comment-typeorm.entity';
+import { LikeStatusTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/likeStatus-typeorm.entity';
 
 dotenv.config();
 
@@ -137,8 +139,10 @@ const useCases = [
     TypeOrmModule.forFeature([EmailConfirmInfoTypeormEntity]),
     TypeOrmModule.forFeature([PasswordRecoveryInfoTypeormEntity]),
     TypeOrmModule.forFeature([SessionTypeormEntity]),
+    TypeOrmModule.forFeature([CommentTypeormEntity]),
     TypeOrmModule.forFeature([PostTypeormEntity]),
     TypeOrmModule.forFeature([BlogTypeormEntity]),
+    TypeOrmModule.forFeature([LikeStatusTypeormEntity]),
   ],
   controllers: [
     AppController,

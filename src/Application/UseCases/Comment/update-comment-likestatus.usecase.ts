@@ -7,6 +7,7 @@ import { AccessTokenPayloadType } from '../../../Domain/Types/Types';
 import { CommentSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/comment-sql.repository';
 import { LikeStatusSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/like-status-sql.repository';
 import { Comment } from '../../../Domain/comment.entity';
+import { LikeStatus } from '../../../Domain/likeStatus.entity';
 
 export class UpdateCommentLikeStatusCommand {
   constructor(
@@ -33,11 +34,12 @@ export class UpdateCommentLikeStatusUseCase {
       throw new DomainException('Comment not found', HttpStatus.NOT_FOUND);
     }
 
-    await this.likeStatusRepository.updateLikeStatus(
+    const newLikeStatus: LikeStatus = LikeStatus.createNew(
       dto.updateLikeStatusDTO.likeStatus,
       dto.user,
       dto.commentId,
     );
+    await this.likeStatusRepository.updateLikeStatus(newLikeStatus);
     return true;
   }
 }

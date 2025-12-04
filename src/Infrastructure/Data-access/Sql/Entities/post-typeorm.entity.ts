@@ -1,5 +1,14 @@
-import { Column, Entity, JoinTable, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 import { BlogTypeormEntity } from './blog-typeorm.entity';
+import { CommentTypeormEntity } from './comment-typeorm.entity';
+import { LikeStatusTypeormEntity } from './likeStatus-typeorm.entity';
 
 @Entity()
 export class PostTypeormEntity {
@@ -28,6 +37,12 @@ export class PostTypeormEntity {
     () => BlogTypeormEntity,
     (blogTypeormEntity) => blogTypeormEntity.posts,
   )
-  @JoinTable({ name: 'blogId' })
+  @JoinColumn({ name: 'blogId' })
   blog: BlogTypeormEntity;
+
+  @OneToMany(() => CommentTypeormEntity, (comments) => comments.post)
+  comments: CommentTypeormEntity[];
+
+  @OneToMany(() => LikeStatusTypeormEntity, (likes) => likes.post)
+  likes: LikeStatusTypeormEntity[];
 }

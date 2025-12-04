@@ -6,6 +6,7 @@ import { AccessTokenPayloadType } from '../../../Domain/Types/Types';
 import { LikeStatusSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/like-status-sql.repository';
 import { PostSqlRepository } from '../../../Infrastructure/Data-access/Sql/Repositories/post-sql.repository';
 import { Post } from '../../../Domain/post.entity';
+import { LikeStatus } from '../../../Domain/likeStatus.entity';
 
 export class UpdatePostLikeStatusCommand {
   constructor(
@@ -37,13 +38,14 @@ export class UpdatePostLikeStatusUseCase
         dto.user.sub,
         dto.postId,
       );
-    } else {
-      await this.likeStatusRepository.updateLikeStatus(
-        dto.updateLikeStatusDTO.likeStatus,
-        dto.user,
-        dto.postId,
-      );
     }
+    const newLikeStatus: LikeStatus = LikeStatus.createNew(
+      dto.updateLikeStatusDTO.likeStatus,
+      dto.user,
+      dto.postId,
+    );
+
+    await this.likeStatusRepository.updateLikeStatus(newLikeStatus);
 
     return true;
   }

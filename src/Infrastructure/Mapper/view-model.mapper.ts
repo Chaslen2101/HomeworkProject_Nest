@@ -10,6 +10,7 @@ import { UserTypeormEntity } from '../Data-access/Sql/Entities/user-typeorm.enti
 import { SessionTypeormEntity } from '../Data-access/Sql/Entities/session-typeorm.entity';
 import { PostTypeormEntity } from '../Data-access/Sql/Entities/post-typeorm.entity';
 import { BlogTypeormEntity } from '../Data-access/Sql/Entities/blog-typeorm.entity';
+import { CommentTypeormEntity } from '../Data-access/Sql/Entities/comment-typeorm.entity';
 
 export class mapToView {
   static mapComments(comments: any[]): CommentViewType[] {
@@ -24,8 +25,8 @@ export class mapToView {
         },
         createdAt: comment.created_at,
         likesInfo: {
-          likesCount: Number(comment.likes_count),
-          dislikesCount: Number(comment.dislikes_count),
+          likesCount: comment.likes_count,
+          dislikesCount: comment.dislikes_count,
           myStatus: status,
         },
       };
@@ -43,8 +44,8 @@ export class mapToView {
       },
       createdAt: comment.created_at,
       likesInfo: {
-        likesCount: Number(comment.likes_count),
-        dislikesCount: Number(comment.dislikes_count),
+        likesCount: comment.likes_count,
+        dislikesCount: comment.dislikes_count,
         myStatus: status,
       },
     };
@@ -98,43 +99,43 @@ export class mapToView {
   //   };
   // },
 
-  static mapPost(post: PostTypeormEntity): PostViewType {
-    // const status = post.status ? post.status : 'None';
-    // const newestLikes = post.newest_likes ? post.newest_likes : [];
+  static mapPost(post: any): PostViewType {
+    const status = post.status ? post.status : 'None';
+    const newestLikes = post.newest_likes ? post.newest_likes : [];
     return {
       id: post.id,
       title: post.title,
-      shortDescription: post.shortDescription,
+      shortDescription: post.short_description,
       content: post.content,
-      blogId: post.blogId,
-      blogName: post.blogName,
-      createdAt: post.createdAt,
+      blogId: post.blog_id,
+      blogName: post.blog_name,
+      createdAt: post.created_at,
       extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: 'None',
-        newestLikes: [],
+        likesCount: post.likes_count,
+        dislikesCount: post.dislikes_count,
+        myStatus: status,
+        newestLikes: newestLikes,
       },
     };
   }
 
-  static mapPosts(posts: PostTypeormEntity[]): PostViewType[] {
-    return posts.map((post: PostTypeormEntity): PostViewType => {
-      // const status = post.status ? post.status : 'None';
-      // const newestLikes = post.newest_likes ? post.newest_likes : [];
+  static mapPosts(posts: any[]): PostViewType[] {
+    return posts.map((post: any): PostViewType => {
+      const status = post.status ? post.status : 'None';
+      const newestLikes = post.newest_likes ? post.newest_likes : [];
       return {
         id: post.id,
         title: post.title,
-        shortDescription: post.shortDescription,
+        shortDescription: post.short_description,
         content: post.content,
-        blogId: post.blogId,
-        blogName: post.blogName,
-        createdAt: post.createdAt,
+        blogId: post.blog_id,
+        blogName: post.blog_name,
+        createdAt: post.created_at,
         extendedLikesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: 'None',
-          newestLikes: [],
+          likesCount: post.likes_count,
+          dislikesCount: post.dislikes_count,
+          myStatus: status,
+          newestLikes: newestLikes,
         },
       };
     });
