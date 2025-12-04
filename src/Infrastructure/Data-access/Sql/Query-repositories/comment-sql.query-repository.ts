@@ -74,11 +74,10 @@ export class CommentSqlQueryRepository {
           `,
       [commentId, user?.sub],
     );
-
     if (result.length === 0) {
       return null;
     }
-    return mapToView.mapComment(result);
+    return mapToView.mapComment(result[0]);
   }
 
   async findByPostId(
@@ -154,6 +153,7 @@ export class CommentSqlQueryRepository {
       sanitizedQuery.pageSize,
       offsetValue,
     ]);
+    console.log(result);
     const totalCount: number = result[0] ? Number(result[0].total_count) : 0;
     const mappedComments: CommentViewType[] = mapToView.mapComments(result);
     return {

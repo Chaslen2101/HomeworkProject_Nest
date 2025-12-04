@@ -8,9 +8,7 @@ import {
 } from '../../Domain/Types/Types';
 import { UserTypeormEntity } from '../Data-access/Sql/Entities/user-typeorm.entity';
 import { SessionTypeormEntity } from '../Data-access/Sql/Entities/session-typeorm.entity';
-import { PostTypeormEntity } from '../Data-access/Sql/Entities/post-typeorm.entity';
 import { BlogTypeormEntity } from '../Data-access/Sql/Entities/blog-typeorm.entity';
-import { CommentTypeormEntity } from '../Data-access/Sql/Entities/comment-typeorm.entity';
 
 export class mapToView {
   static mapComments(comments: any[]): CommentViewType[] {
