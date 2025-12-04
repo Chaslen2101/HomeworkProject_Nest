@@ -23,8 +23,8 @@ export class mapToView {
         },
         createdAt: comment.createdAt,
         likesInfo: {
-          likesCount: comment.likesCount,
-          dislikesCount: comment.dislikesCount,
+          likesCount: Number(comment.likesCount),
+          dislikesCount: Number(comment.dislikesCount),
           myStatus: status,
         },
       };
@@ -42,8 +42,8 @@ export class mapToView {
       },
       createdAt: comment.createdAt,
       likesInfo: {
-        likesCount: comment.likesCount,
-        dislikesCount: comment.dislikesCount,
+        likesCount: Number(comment.likesCount),
+        dislikesCount: Number(comment.dislikesCount),
         myStatus: status,
       },
     };
@@ -109,8 +109,8 @@ export class mapToView {
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
-        likesCount: post.likesCount,
-        dislikesCount: post.dislikesCount,
+        likesCount: Number(post.likesCount),
+        dislikesCount: Number(post.dislikesCount),
         myStatus: status,
         newestLikes: newestLikes,
       },
@@ -130,8 +130,8 @@ export class mapToView {
         blogName: post.blogName,
         createdAt: post.createdAt,
         extendedLikesInfo: {
-          likesCount: post.likesCount,
-          dislikesCount: post.dislikesCount,
+          likesCount: Number(post.likesCount),
+          dislikesCount: Number(post.dislikesCount),
           myStatus: status,
           newestLikes: newestLikes,
         },
