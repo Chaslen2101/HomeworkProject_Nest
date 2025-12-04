@@ -59,12 +59,12 @@ export class PostSqlQueryRepository {
         ls.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          ),
@@ -135,12 +135,12 @@ export class PostSqlQueryRepository {
         ls2.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = p.id
          )
@@ -151,10 +151,9 @@ export class PostSqlQueryRepository {
           `,
       [postId, user?.sub],
     );
-
     if (result.length === 0) {
       return null;
     }
-    return mapToView.mapPost(result);
+    return mapToView.mapPost(result[0]);
   }
 }

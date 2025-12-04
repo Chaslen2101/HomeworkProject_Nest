@@ -58,12 +58,12 @@ export class CommentSqlQueryRepository {
         ls.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          )
@@ -124,12 +124,12 @@ export class CommentSqlQueryRepository {
         ls.status,
         al.newest_likes,
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Like') as likesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          ),
          (
-             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikes_count
+             SELECT COUNT (*) FILTER (WHERE status = 'Dislike') as dislikesCount
              FROM like_status_typeorm_entity
              WHERE "entityId" = c.id
          ),
