@@ -144,7 +144,7 @@ export class CommentSqlQueryRepository {
       sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
     );
-
+    console.log(1);
     const offsetValue: number =
       (sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize;
     const result = await this.dataSource.query(beforeQuery, [
