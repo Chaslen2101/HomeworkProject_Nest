@@ -86,7 +86,6 @@ export class CommentSqlQueryRepository {
     sanitizedQuery: CommentQueryType,
     user?: AccessTokenPayloadType,
   ): Promise<CommentPagesType> {
-    const sortBy: string = queryHelper.toSnake(sanitizedQuery.sortBy);
     const beforeQuery = format(
       `
       WITH comment_with_likes AS (
@@ -142,7 +141,7 @@ export class CommentSqlQueryRepository {
         LIMIT $3
         OFFSET $4
     `,
-      sortBy,
+      sanitizedQuery.sortBy,
       sanitizedQuery.sortDirection,
     );
 
