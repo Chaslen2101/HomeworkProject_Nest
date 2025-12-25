@@ -1,6 +1,7 @@
-import { AnswerStatusEnum } from '../../Domain/Types/answer.types';
+import { AnswerStatusEnum } from '../../Domain/Types/answer-status.enum';
+import { PairStatusEnum } from '../../Domain/Types/pair-status.enum';
 
-export type QuizQuestionViewType = {
+export type QuizQuestionSAViewType = {
   id: string;
   body: string;
   correctAnswers: string[];
@@ -14,7 +15,12 @@ export type QuestionPagesType = {
   page: number;
   pageSize: number;
   totalCount: number;
-  items: QuizQuestionViewType[];
+  items: QuizQuestionSAViewType[];
+};
+
+export type QuizQuestionViewType = {
+  id: string;
+  body: string;
 };
 
 export type QuizAnswerViewType = {
@@ -41,13 +47,8 @@ export type QuizPairViewType = {
     };
     score: number;
   } | null;
-  questions:
-    | {
-        id: string;
-        body: string;
-      }[]
-    | null;
-  status: string;
+  questions: QuizQuestionViewType[] | null;
+  status: PairStatusEnum;
   pairCreatedDate: Date;
   startGameDate: Date | null;
   finishGameDate: Date | null;

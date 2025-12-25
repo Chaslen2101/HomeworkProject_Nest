@@ -4,6 +4,8 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Inject,
   NotFoundException,
   Param,
@@ -21,7 +23,7 @@ import { CommandBus } from '@nestjs/cqrs';
 import { CreateNewQuestionCommand } from '../Application/UseCases/create-new-question.usecase';
 import {
   QuestionPagesType,
-  QuizQuestionViewType,
+  QuizQuestionSAViewType,
 } from './Types/quiz-game-view-model.types';
 import { QuizQuestionQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/quiz-question.query-repository';
 import { DeleteQuestionCommand } from '../Application/UseCases/delete-question.usecase';
@@ -48,7 +50,6 @@ export class QuizGameSaController {
       QuizGameQueryHelper.questionQuery(query);
     const result: QuestionPagesType =
       await this.questionQueryRepository.findAll(sanitizedQuery);
-    console.log(result);
     return result;
   }
   @Post()
@@ -56,13 +57,12 @@ export class QuizGameSaController {
   @HttpCode(201)
   async createQuestion(
     @Body() newQuestionDto: CreateUpdateQuestionInputDTO,
-  ): Promise<QuizQuestionViewType | null> {
+  ): Promise<QuizQuestionSAViewType | null> {
     const newQuestionId: string = await this.commandBus.execute(
       new CreateNewQuestionCommand(newQuestionDto),
     );
-    const newQuestion: QuizQuestionViewType | null =
+    const newQuestion: QuizQuestionSAViewType | null =
       await this.questionQueryRepository.findQuestionById(newQuestionId);
-    console.log(newQuestion);
     return newQuestion;
   }
 
@@ -85,11 +85,11 @@ export class QuizGameSaController {
   async updateQuestion(
     @Param('id') id: string,
     @Body() updateQuestionDto: CreateUpdateQuestionInputDTO,
-  ): Promise<{ test: string }> {
+  ): Promise<void> {
     await this.commandBus.execute(
       new UpdateQuestionCommand(id, updateQuestionDto),
     );
-    return { test: 'Put' };
+    return;
   }
 
   @Put(':id/publish')
@@ -99,9 +99,12 @@ export class QuizGameSaController {
     @Param('id') id: string,
     @Body() body: UpdatePublishStatusDTO,
   ): Promise<void> {
-    await this.commandBus.execute(
+    const result = await this.commandBus.execute(
       new UpdateQuestionPublishStatusCommand(body, id),
     );
+    if (!result) {
+      throw new HttpException('Question not found', HttpStatus.NOT_FOUND);
+    }
     return;
   }
 }

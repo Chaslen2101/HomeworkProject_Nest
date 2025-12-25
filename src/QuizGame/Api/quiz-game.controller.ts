@@ -24,6 +24,8 @@ import {
 import { SetAnswerInputDTO } from './InputDTOValidator/quiz-pair-dto.validator';
 import { SetAnswerForQuestionCommand } from '../Application/UseCases/set-answer-for-question.usecase';
 import { QuizAnswerQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/quiz-answer.query-repository';
+import { PairStatusEnum } from '../Domain/Types/pair-status.enum';
+import { isUUID } from 'class-validator';
 
 @Controller('pair-game-quiz/pairs')
 export class QuizGameController {
@@ -41,7 +43,7 @@ export class QuizGameController {
     const pairId: string = await this.commandBus.execute(
       new ConnectionQuizGameCommand(req.user as AccessTokenPayloadType),
     );
-    return await this.quizPairQueryRepository.findPairByPairId(pairId);
+    return await this.quizPairQueryRepository.findPairById(pairId);
   }
 
   @Get('my-current')
@@ -51,7 +53,7 @@ export class QuizGameController {
     @Req() req: Express.Request,
   ): Promise<QuizPairViewType> {
     const currentGame: QuizPairViewType | null =
-      await this.quizPairQueryRepository.findPairByPlayerId(
+      await this.quizPairQueryRepository.findActivePairByPlayerId(
         req.user as AccessTokenPayloadType,
       );
     if (!currentGame) {
@@ -67,8 +69,11 @@ export class QuizGameController {
     @Req() req: Express.Request,
     @Param('id') pairId: string,
   ): Promise<QuizPairViewType> {
+    if (!isUUID(pairId)) {
+      throw new HttpException('Invalid UUID', HttpStatus.BAD_REQUEST);
+    }
     const neededPair: QuizPairViewType | null =
-      await this.quizPairQueryRepository.findPairByPairId(pairId);
+      await this.quizPairQueryRepository.findPairById(pairId);
     if (!neededPair) {
       throw new HttpException('Pair not found', HttpStatus.NOT_FOUND);
     }

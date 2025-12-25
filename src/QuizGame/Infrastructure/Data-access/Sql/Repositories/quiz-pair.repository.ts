@@ -9,6 +9,7 @@ import { QuizQuestion } from '../../../../Domain/quiz-question.entity';
 import { QuizQuestionTypeormEntity } from '../Entities/quiz-question-typeorm.entity';
 import { QuizAnswer } from '../../../../Domain/quiz-answer.entity';
 import { GameDataType } from '../../../../Domain/Types/game-data.types';
+import { PairStatusEnum } from '../../../../Domain/Types/pair-status.enum';
 
 @Injectable()
 export class QuizPairRepository {
@@ -34,7 +35,7 @@ export class QuizPairRepository {
   async findExistingGame(): Promise<QuizPair | null> {
     const existingGame: QuizPairTypeormEntity | null =
       await this.quizPairRepository.findOneBy({
-        status: 'PendingSecondPlayer',
+        status: PairStatusEnum.Pending,
       });
     if (!existingGame) {
       return null;

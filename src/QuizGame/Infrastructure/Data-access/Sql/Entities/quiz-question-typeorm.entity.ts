@@ -10,7 +10,7 @@ export class QuizQuestionTypeormEntity {
   body: string;
 
   @Column('json')
-  answers: string[];
+  correctAnswers: string[];
 
   @Column('boolean')
   published: boolean;

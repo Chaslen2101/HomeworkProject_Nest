@@ -41,7 +41,7 @@ export class QuizGameEntityMapper {
       new QuizQuestionTypeormEntity();
     typeormEntity.id = questionDomain.id;
     typeormEntity.body = questionDomain.body;
-    typeormEntity.answers = questionDomain.answers;
+    typeormEntity.correctAnswers = questionDomain.correctAnswers;
     typeormEntity.published = questionDomain.published;
     typeormEntity.createdAt = questionDomain.createdAt;
     typeormEntity.updatedAt = questionDomain.updatedAt;
@@ -54,7 +54,7 @@ export class QuizGameEntityMapper {
     return new QuizQuestion(
       questionTypeorm.id,
       questionTypeorm.body,
-      questionTypeorm.answers,
+      questionTypeorm.correctAnswers,
       questionTypeorm.published,
       questionTypeorm.createdAt,
       questionTypeorm.updatedAt,
@@ -69,7 +69,7 @@ export class QuizGameEntityMapper {
         new QuizQuestionTypeormEntity();
       typeormEntity.id = questionDomain.id;
       typeormEntity.body = questionDomain.body;
-      typeormEntity.answers = questionDomain.answers;
+      typeormEntity.correctAnswers = questionDomain.correctAnswers;
       typeormEntity.published = questionDomain.published;
       typeormEntity.createdAt = questionDomain.createdAt;
       typeormEntity.updatedAt = questionDomain.updatedAt;
@@ -84,7 +84,7 @@ export class QuizGameEntityMapper {
       return new QuizQuestion(
         questionTypeorm.id,
         questionTypeorm.body,
-        questionTypeorm.answers,
+        questionTypeorm.correctAnswers,
         questionTypeorm.published,
         questionTypeorm.createdAt,
         questionTypeorm.updatedAt,

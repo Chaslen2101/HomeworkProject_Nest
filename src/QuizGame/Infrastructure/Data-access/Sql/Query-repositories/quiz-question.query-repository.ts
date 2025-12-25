@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { QuizQuestionTypeormEntity } from '../Entities/quiz-question-typeorm.entity';
 import {
   QuestionPagesType,
-  QuizQuestionViewType,
+  QuizQuestionSAViewType,
 } from '../../../../Api/Types/quiz-game-view-model.types';
 import { Repository } from 'typeorm';
 import { MapToViewQuizGame } from '../../../Mappers/quiz-game-view-model.mapper';
@@ -18,13 +18,13 @@ export class QuizQuestionQueryRepository {
 
   async findQuestionById(
     questionId: string,
-  ): Promise<QuizQuestionViewType | null> {
+  ): Promise<QuizQuestionSAViewType | null> {
     const neededQuestion: QuizQuestionTypeormEntity | null =
       await this.questionRepository.findOneBy({ id: questionId });
     if (!neededQuestion) {
       return null;
     }
-    return MapToViewQuizGame.mapQuestion(neededQuestion);
+    return MapToViewQuizGame.mapQuestionForSA(neededQuestion);
   }
 
   async findAll(sanitizedQuery: QuestionQueryType): Promise<QuestionPagesType> {
@@ -49,8 +49,8 @@ export class QuizQuestionQueryRepository {
       .skip(offsetValue)
       .getManyAndCount();
 
-    const mappedQuestions: QuizQuestionViewType[] =
-      MapToViewQuizGame.mapQuestions(items);
+    const mappedQuestions: QuizQuestionSAViewType[] =
+      MapToViewQuizGame.mapQuestionsForSA(items);
     return {
       pagesCount: Math.ceil(totalCount / sanitizedQuery.pageSize),
       page: sanitizedQuery.pageNumber,

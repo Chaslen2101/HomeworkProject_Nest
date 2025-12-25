@@ -1,4 +1,4 @@
-import { AnswerStatusEnum } from './Types/answer.types';
+import { AnswerStatusEnum } from './Types/answer-status.enum';
 import { DomainException } from '../../Common/Domain/Exceptions/domain-exceptions';
 import { GameDataType } from './Types/game-data.types';
 import { QuizQuestion } from './quiz-question.entity';
@@ -26,7 +26,7 @@ export class QuizAnswer {
     const questionToAnswer: QuizQuestion =
       gameData.questions[gameData.answers.length];
     let status: AnswerStatusEnum;
-    if (questionToAnswer.answers.includes(answer)) {
+    if (questionToAnswer.correctAnswers.includes(answer)) {
       status = AnswerStatusEnum.Correct;
     } else {
       status = AnswerStatusEnum.Incorrect;

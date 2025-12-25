@@ -5,7 +5,7 @@ export class QuizQuestion {
   constructor(
     public id: string,
     public body: string,
-    public answers: string[],
+    public correctAnswers: string[],
     public published: boolean,
     public createdAt: Date,
     public updatedAt: Date | null,
@@ -26,7 +26,8 @@ export class QuizQuestion {
 
   update(updateDto: CreateUpdateQuestionInputDTO): QuizQuestion {
     this.body = updateDto.body;
-    this.answers = updateDto.correctAnswers;
+    this.correctAnswers = updateDto.correctAnswers;
+    this.updatedAt = new Date();
     return this;
   }
 }

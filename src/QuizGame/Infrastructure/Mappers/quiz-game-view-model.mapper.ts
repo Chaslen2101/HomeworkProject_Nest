@@ -1,12 +1,13 @@
 import {
-  QuizQuestionViewType,
+  QuizQuestionSAViewType,
   QuizPairViewType,
   QuizAnswerViewType,
+  QuizQuestionViewType,
 } from '../../Api/Types/quiz-game-view-model.types';
 import { QuizQuestionTypeormEntity } from '../Data-access/Sql/Entities/quiz-question-typeorm.entity';
 import { QuizPairTypeormEntity } from '../Data-access/Sql/Entities/quiz-pair-typeorm.entity';
 import { QuizAnswerTypeormEntity } from '../Data-access/Sql/Entities/quiz-answer-typeorm.entity';
-import { AnswerStatusEnum } from '../../Domain/Types/answer.types';
+import { AnswerStatusEnum } from '../../Domain/Types/answer-status.enum';
 
 export class MapToViewQuizGame {
   static mapPair(pair: QuizPairTypeormEntity): QuizPairViewType {
@@ -76,16 +77,40 @@ export class MapToViewQuizGame {
     });
   }
 
+  static mapQuestionForSA(
+    question: QuizQuestionTypeormEntity,
+  ): QuizQuestionSAViewType {
+    return {
+      id: question.id,
+      body: question.body,
+      correctAnswers: question.correctAnswers,
+      published: question.published,
+      createdAt: question.createdAt,
+      updatedAt: question.updatedAt,
+    };
+  }
+
+  static mapQuestionsForSA(
+    questions: QuizQuestionTypeormEntity[],
+  ): QuizQuestionSAViewType[] {
+    return questions.map((question) => {
+      return {
+        id: question.id,
+        body: question.body,
+        correctAnswers: question.correctAnswers,
+        published: question.published,
+        createdAt: question.createdAt,
+        updatedAt: question.updatedAt,
+      };
+    });
+  }
+
   static mapQuestion(
     question: QuizQuestionTypeormEntity,
   ): QuizQuestionViewType {
     return {
       id: question.id,
       body: question.body,
-      correctAnswers: question.answers,
-      published: question.published,
-      createdAt: question.createdAt,
-      updatedAt: question.updatedAt,
     };
   }
 
@@ -96,10 +121,6 @@ export class MapToViewQuizGame {
       return {
         id: question.id,
         body: question.body,
-        correctAnswers: question.answers,
-        published: question.published,
-        createdAt: question.createdAt,
-        updatedAt: question.updatedAt,
       };
     });
   }

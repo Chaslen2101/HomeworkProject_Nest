@@ -18,11 +18,11 @@ export class UpdateQuestionPublishStatusUseCase
     @Inject(QuizQuestionRepository)
     private questionRepository: QuizQuestionRepository,
   ) {}
-  async execute(dto: UpdateQuestionPublishStatusCommand): Promise<void> {
-    await this.questionRepository.updatePublishStatus(
+  async execute(dto: UpdateQuestionPublishStatusCommand): Promise<boolean> {
+    const result: boolean = await this.questionRepository.updatePublishStatus(
       dto.updatePublishStatusDTO.published,
       dto.id,
     );
-    return;
+    return result;
   }
 }

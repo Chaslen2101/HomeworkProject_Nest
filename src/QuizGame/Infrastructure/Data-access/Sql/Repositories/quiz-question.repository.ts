@@ -39,7 +39,8 @@ export class QuizQuestionRepository {
       { id: question.id },
       {
         body: question.body,
-        answers: question.answers,
+        correctAnswers: question.correctAnswers,
+        updatedAt: question.updatedAt,
       },
     );
     return result.affected != 0;

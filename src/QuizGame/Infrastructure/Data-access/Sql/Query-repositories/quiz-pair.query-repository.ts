@@ -8,6 +8,7 @@ import { UserTypeormEntity } from '../../../../../UserAccounts/Infrastructure/Da
 import { QuizQuestionTypeormEntity } from '../Entities/quiz-question-typeorm.entity';
 import { QuizPairViewType } from '../../../../Api/Types/quiz-game-view-model.types';
 import { AccessTokenPayloadType } from '../../../../../Common/Types/auth-payloads.types';
+import { PairStatusEnum } from '../../../../Domain/Types/pair-status.enum';
 
 @Injectable()
 export class QuizPairQueryRepository {
@@ -22,7 +23,7 @@ export class QuizPairQueryRepository {
     private questionRepository: Repository<QuizQuestionTypeormEntity>,
   ) {}
 
-  async findPairByPairId(pairId: string): Promise<QuizPairViewType | null> {
+  async findPairById(pairId: string): Promise<QuizPairViewType | null> {
     const quizPair: QuizPairTypeormEntity | null = await this.quizPairRepository
       .createQueryBuilder('q')
       .select(['q'])
@@ -57,6 +58,30 @@ export class QuizPairQueryRepository {
         { firstPlayerId: playerInfo.sub },
         { secondPlayerId: playerInfo.sub },
       ])
+      .getOne();
+
+    if (!quizPair) {
+      return null;
+    }
+    return MapToViewQuizGame.mapPair(quizPair);
+  }
+
+  async findActivePairByPlayerId(
+    playerInfo: AccessTokenPayloadType,
+  ): Promise<QuizPairViewType | null> {
+    const quizPair: QuizPairTypeormEntity | null = await this.quizPairRepository
+      .createQueryBuilder('q')
+      .select(['q'])
+      .leftJoin('q.firstPlayer', 'fp')
+      .leftJoin('q.secondPlayer', 'sp')
+      .leftJoin('q.playersAnswers', 'pr')
+      .leftJoin('q.questions', 'questions')
+      .addSelect(['fp.login', 'sp.login', 'pr', 'questions'])
+      .where([
+        { firstPlayerId: playerInfo.sub },
+        { secondPlayerId: playerInfo.sub },
+      ])
+      .andWhere({ status: PairStatusEnum.Active })
       .getOne();
 
     if (!quizPair) {

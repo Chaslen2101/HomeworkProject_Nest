@@ -11,14 +11,15 @@ import {
 import { UserTypeormEntity } from '../../../../../UserAccounts/Infrastructure/Data-access/Sql/Entities/user.typeorm-entity';
 import { QuizAnswerTypeormEntity } from './quiz-answer-typeorm.entity';
 import { QuizQuestionTypeormEntity } from './quiz-question-typeorm.entity';
+import { PairStatusEnum } from '../../../../Domain/Types/pair-status.enum';
 
 @Entity()
 export class QuizPairTypeormEntity {
   @PrimaryColumn('uuid')
   id: string;
 
-  @Column()
-  status: string;
+  @Column({ type: 'enum', enum: PairStatusEnum })
+  status: PairStatusEnum;
 
   @Column('timestamp with time zone')
   pairCreatedDate: Date;
