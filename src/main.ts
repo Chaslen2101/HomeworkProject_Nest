@@ -7,21 +7,13 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { ValidationError } from 'class-validator';
-import { HttpExceptionsFilter } from './Api/Filters/http-exception.filter';
-import { DomainExceptionFilter } from './Api/Filters/domain-exception.filter';
+import { HttpExceptionsFilter } from './Common/Filters/http-exception.filter';
+import { DomainExceptionFilter } from './Common/Filters/domain-exception.filter';
 import cookieParser from 'cookie-parser';
-import fastifyCookie from '@fastify/cookie';
-import {
-  FastifyAdapter,
-  NestFastifyApplication,
-} from '@nestjs/platform-fastify';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter(),
-  );
-  await app.register(fastifyCookie);
+  const app = await NestFactory.create(AppModule);
+
   app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({
