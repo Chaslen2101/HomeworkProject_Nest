@@ -34,24 +34,12 @@ export class QuizQuestionRepository {
     return QuizGameEntityMapper.questionToDomainEntity(questionTypeorm);
   }
 
-  async updateQuestion(question: QuizQuestion): Promise<boolean> {
-    const result = await this.questionRepository.update(
-      { id: question.id },
-      {
-        body: question.body,
-        correctAnswers: question.correctAnswers,
-        updatedAt: question.updatedAt,
-      },
-    );
-    return result.affected != 0;
-  }
-
-  async updatePublishStatus(status: boolean, id: string): Promise<boolean> {
-    const result = await this.questionRepository.update(
-      { id: id },
-      { published: status },
-    );
-    return result.affected != 0;
+  async update(question: QuizQuestion): Promise<string> {
+    const typeormQuestion: QuizQuestionTypeormEntity =
+      QuizGameEntityMapper.questionToTypeormEntity(question);
+    const result: QuizQuestionTypeormEntity =
+      await this.questionRepository.save(typeormQuestion);
+    return result.id;
   }
 
   async getRandomQuestion(): Promise<QuizQuestion[]> {

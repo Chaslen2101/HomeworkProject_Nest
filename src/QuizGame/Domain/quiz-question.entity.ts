@@ -24,9 +24,15 @@ export class QuizQuestion {
     );
   }
 
-  update(updateDto: CreateUpdateQuestionInputDTO): QuizQuestion {
+  updateBodyAnswers(updateDto: CreateUpdateQuestionInputDTO): QuizQuestion {
     this.body = updateDto.body;
     this.correctAnswers = updateDto.correctAnswers;
+    this.updatedAt = new Date();
+    return this;
+  }
+
+  updatePublishStatus(publishStatus: boolean): QuizQuestion {
+    this.published = publishStatus;
     this.updatedAt = new Date();
     return this;
   }

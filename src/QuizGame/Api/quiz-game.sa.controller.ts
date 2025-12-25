@@ -4,8 +4,6 @@ import {
   Delete,
   Get,
   HttpCode,
-  HttpException,
-  HttpStatus,
   Inject,
   NotFoundException,
   Param,
@@ -99,12 +97,9 @@ export class QuizGameSaController {
     @Param('id') id: string,
     @Body() body: UpdatePublishStatusDTO,
   ): Promise<void> {
-    const result = await this.commandBus.execute(
+    await this.commandBus.execute(
       new UpdateQuestionPublishStatusCommand(body, id),
     );
-    if (!result) {
-      throw new HttpException('Question not found', HttpStatus.NOT_FOUND);
-    }
     return;
   }
 }

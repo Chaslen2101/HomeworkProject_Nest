@@ -25,8 +25,8 @@ export class UpdateQuestionUseCase
     const neededQuestion: QuizQuestion | null =
       await this.questionRepository.findById(dto.id);
     if (!neededQuestion) throw new DomainException('Not Found', 404);
-    neededQuestion.update(dto.updateQuestionDto);
-    await this.questionRepository.updateQuestion(neededQuestion);
+    neededQuestion.updateBodyAnswers(dto.updateQuestionDto);
+    await this.questionRepository.update(neededQuestion);
     return;
   }
 }
