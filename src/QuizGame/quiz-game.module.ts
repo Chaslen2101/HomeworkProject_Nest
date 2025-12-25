@@ -44,7 +44,6 @@ const useCases = [
     QuizQuestionQueryRepository,
     QuizAnswerRepository,
     QuizAnswerQueryRepository,
-
     ...useCases,
   ],
   exports: [],

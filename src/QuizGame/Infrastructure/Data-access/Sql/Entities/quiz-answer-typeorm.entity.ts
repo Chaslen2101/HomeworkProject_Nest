@@ -1,7 +1,6 @@
 import { Column, Entity, JoinTable, ManyToOne, PrimaryColumn } from 'typeorm';
 import { UserTypeormEntity } from '../../../../../UserAccounts/Infrastructure/Data-access/Sql/Entities/user.typeorm-entity';
 import { QuizPairTypeormEntity } from './quiz-pair-typeorm.entity';
-import type { AnswerStatusEnum } from '../../../../Domain/Types/answer.types';
 
 @Entity()
 export class QuizAnswerTypeormEntity {
@@ -21,7 +20,7 @@ export class QuizAnswerTypeormEntity {
   answer: string;
 
   @Column()
-  answerStatus: AnswerStatusEnum;
+  answerStatus: 'Correct' | 'Incorrect';
 
   @Column('timestamp with time zone')
   addedAt: Date;
