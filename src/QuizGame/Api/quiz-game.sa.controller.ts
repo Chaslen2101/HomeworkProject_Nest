@@ -48,6 +48,7 @@ export class QuizGameSaController {
       QuizGameQueryHelper.questionQuery(query);
     const result: QuestionPagesType =
       await this.questionQueryRepository.findAll(sanitizedQuery);
+    console.log(result);
     return result;
   }
   @Post()
@@ -61,6 +62,7 @@ export class QuizGameSaController {
     );
     const newQuestion: QuizQuestionViewType | null =
       await this.questionQueryRepository.findQuestionById(newQuestionId);
+    console.log(newQuestion);
     return newQuestion;
   }
 
@@ -83,11 +85,11 @@ export class QuizGameSaController {
   async updateQuestion(
     @Param('id') id: string,
     @Body() updateQuestionDto: CreateUpdateQuestionInputDTO,
-  ): Promise<void> {
+  ): Promise<{ test: string }> {
     await this.commandBus.execute(
       new UpdateQuestionCommand(id, updateQuestionDto),
     );
-    return;
+    return { test: 'Put' };
   }
 
   @Put(':id/publish')
