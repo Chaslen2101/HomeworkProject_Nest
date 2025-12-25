@@ -17,6 +17,7 @@ import { QuizPairQueryRepository } from './Infrastructure/Data-access/Sql/Query-
 import { UserTypeormEntity } from '../UserAccounts/Infrastructure/Data-access/Sql/Entities/user.typeorm-entity';
 import { QuizAnswerRepository } from './Infrastructure/Data-access/Sql/Repositories/quiz-answer.repository';
 import { SetAnswerForQuestionUseCase } from './Application/UseCases/set-answer-for-question.usecase';
+import { QuizAnswerQueryRepository } from './Infrastructure/Data-access/Sql/Query-repositories/quiz-answer.query-repository';
 
 const useCases = [
   ConnectionQuizGameUseCase,
@@ -42,7 +43,7 @@ const useCases = [
     QuizQuestionRepository,
     QuizQuestionQueryRepository,
     QuizAnswerRepository,
-
+    QuizAnswerQueryRepository,
     ...useCases,
   ],
   exports: [],
