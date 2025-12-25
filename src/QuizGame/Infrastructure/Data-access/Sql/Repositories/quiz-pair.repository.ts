@@ -27,7 +27,10 @@ export class QuizPairRepository {
     const questionsTypeorm: QuizQuestionTypeormEntity[] =
       QuizGameEntityMapper.questionsToTypeormEntity(questions);
     const newQuizGameTypeormEntity: QuizPairTypeormEntity =
-      QuizGameEntityMapper.pairToTypeormEntity(quizPair, questionsTypeorm);
+      QuizGameEntityMapper.pairToTypeormEntityCreate(
+        quizPair,
+        questionsTypeorm,
+      );
     await this.quizPairRepository.save(newQuizGameTypeormEntity);
     return newQuizGameTypeormEntity.id;
   }
@@ -43,16 +46,11 @@ export class QuizPairRepository {
     return QuizGameEntityMapper.pairToDomainEntity(existingGame);
   }
 
-  async addSecondPlayer(quizPair: QuizPair): Promise<boolean> {
-    const result = await this.quizPairRepository.update(
-      { id: quizPair.id },
-      {
-        secondPlayerId: quizPair.secondPlayerId,
-        status: quizPair.status,
-        startGameDate: quizPair.startGameDate,
-      },
-    );
-    return result.affected != 0;
+  async update(quizPair: QuizPair): Promise<string> {
+    const typeormEntity: QuizPairTypeormEntity =
+      QuizGameEntityMapper.pairToTypeormEntityUpdate(quizPair);
+    const result = await this.quizPairRepository.save(typeormEntity);
+    return result.id;
   }
 
   async findPairByPairId(id: string): Promise<QuizPair | null> {
@@ -79,20 +77,13 @@ export class QuizPairRepository {
   async getActiveGameData(userId: string): Promise<GameDataType | null> {
     const gameData: QuizPairTypeormEntity | null = await this.quizPairRepository
       .createQueryBuilder('q')
-      // 1. Джоиним вопросы (ManyToMany)
       .leftJoinAndSelect('q.questions', 'questions')
-      // 2. Джоиним только ответы ЭТОГО пользователя (фильтрация прямо в JOIN)
-      .leftJoinAndSelect('q.playersAnswers', 'a', 'a.userId = :userId', {
-        userId,
-      })
-      // 3. Ищем только активную игру этого пользователя
+      .leftJoinAndSelect('q.playersAnswers', 'a')
       .where('q.status = :status', { status: 'Active' })
       .andWhere('(q.firstPlayerId = :userId OR q.secondPlayerId = :userId)', {
         userId,
       })
-      // 4. Сортируем вопросы по ID (стабильный порядок)
       .addOrderBy('questions.id', 'ASC')
-      // 5. Сортируем ответы по времени (чтобы понять хронологию)
       .addOrderBy('a.addedAt', 'ASC')
       .getOne();
     if (!gameData) {
@@ -102,10 +93,12 @@ export class QuizPairRepository {
       QuizGameEntityMapper.questionsToDomainEntity(gameData.questions);
     const answersDomain: QuizAnswer[] =
       QuizGameEntityMapper.answersToDomainEntity(gameData.playersAnswers);
+    const pairDomain: QuizPair =
+      QuizGameEntityMapper.pairToDomainEntity(gameData);
     return {
       questions: questionsDomain,
       answers: answersDomain,
-      pairId: gameData.id,
+      pair: pairDomain,
     };
   }
 }

@@ -41,7 +41,7 @@ export class ConnectionQuizGameUseCase
     }
     const activeGame: QuizPair = existingGame.addSecondPlayer(dto.userInfo);
 
-    await this.quizRepository.addSecondPlayer(activeGame);
+    await this.quizRepository.update(activeGame);
     return activeGame.id;
   }
 }

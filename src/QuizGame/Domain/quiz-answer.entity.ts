@@ -20,11 +20,14 @@ export class QuizAnswer {
     answer: string,
     userId: string,
   ): QuizAnswer {
-    if (gameData.answers.length === 5) {
+    const userAnswers: QuizAnswer[] = gameData.answers.filter(
+      (a) => a.id === userId,
+    );
+    if (userAnswers.length == 5) {
       throw new DomainException('User already answered all questions', 403);
     }
     const questionToAnswer: QuizQuestion =
-      gameData.questions[gameData.answers.length];
+      gameData.questions[userAnswers.length];
     let status: AnswerStatusEnum;
     if (questionToAnswer.correctAnswers.includes(answer)) {
       status = AnswerStatusEnum.Correct;
@@ -34,7 +37,7 @@ export class QuizAnswer {
     return new this(
       randomUUID(),
       userId,
-      gameData.pairId,
+      gameData.pair.id,
       questionToAnswer.id,
       answer,
       status,

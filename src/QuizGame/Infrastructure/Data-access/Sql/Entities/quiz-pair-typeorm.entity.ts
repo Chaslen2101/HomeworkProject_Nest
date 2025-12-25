@@ -30,6 +30,12 @@ export class QuizPairTypeormEntity {
   @Column('timestamp with time zone', { nullable: true })
   finishGameDate: Date | null;
 
+  @Column({ default: 0 })
+  firstPlayerScore: number;
+
+  @Column({ default: 0 })
+  secondPlayerScore: number;
+
   @Column('uuid')
   firstPlayerId: string;
 

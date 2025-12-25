@@ -58,6 +58,8 @@ export class QuizPairQueryRepository {
         { firstPlayerId: playerInfo.sub },
         { secondPlayerId: playerInfo.sub },
       ])
+      .addOrderBy('questions.id', 'ASC')
+      .addOrderBy('pr.addedAt', 'ASC')
       .getOne();
 
     if (!quizPair) {
@@ -82,6 +84,8 @@ export class QuizPairQueryRepository {
         { secondPlayerId: playerInfo.sub },
       ])
       .andWhere({ status: PairStatusEnum.Active })
+      .addOrderBy('questions.id', 'ASC')
+      .addOrderBy('pr.addedAt', 'ASC')
       .getOne();
 
     if (!quizPair) {

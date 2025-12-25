@@ -36,6 +36,10 @@ export class SetAnswerForQuestionUseCase
       dto.userInfo.sub,
     );
     await this.quizAnswerRepository.createNewAnswer(newAnswer);
+    gameData.answers.push(newAnswer);
+    gameData.pair.countScore(gameData.answers);
+    gameData.pair.tryFinishGame(gameData.answers);
+    await this.quizPairRepository.update(gameData.pair);
     return newAnswer.id;
   }
 }

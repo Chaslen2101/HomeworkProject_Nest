@@ -6,7 +6,7 @@ import { QuizAnswer } from '../../Domain/quiz-answer.entity';
 import { QuizAnswerTypeormEntity } from '../Data-access/Sql/Entities/quiz-answer-typeorm.entity';
 
 export class QuizGameEntityMapper {
-  static pairToTypeormEntity(
+  static pairToTypeormEntityCreate(
     pairDomain: QuizPair,
     questions: QuizQuestionTypeormEntity[],
   ): QuizPairTypeormEntity {
@@ -19,6 +19,24 @@ export class QuizGameEntityMapper {
     typeormEntity.firstPlayerId = pairDomain.firstPlayerId;
     typeormEntity.secondPlayerId = pairDomain.secondPlayerId;
     typeormEntity.questions = questions;
+    typeormEntity.firstPlayerScore = pairDomain.firstPlayerScore;
+    typeormEntity.secondPlayerScore = pairDomain.secondPlayerScore;
+    return typeormEntity;
+  }
+
+  static pairToTypeormEntityUpdate(
+    pairDomain: QuizPair,
+  ): QuizPairTypeormEntity {
+    const typeormEntity: QuizPairTypeormEntity = new QuizPairTypeormEntity();
+    typeormEntity.id = pairDomain.id;
+    typeormEntity.status = pairDomain.status;
+    typeormEntity.pairCreatedDate = pairDomain.pairCreatedDate;
+    typeormEntity.startGameDate = pairDomain.startGameDate;
+    typeormEntity.finishGameDate = pairDomain.finishGameDate;
+    typeormEntity.firstPlayerId = pairDomain.firstPlayerId;
+    typeormEntity.secondPlayerId = pairDomain.secondPlayerId;
+    typeormEntity.firstPlayerScore = pairDomain.firstPlayerScore;
+    typeormEntity.secondPlayerScore = pairDomain.secondPlayerScore;
     return typeormEntity;
   }
 
@@ -31,6 +49,8 @@ export class QuizGameEntityMapper {
       pairTypeorm.pairCreatedDate,
       pairTypeorm.startGameDate,
       pairTypeorm.finishGameDate,
+      pairTypeorm.firstPlayerScore,
+      pairTypeorm.secondPlayerScore,
     );
   }
 
