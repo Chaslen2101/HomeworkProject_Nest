@@ -108,9 +108,9 @@ export class QuizGameController {
       ),
     );
 
-    const result: QuizAnswerViewType | null =
+    const result1: QuizAnswerViewType | null =
       await this.quizAnswerQueryRepository.findAnswerById(answerId);
-    console.log(result);
-    return result;
+    console.log(result1);
+    return result1;
   }
 }
