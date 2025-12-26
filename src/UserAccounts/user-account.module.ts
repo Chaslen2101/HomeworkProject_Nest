@@ -26,7 +26,7 @@ import { LocalStrategy } from './Application/Strategies/local.strategy';
 import { JwtStrategy } from './Application/Strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './Application/Strategies/refresh.strategy';
 import { PassportModule } from '@nestjs/passport';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { AuthExternalService } from './Application/auth.external-service';
 
 const useCases = [
@@ -51,7 +51,7 @@ const useCases = [
     PassportModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10m' },
+      signOptions: { expiresIn: '60m' },
     }),
     NotificationModule,
   ],
