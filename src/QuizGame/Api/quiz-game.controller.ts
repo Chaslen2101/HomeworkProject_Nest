@@ -82,8 +82,8 @@ export class QuizGameController {
     const userInfo: AccessTokenPayloadType = req.user as AccessTokenPayloadType;
     if (
       neededPair.firstPlayerProgress.player.id != userInfo.sub &&
-      neededPair.secondPlayerProgress &&
-      neededPair.secondPlayerProgress.player.id != userInfo.sub
+      (!neededPair.secondPlayerProgress ||
+        neededPair.secondPlayerProgress.player.id != userInfo.sub)
     ) {
       throw new HttpException(
         'User not participant of the pair',
