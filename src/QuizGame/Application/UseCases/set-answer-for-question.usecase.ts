@@ -29,7 +29,7 @@ export class SetAnswerForQuestionUseCase
     if (!gameData) {
       throw new DomainException('User is not in active pair', 403);
     }
-
+    console.log(gameData);
     const newAnswer: QuizAnswer = QuizAnswer.createNew(
       gameData,
       dto.answer,

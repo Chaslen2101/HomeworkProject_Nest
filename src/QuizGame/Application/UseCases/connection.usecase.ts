@@ -23,7 +23,7 @@ export class ConnectionQuizGameUseCase
 
   async execute(dto: ConnectionQuizGameCommand): Promise<string> {
     const activePairWithPlayer: QuizPair | null =
-      await this.quizRepository.findPairByUserId(dto.userInfo.sub);
+      await this.quizRepository.findActiveGameByUserId(dto.userInfo.sub);
     if (activePairWithPlayer) {
       throw new DomainException('User already in active game', 403);
     }

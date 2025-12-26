@@ -43,7 +43,6 @@ export class QuizGameController {
     );
     const result: QuizPairViewType | null =
       await this.quizPairQueryRepository.findPairById(pairId);
-    console.log(result);
     return result;
   }
 
@@ -60,7 +59,6 @@ export class QuizGameController {
     if (!currentGame) {
       throw new HttpException('Pair not found', HttpStatus.NOT_FOUND);
     }
-    console.log(currentGame);
     return currentGame;
   }
 
@@ -90,7 +88,6 @@ export class QuizGameController {
         HttpStatus.FORBIDDEN,
       );
     }
-    console.log(neededPair);
     return neededPair;
   }
 
@@ -108,9 +105,8 @@ export class QuizGameController {
       ),
     );
 
-    const result1: QuizAnswerViewType | null =
+    const result: QuizAnswerViewType | null =
       await this.quizAnswerQueryRepository.findAnswerById(answerId);
-    console.log(result1);
-    return result1;
+    return result;
   }
 }

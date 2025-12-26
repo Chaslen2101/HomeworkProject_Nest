@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QuizPairTypeormEntity } from '../Entities/quiz-pair-typeorm.entity';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { QuizAnswerTypeormEntity } from '../Entities/quiz-answer-typeorm.entity';
 import { QuizPair } from '../../../../Domain/quiz-pair.entity';
 import { QuizGameEntityMapper } from '../../../Mappers/quiz-game-entity.mapper';
@@ -68,6 +68,20 @@ export class QuizPairRepository {
         { firstPlayerId: id },
         { secondPlayerId: id },
       ]);
+    if (!neededPair) {
+      return null;
+    }
+    return QuizGameEntityMapper.pairToDomainEntity(neededPair);
+  }
+
+  async findActiveGameByUserId(id: string): Promise<QuizPair | null> {
+    const neededPair: QuizPairTypeormEntity | null =
+      await this.quizPairRepository.findOne({
+        where: [
+          { firstPlayerId: id, status: Not(PairStatusEnum.Finished) },
+          { secondPlayerId: id, status: Not(PairStatusEnum.Finished) },
+        ],
+      });
     if (!neededPair) {
       return null;
     }
