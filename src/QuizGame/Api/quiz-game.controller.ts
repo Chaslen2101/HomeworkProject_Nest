@@ -15,7 +15,6 @@ import { JwtGuard } from '../../Common/Guards/jwt.guard';
 import { CommandBus } from '@nestjs/cqrs';
 import { ConnectionQuizGameCommand } from '../Application/UseCases/connection.usecase';
 import { AccessTokenPayloadType } from '../../Common/Types/auth-payloads.types';
-import { QuizPair } from '../Domain/quiz-pair.entity';
 import { QuizPairQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/quiz-pair.query-repository';
 import {
   QuizPairViewType,
@@ -24,7 +23,6 @@ import {
 import { SetAnswerInputDTO } from './InputDTOValidator/quiz-pair-dto.validator';
 import { SetAnswerForQuestionCommand } from '../Application/UseCases/set-answer-for-question.usecase';
 import { QuizAnswerQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/quiz-answer.query-repository';
-import { PairStatusEnum } from '../Domain/Types/pair-status.enum';
 import { isUUID } from 'class-validator';
 
 @Controller('pair-game-quiz/pairs')
@@ -43,7 +41,10 @@ export class QuizGameController {
     const pairId: string = await this.commandBus.execute(
       new ConnectionQuizGameCommand(req.user as AccessTokenPayloadType),
     );
-    return await this.quizPairQueryRepository.findPairById(pairId);
+    const result: QuizPairViewType | null =
+      await this.quizPairQueryRepository.findPairById(pairId);
+    console.log(result);
+    return result;
   }
 
   @Get('my-current')
@@ -59,6 +60,7 @@ export class QuizGameController {
     if (!currentGame) {
       throw new HttpException('Pair not found', HttpStatus.NOT_FOUND);
     }
+    console.log(currentGame);
     return currentGame;
   }
 
@@ -88,6 +90,7 @@ export class QuizGameController {
         HttpStatus.FORBIDDEN,
       );
     }
+    console.log(neededPair);
     return neededPair;
   }
 
@@ -104,6 +107,10 @@ export class QuizGameController {
         dto.answer,
       ),
     );
-    return await this.quizAnswerQueryRepository.findAnswerById(answerId);
+
+    const result: QuizAnswerViewType | null =
+      await this.quizAnswerQueryRepository.findAnswerById(answerId);
+    console.log(result);
+    return result;
   }
 }
