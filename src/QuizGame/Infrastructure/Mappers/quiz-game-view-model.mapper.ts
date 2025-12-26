@@ -7,7 +7,6 @@ import {
 import { QuizQuestionTypeormEntity } from '../Data-access/Sql/Entities/quiz-question-typeorm.entity';
 import { QuizPairTypeormEntity } from '../Data-access/Sql/Entities/quiz-pair-typeorm.entity';
 import { QuizAnswerTypeormEntity } from '../Data-access/Sql/Entities/quiz-answer-typeorm.entity';
-import { AnswerStatusEnum } from '../../Domain/Types/answer-status.enum';
 
 export class MapToViewQuizGame {
   static mapPair(pair: QuizPairTypeormEntity): QuizPairViewType {
@@ -19,18 +18,6 @@ export class MapToViewQuizGame {
     const secondPlayerAnswers: QuizAnswerTypeormEntity[] =
       pair.playersAnswers.filter((a) => a.userId === pair.secondPlayerId);
 
-    const firstPlayerCorrectAnswers: QuizAnswerTypeormEntity[] =
-      firstPlayerAnswers.filter(
-        (a) => a.answerStatus === AnswerStatusEnum.Correct,
-      );
-    const firstPlayerScore: number = firstPlayerCorrectAnswers.length;
-
-    const secondPlayerCorrectAnswers: QuizAnswerTypeormEntity[] =
-      firstPlayerAnswers.filter(
-        (a) => a.answerStatus === AnswerStatusEnum.Correct,
-      );
-    const secondPlayerScore: number = secondPlayerCorrectAnswers.length;
-
     return {
       id: pair.id,
       firstPlayerProgress: {
@@ -39,7 +26,7 @@ export class MapToViewQuizGame {
           id: pair.firstPlayerId,
           login: pair.firstPlayer.login,
         },
-        score: firstPlayerScore,
+        score: pair.firstPlayerScore,
       },
       secondPlayerProgress: pair.secondPlayerId
         ? {
@@ -48,7 +35,7 @@ export class MapToViewQuizGame {
               id: pair.secondPlayerId,
               login: pair.secondPlayer.login,
             },
-            score: secondPlayerScore,
+            score: pair.secondPlayerScore,
           }
         : null,
       questions: pair.secondPlayerId ? mappedQuestions : null,
