@@ -83,7 +83,10 @@ export class QuizPairQueryRepository {
         { firstPlayerId: playerInfo.sub },
         { secondPlayerId: playerInfo.sub },
       ])
-      .andWhere({ status: PairStatusEnum.Active })
+      .andWhere([
+        { status: PairStatusEnum.Active },
+        { status: PairStatusEnum.Pending },
+      ])
       .addOrderBy('questions.id', 'ASC')
       .addOrderBy('pr.addedAt', 'ASC')
       .getOne();

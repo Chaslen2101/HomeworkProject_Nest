@@ -21,7 +21,7 @@ export class QuizAnswer {
     userId: string,
   ): QuizAnswer {
     const userAnswers: QuizAnswer[] = gameData.answers.filter(
-      (a) => a.id === userId,
+      (a) => a.userId === userId,
     );
     if (userAnswers.length == 5) {
       throw new DomainException('User already answered all questions', 403);
