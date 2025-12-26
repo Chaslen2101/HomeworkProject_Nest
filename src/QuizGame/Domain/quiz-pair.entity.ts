@@ -80,8 +80,10 @@ export class QuizPair {
         firstPlayerScore > 0
       ) {
         ++firstPlayerScore;
-      }
-      if (firstPlayerFinishDate > secondPlayerScore && secondPlayerScore > 0) {
+      } else if (
+        secondPlayerFinishDate < firstPlayerFinishDate &&
+        secondPlayerScore > 0
+      ) {
         ++secondPlayerScore;
       }
     }
