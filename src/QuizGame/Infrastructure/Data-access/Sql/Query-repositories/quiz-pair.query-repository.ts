@@ -52,32 +52,35 @@ export class QuizPairQueryRepository {
     playerInfo: AccessTokenPayloadType,
     query: QuizPairQueryType,
   ): Promise<QuizPairPagesType> {
-    const toSkip: number = (query.pageNumber - 1) * query.pageSize;
-    const [quizPair, totalCount] = await this.quizPairRepository
+    const toSkip = (query.pageNumber - 1) * query.pageSize;
+
+    const [idsResult, totalCount] = await this.quizPairRepository
       .createQueryBuilder('q')
-      .leftJoinAndSelect('q.firstPlayer', 'fp')
-      .leftJoinAndSelect('q.secondPlayer', 'sp')
-      .leftJoinAndSelect('q.playersAnswers', 'pr')
-      .leftJoinAndSelect('q.questions', 'questions')
+      .select('q.id')
       .where('q.firstPlayerId = :id OR q.secondPlayerId = :id', {
         id: playerInfo.sub,
       })
       .orderBy(`q.${query.sortBy}`, query.sortDirection)
       .addOrderBy('q.pairCreatedDate', 'DESC')
-      .addOrderBy('questions.id', 'ASC')
-      .addOrderBy('pr.addedAt', 'ASC')
       .skip(toSkip)
       .take(query.pageSize)
       .getManyAndCount();
 
-    console.log(
-      await this.quizPairRepository.findBy([
-        { firstPlayerId: playerInfo.sub },
-        { secondPlayerId: playerInfo.sub },
-      ]),
-    );
+    const quizPairs = await this.quizPairRepository
+      .createQueryBuilder('q')
+      .leftJoinAndSelect('q.firstPlayer', 'fp')
+      .leftJoinAndSelect('q.secondPlayer', 'sp')
+      .leftJoinAndSelect('q.questions', 'questions')
+      .leftJoinAndSelect('q.playersAnswers', 'pr')
+      .where('q.id IN (:...ids)', { idsResult })
+      .orderBy(`q.${query.sortBy}`, query.sortDirection)
+      .addOrderBy('q.pairCreatedDate', 'DESC')
+      .addOrderBy('questions.id', 'ASC')
+      .addOrderBy('pr.addedAt', 'ASC')
+      .getMany();
 
-    const items: QuizPairViewType[] = MapToViewQuizGame.mapPairs(quizPair);
+    const items: QuizPairViewType[] = MapToViewQuizGame.mapPairs(quizPairs);
+
     return {
       pagesCount: Math.ceil(totalCount / query.pageSize),
       page: query.pageNumber,
