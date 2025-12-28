@@ -53,3 +53,20 @@ export type QuizPairViewType = {
   startGameDate: Date | null;
   finishGameDate: Date | null;
 };
+
+export type QuizPairPagesType = {
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  items: QuizPairViewType[];
+};
+
+export type QuizMyStatisticType = {
+  sumScore: number;
+  avgScores: number;
+  gamesCount: number;
+  winsCount: number;
+  lossesCount: number;
+  drawsCount: number;
+};

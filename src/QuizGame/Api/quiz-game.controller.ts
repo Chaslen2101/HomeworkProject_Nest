@@ -8,6 +8,7 @@ import {
   Inject,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -19,13 +20,18 @@ import { QuizPairQueryRepository } from '../Infrastructure/Data-access/Sql/Query
 import {
   QuizPairViewType,
   QuizAnswerViewType,
+  QuizMyStatisticType,
+  QuizPairPagesType,
 } from './Types/quiz-game-view-model.types';
 import { SetAnswerInputDTO } from './InputDTOValidator/quiz-pair-dto.validator';
 import { SetAnswerForQuestionCommand } from '../Application/UseCases/set-answer-for-question.usecase';
 import { QuizAnswerQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/quiz-answer.query-repository';
 import { isUUID } from 'class-validator';
+import type { InputQueryType } from '../../Common/Types/input-query.types';
+import { QuizGameQueryHelper } from './Helpers/quiz-game.query.helper';
+import { QuizPairQueryType } from './Types/quiz-game.input-query.types';
 
-@Controller('pair-game-quiz/pairs')
+@Controller('pair-game-quiz')
 export class QuizGameController {
   constructor(
     @Inject(CommandBus) private readonly commandBus: CommandBus,
@@ -34,7 +40,7 @@ export class QuizGameController {
     @Inject(QuizAnswerQueryRepository)
     private readonly quizAnswerQueryRepository: QuizAnswerQueryRepository,
   ) {}
-  @Post('connection')
+  @Post('pairs/connection')
   @UseGuards(JwtGuard)
   @HttpCode(200)
   async connection(@Req() req: Express.Request) {
@@ -46,7 +52,7 @@ export class QuizGameController {
     return result;
   }
 
-  @Get('my-current')
+  @Get('pairs/my-current')
   @UseGuards(JwtGuard)
   @HttpCode(200)
   async returnCurrentGame(
@@ -62,7 +68,7 @@ export class QuizGameController {
     return currentGame;
   }
 
-  @Get(':id')
+  @Get('pairs/:id')
   @UseGuards(JwtGuard)
   @HttpCode(200)
   async returnPairById(
@@ -91,7 +97,7 @@ export class QuizGameController {
     return neededPair;
   }
 
-  @Post('my-current/answers')
+  @Post('pairs/my-current/answers')
   @UseGuards(JwtGuard)
   @HttpCode(200)
   async setAnswer(
@@ -107,6 +113,35 @@ export class QuizGameController {
 
     const result: QuizAnswerViewType | null =
       await this.quizAnswerQueryRepository.findAnswerById(answerId);
+    return result;
+  }
+
+  @Get('users/my-statistic')
+  @UseGuards(JwtGuard)
+  @HttpCode(200)
+  async getStatistic(
+    @Req() req: Express.Request,
+  ): Promise<QuizMyStatisticType> {
+    const userInfo: AccessTokenPayloadType = req.user as AccessTokenPayloadType;
+    const result: QuizMyStatisticType =
+      await this.quizPairQueryRepository.getStatisctic(userInfo.sub);
+    return result;
+  }
+
+  @Get('pairs/my')
+  @UseGuards(JwtGuard)
+  @HttpCode(200)
+  async getAllMyGames(
+    @Query() query: InputQueryType,
+    @Req() req: Express.Request,
+  ): Promise<any> {
+    const sanitizedQuery: QuizPairQueryType =
+      QuizGameQueryHelper.pairQuery(query);
+    const result: QuizPairPagesType =
+      await this.quizPairQueryRepository.findPairsByPlayerId(
+        req.user as AccessTokenPayloadType,
+        sanitizedQuery,
+      );
     return result;
   }
 }

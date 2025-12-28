@@ -46,6 +46,45 @@ export class MapToViewQuizGame {
     };
   }
 
+  static mapPairs(pairs: QuizPairTypeormEntity[]): QuizPairViewType[] {
+    return pairs.map((pair) => {
+      const mappedQuestions: QuizQuestionViewType[] = this.mapQuestions(
+        pair.questions,
+      );
+      const firstPlayerAnswers: QuizAnswerTypeormEntity[] =
+        pair.playersAnswers.filter((a) => a.userId === pair.firstPlayerId);
+      const secondPlayerAnswers: QuizAnswerTypeormEntity[] =
+        pair.playersAnswers.filter((a) => a.userId === pair.secondPlayerId);
+
+      return {
+        id: pair.id,
+        firstPlayerProgress: {
+          answers: this.mapAnswers(firstPlayerAnswers),
+          player: {
+            id: pair.firstPlayerId,
+            login: pair.firstPlayer.login,
+          },
+          score: pair.firstPlayerScore,
+        },
+        secondPlayerProgress: pair.secondPlayerId
+          ? {
+              answers: this.mapAnswers(secondPlayerAnswers),
+              player: {
+                id: pair.secondPlayerId,
+                login: pair.secondPlayer.login,
+              },
+              score: pair.secondPlayerScore,
+            }
+          : null,
+        questions: pair.secondPlayerId ? mappedQuestions : null,
+        status: pair.status,
+        pairCreatedDate: pair.pairCreatedDate,
+        startGameDate: pair.startGameDate,
+        finishGameDate: pair.finishGameDate,
+      };
+    });
+  }
+
   static mapAnswer(answer: QuizAnswerTypeormEntity): QuizAnswerViewType {
     return {
       questionId: answer.questionId,

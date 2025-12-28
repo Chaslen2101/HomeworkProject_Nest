@@ -1,5 +1,9 @@
 import { InputQueryType } from '../../../Common/Types/input-query.types';
-import { QuestionQueryType } from '../Types/quiz-game.input-query.types';
+import {
+  QuestionQueryType,
+  QuizPairQueryType,
+} from '../Types/quiz-game.input-query.types';
+import { SortDirectionEnum } from '../../../Common/Types/sort-direction.enum';
 
 export class QuizGameQueryHelper {
   static questionQuery(query: InputQueryType): QuestionQueryType {
@@ -26,10 +30,24 @@ export class QuizGameQueryHelper {
       publishedStatus: publishedStatus,
       sortBy: query.sortBy ? query.sortBy : 'createdAt',
       sortDirection: !query.sortDirection
-        ? 'DESC'
+        ? SortDirectionEnum.DEscending
         : sortDirAllowedValues.includes(query.sortDirection.toUpperCase())
-          ? query.sortDirection.toUpperCase()
-          : 'DESC',
+          ? (query.sortDirection.toUpperCase() as SortDirectionEnum)
+          : SortDirectionEnum.DEscending,
+      pageNumber: query.pageNumber ? +query.pageNumber : 1,
+      pageSize: query.pageSize ? +query.pageSize : 10,
+    };
+  }
+
+  static pairQuery(query: InputQueryType): QuizPairQueryType {
+    const sortDirAllowedValues: string[] = ['ASC', 'DESC'];
+    return {
+      sortBy: query.sortBy ? query.sortBy : 'pairCreatedDate',
+      sortDirection: !query.sortDirection
+        ? SortDirectionEnum.DEscending
+        : sortDirAllowedValues.includes(query.sortDirection.toUpperCase())
+          ? (query.sortDirection.toUpperCase() as SortDirectionEnum)
+          : SortDirectionEnum.DEscending,
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
     };

@@ -6,9 +6,14 @@ import { QuizAnswerTypeormEntity } from '../Entities/quiz-answer-typeorm.entity'
 import { MapToViewQuizGame } from '../../../Mappers/quiz-game-view-model.mapper';
 import { UserTypeormEntity } from '../../../../../UserAccounts/Infrastructure/Data-access/Sql/Entities/user.typeorm-entity';
 import { QuizQuestionTypeormEntity } from '../Entities/quiz-question-typeorm.entity';
-import { QuizPairViewType } from '../../../../Api/Types/quiz-game-view-model.types';
+import {
+  QuizMyStatisticType,
+  QuizPairPagesType,
+  QuizPairViewType,
+} from '../../../../Api/Types/quiz-game-view-model.types';
 import { AccessTokenPayloadType } from '../../../../../Common/Types/auth-payloads.types';
 import { PairStatusEnum } from '../../../../Domain/Types/pair-status.enum';
+import { QuizPairQueryType } from '../../../../Api/Types/quiz-game.input-query.types';
 
 @Injectable()
 export class QuizPairQueryRepository {
@@ -43,10 +48,12 @@ export class QuizPairQueryRepository {
     return MapToViewQuizGame.mapPair(quizPair);
   }
 
-  async findPairByPlayerId(
+  async findPairsByPlayerId(
     playerInfo: AccessTokenPayloadType,
-  ): Promise<QuizPairViewType | null> {
-    const quizPair: QuizPairTypeormEntity | null = await this.quizPairRepository
+    query: QuizPairQueryType,
+  ): Promise<QuizPairPagesType> {
+    const toSkip: number = (query.pageNumber - 1) * query.pageSize;
+    const [quizPair, totalCount] = await this.quizPairRepository
       .createQueryBuilder('q')
       .select(['q'])
       .leftJoin('q.firstPlayer', 'fp')
@@ -60,12 +67,19 @@ export class QuizPairQueryRepository {
       ])
       .addOrderBy('questions.id', 'ASC')
       .addOrderBy('pr.addedAt', 'ASC')
-      .getOne();
+      .addOrderBy(query.sortBy, query.sortDirection)
+      .skip(toSkip)
+      .take(query.pageSize)
+      .getManyAndCount();
 
-    if (!quizPair) {
-      return null;
-    }
-    return MapToViewQuizGame.mapPair(quizPair);
+    const items: QuizPairViewType[] = MapToViewQuizGame.mapPairs(quizPair);
+    return {
+      pagesCount: Math.ceil(totalCount / query.pageSize),
+      page: query.pageNumber,
+      pageSize: query.pageSize,
+      totalCount: totalCount,
+      items: items,
+    };
   }
 
   async findActivePairByPlayerId(
@@ -95,5 +109,23 @@ export class QuizPairQueryRepository {
       return null;
     }
     return MapToViewQuizGame.mapPair(quizPair);
+  }
+
+  async getStatisctic(userId: string): Promise<QuizMyStatisticType> {
+    const result: QuizMyStatisticType | undefined =
+      await this.quizPairRepository
+        .createQueryBuilder('q')
+        .select([
+          `COALESCE(SUM(CASE WHEN q.firstPlayerId = '${userId}' THEN q.firstPlayerScore ELSE q.secondPlayerScore END)::int, 0) as "sumScore"`,
+          `COALESCE(AVG(CASE WHEN q.firstPlayerId = '${userId}' THEN q.firstPlayerScore ELSE q.secondPlayerScore END)::float, 0) as "avgScores"`,
+          'COUNT (*)::int as "gamesCount"',
+          `COUNT (*) FILTER(WHERE (q.firstPlayerId = '${userId}' AND q.firstPlayerScore > q.secondPlayerScore) OR (q.secondPlayerId = '${userId}' AND q.secondPlayerScore > q.firstPlayerScore))::int as "winsCount"`,
+          `COUNT (*) FILTER(WHERE (q.firstPlayerId = '${userId}' AND q.firstPlayerScore < q.secondPlayerScore) OR (q.secondPlayerId = '${userId}' AND q.secondPlayerScore < q.firstPlayerScore))::int as "lossesCount"`,
+          `COUNT (*) FILTER(WHERE q.firstPlayerScore = q.secondPlayerScore)::int as "drawsCount"`,
+        ])
+        .where([{ firstPlayerId: userId }, { secondPlayerId: userId }])
+        .getRawOne();
+
+    return result!;
   }
 }
