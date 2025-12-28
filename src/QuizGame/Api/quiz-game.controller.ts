@@ -68,35 +68,6 @@ export class QuizGameController {
     return currentGame;
   }
 
-  @Get('pairs/:id')
-  @UseGuards(JwtGuard)
-  @HttpCode(200)
-  async returnPairById(
-    @Req() req: Express.Request,
-    @Param('id') pairId: string,
-  ): Promise<QuizPairViewType> {
-    if (!isUUID(pairId)) {
-      throw new HttpException('Invalid UUID', HttpStatus.BAD_REQUEST);
-    }
-    const neededPair: QuizPairViewType | null =
-      await this.quizPairQueryRepository.findPairById(pairId);
-    if (!neededPair) {
-      throw new HttpException('Pair not found', HttpStatus.NOT_FOUND);
-    }
-    const userInfo: AccessTokenPayloadType = req.user as AccessTokenPayloadType;
-    if (
-      neededPair.firstPlayerProgress.player.id != userInfo.sub &&
-      (!neededPair.secondPlayerProgress ||
-        neededPair.secondPlayerProgress.player.id != userInfo.sub)
-    ) {
-      throw new HttpException(
-        'User not participant of the pair',
-        HttpStatus.FORBIDDEN,
-      );
-    }
-    return neededPair;
-  }
-
   @Post('pairs/my-current/answers')
   @UseGuards(JwtGuard)
   @HttpCode(200)
@@ -134,7 +105,7 @@ export class QuizGameController {
   async getAllMyGames(
     @Query() query: InputQueryType,
     @Req() req: Express.Request,
-  ): Promise<any> {
+  ): Promise<QuizPairPagesType> {
     const sanitizedQuery: QuizPairQueryType =
       QuizGameQueryHelper.pairQuery(query);
     const result: QuizPairPagesType =
@@ -143,5 +114,34 @@ export class QuizGameController {
         sanitizedQuery,
       );
     return result;
+  }
+
+  @Get('pairs/:id')
+  @UseGuards(JwtGuard)
+  @HttpCode(200)
+  async returnPairById(
+    @Req() req: Express.Request,
+    @Param('id') pairId: string,
+  ): Promise<QuizPairViewType> {
+    if (!isUUID(pairId)) {
+      throw new HttpException('Invalid UUID', HttpStatus.BAD_REQUEST);
+    }
+    const neededPair: QuizPairViewType | null =
+      await this.quizPairQueryRepository.findPairById(pairId);
+    if (!neededPair) {
+      throw new HttpException('Pair not found', HttpStatus.NOT_FOUND);
+    }
+    const userInfo: AccessTokenPayloadType = req.user as AccessTokenPayloadType;
+    if (
+      neededPair.firstPlayerProgress.player.id != userInfo.sub &&
+      (!neededPair.secondPlayerProgress ||
+        neededPair.secondPlayerProgress.player.id != userInfo.sub)
+    ) {
+      throw new HttpException(
+        'User not participant of the pair',
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    return neededPair;
   }
 }

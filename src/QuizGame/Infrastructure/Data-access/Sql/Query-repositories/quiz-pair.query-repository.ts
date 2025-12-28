@@ -67,7 +67,7 @@ export class QuizPairQueryRepository {
       ])
       .addOrderBy('questions.id', 'ASC')
       .addOrderBy('pr.addedAt', 'ASC')
-      .addOrderBy(query.sortBy, query.sortDirection)
+      .addOrderBy(`q.${query.sortBy}`, `${query.sortDirection}`)
       .skip(toSkip)
       .take(query.pageSize)
       .getManyAndCount();
@@ -117,7 +117,7 @@ export class QuizPairQueryRepository {
         .createQueryBuilder('q')
         .select([
           `COALESCE(SUM(CASE WHEN q.firstPlayerId = '${userId}' THEN q.firstPlayerScore ELSE q.secondPlayerScore END)::int, 0) as "sumScore"`,
-          `COALESCE(AVG(CASE WHEN q.firstPlayerId = '${userId}' THEN q.firstPlayerScore ELSE q.secondPlayerScore END)::float, 0) as "avgScores"`,
+          `COALESCE(ROUND(AVG(CASE WHEN q.firstPlayerId = '${userId}' THEN q.firstPlayerScore ELSE q.secondPlayerScore END),2)::float, 0) as "avgScores"`,
           'COUNT (*)::int as "gamesCount"',
           `COUNT (*) FILTER(WHERE (q.firstPlayerId = '${userId}' AND q.firstPlayerScore > q.secondPlayerScore) OR (q.secondPlayerId = '${userId}' AND q.secondPlayerScore > q.firstPlayerScore))::int as "winsCount"`,
           `COUNT (*) FILTER(WHERE (q.firstPlayerId = '${userId}' AND q.firstPlayerScore < q.secondPlayerScore) OR (q.secondPlayerId = '${userId}' AND q.secondPlayerScore < q.firstPlayerScore))::int as "lossesCount"`,
