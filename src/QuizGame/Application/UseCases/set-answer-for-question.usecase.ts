@@ -29,13 +29,11 @@ export class SetAnswerForQuestionUseCase
     if (!gameData) {
       throw new DomainException('User is not in active pair', 403);
     }
-    console.log({ gameId: gameData.pair.id, gameData: gameData });
     const newAnswer: QuizAnswer = QuizAnswer.createNew(
       gameData,
       dto.answer,
       dto.userInfo.sub,
     );
-    console.log({ answer: newAnswer });
     await this.quizAnswerRepository.createNewAnswer(newAnswer);
     gameData.answers.push(newAnswer);
     gameData.pair.countScore(gameData.answers);

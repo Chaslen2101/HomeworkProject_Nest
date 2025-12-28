@@ -54,7 +54,7 @@ export class QuizPairQueryRepository {
   ): Promise<QuizPairPagesType> {
     const toSkip = (query.pageNumber - 1) * query.pageSize;
 
-    const [idsResult, totalCount] = await this.quizPairRepository
+    const [ids, totalCount] = await this.quizPairRepository
       .createQueryBuilder('q')
       .select('q.id')
       .where('q.firstPlayerId = :id OR q.secondPlayerId = :id', {
@@ -72,7 +72,7 @@ export class QuizPairQueryRepository {
       .leftJoinAndSelect('q.secondPlayer', 'sp')
       .leftJoinAndSelect('q.questions', 'questions')
       .leftJoinAndSelect('q.playersAnswers', 'pr')
-      .where('q.id IN (:...ids)', { idsResult })
+      .where('q.id IN (:...ids)', { ids })
       .orderBy(`q.${query.sortBy}`, query.sortDirection)
       .addOrderBy('q.pairCreatedDate', 'DESC')
       .addOrderBy('questions.id', 'ASC')
