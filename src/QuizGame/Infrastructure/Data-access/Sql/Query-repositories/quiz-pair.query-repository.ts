@@ -54,7 +54,7 @@ export class QuizPairQueryRepository {
   ): Promise<QuizPairPagesType> {
     const toSkip = (query.pageNumber - 1) * query.pageSize;
 
-    const [ids, totalCount] = await this.quizPairRepository
+    const [idsResult, totalCount] = await this.quizPairRepository
       .createQueryBuilder('q')
       .select('q.id')
       .where('q.firstPlayerId = :id OR q.secondPlayerId = :id', {
@@ -65,6 +65,19 @@ export class QuizPairQueryRepository {
       .skip(toSkip)
       .take(query.pageSize)
       .getManyAndCount();
+
+    const ids: string[] = idsResult.map((item) => item.id);
+
+    // --- ВОТ ЭТОТ ПРЕДОХРАНИТЕЛЬ ---
+    if (ids.length === 0) {
+      return {
+        pagesCount: 0,
+        page: query.pageNumber,
+        pageSize: query.pageSize,
+        totalCount: 0,
+        items: [],
+      };
+    }
 
     const quizPairs = await this.quizPairRepository
       .createQueryBuilder('q')
