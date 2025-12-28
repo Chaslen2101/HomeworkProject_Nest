@@ -55,19 +55,18 @@ export class QuizPairQueryRepository {
     const toSkip: number = (query.pageNumber - 1) * query.pageSize;
     const [quizPair, totalCount] = await this.quizPairRepository
       .createQueryBuilder('q')
-      .select(['q'])
-      .leftJoin('q.firstPlayer', 'fp')
-      .leftJoin('q.secondPlayer', 'sp')
-      .leftJoin('q.playersAnswers', 'pr')
-      .leftJoin('q.questions', 'questions')
-      .addSelect(['fp.login', 'sp.login', 'pr', 'questions'])
+      .leftJoinAndSelect('q.firstPlayer', 'fp')
+      .leftJoinAndSelect('q.secondPlayer', 'sp')
+      .leftJoinAndSelect('q.playersAnswers', 'pr')
+      .leftJoinAndSelect('q.questions', 'questions')
       .where('q.firstPlayerId = :id OR q.secondPlayerId = :id', {
         id: playerInfo.sub,
       })
+      .orderBy(`q.${query.sortBy}`, query.sortDirection)
+      .addOrderBy('q.pairCreatedDate', 'DESC')
+      .addOrderBy('q.id', 'ASC')
       .addOrderBy('questions.id', 'ASC')
       .addOrderBy('pr.addedAt', 'ASC')
-      .addOrderBy(`q.${query.sortBy}`, `${query.sortDirection}`)
-      .addOrderBy('q.pairCreatedDate', 'DESC')
       .skip(toSkip)
       .take(query.pageSize)
       .getManyAndCount();
