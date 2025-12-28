@@ -55,14 +55,10 @@ export class QuizPairQueryRepository {
     const toSkip: number = (query.pageNumber - 1) * query.pageSize;
     const [quizPair, totalCount] = await this.quizPairRepository
       .createQueryBuilder('q')
-      .leftJoin('q.firstPlayer', 'fp')
-      .addSelect('fp.login')
-      .leftJoin('q.secondPlayer', 'sp')
-      .addSelect('sp.login')
-      .leftJoin('q.playersAnswers', 'pr')
-      .addSelect(['pr.questionId', 'pr.answerStatus', 'pr.addedAt'])
-      .leftJoin('q.questions', 'questions')
-      .addSelect(['questions.id', 'questions.body'])
+      .leftJoinAndSelect('q.firstPlayer', 'fp')
+      .leftJoinAndSelect('q.secondPlayer', 'sp')
+      .leftJoinAndSelect('q.playersAnswers', 'pr')
+      .leftJoinAndSelect('q.questions', 'questions')
       .where('q.firstPlayerId = :id OR q.secondPlayerId = :id', {
         id: playerInfo.sub,
       })
@@ -74,6 +70,13 @@ export class QuizPairQueryRepository {
       .skip(toSkip)
       .take(query.pageSize)
       .getManyAndCount();
+
+    console.log(
+      await this.quizPairRepository.findBy([
+        { firstPlayerId: playerInfo.sub },
+        { secondPlayerId: playerInfo.sub },
+      ]),
+    );
 
     const items: QuizPairViewType[] = MapToViewQuizGame.mapPairs(quizPair);
     return {
