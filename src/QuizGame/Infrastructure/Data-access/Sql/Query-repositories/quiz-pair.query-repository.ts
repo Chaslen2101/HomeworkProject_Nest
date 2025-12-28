@@ -61,13 +61,13 @@ export class QuizPairQueryRepository {
       .leftJoin('q.playersAnswers', 'pr')
       .leftJoin('q.questions', 'questions')
       .addSelect(['fp.login', 'sp.login', 'pr', 'questions'])
-      .where([
-        { firstPlayerId: playerInfo.sub },
-        { secondPlayerId: playerInfo.sub },
-      ])
+      .where('q.firstPlayerId = :id OR q.secondPlayerId = :id', {
+        id: playerInfo.sub,
+      })
       .addOrderBy('questions.id', 'ASC')
       .addOrderBy('pr.addedAt', 'ASC')
       .addOrderBy(`q.${query.sortBy}`, `${query.sortDirection}`)
+      .addOrderBy('q.pairCreatedDate', 'DESC')
       .skip(toSkip)
       .take(query.pageSize)
       .getManyAndCount();
