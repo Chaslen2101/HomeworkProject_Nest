@@ -62,11 +62,10 @@ export class QuizPairQueryRepository {
       .where('q.firstPlayerId = :id OR q.secondPlayerId = :id', {
         id: playerInfo.sub,
       })
-      // .orderBy(`q.${query.sortBy}`, query.sortDirection)
-      // .addOrderBy('q.pairCreatedDate', 'DESC')
-      // .addOrderBy('q.id', 'ASC')
-      // .addOrderBy('questions.id', 'ASC')
-      // .addOrderBy('pr.addedAt', 'ASC')
+      .orderBy(`q.${query.sortBy}`, query.sortDirection)
+      .addOrderBy('q.pairCreatedDate', 'DESC')
+      .addOrderBy('questions.id', 'ASC')
+      .addOrderBy('pr.addedAt', 'ASC')
       .skip(toSkip)
       .take(query.pageSize)
       .getManyAndCount();
