@@ -20,8 +20,9 @@ import { QuizPairQueryRepository } from '../Infrastructure/Data-access/Sql/Query
 import {
   QuizPairViewType,
   QuizAnswerViewType,
-  QuizMyStatisticType,
+  QuizStatisticViewType,
   QuizPairPagesType,
+  QuizStatisticPagesType,
 } from './Types/quiz-game-view-model.types';
 import { SetAnswerInputDTO } from './InputDTOValidator/quiz-pair-dto.validator';
 import { SetAnswerForQuestionCommand } from '../Application/UseCases/set-answer-for-question.usecase';
@@ -29,7 +30,11 @@ import { QuizAnswerQueryRepository } from '../Infrastructure/Data-access/Sql/Que
 import { isUUID } from 'class-validator';
 import type { InputQueryType } from '../../Common/Types/input-query.types';
 import { QuizGameQueryHelper } from './Helpers/quiz-game.query.helper';
-import { QuizPairQueryType } from './Types/quiz-game.input-query.types';
+import {
+  QuizPairSanitizedQueryType,
+  QuizStatisticQueryType,
+} from './Types/quiz-game.input-query.types';
+import { QuizStatisticQueryRepository } from '../Infrastructure/Data-access/Sql/Query-repositories/quiz-statistic.query-repository';
 
 @Controller('pair-game-quiz')
 export class QuizGameController {
@@ -39,6 +44,8 @@ export class QuizGameController {
     private readonly quizPairQueryRepository: QuizPairQueryRepository,
     @Inject(QuizAnswerQueryRepository)
     private readonly quizAnswerQueryRepository: QuizAnswerQueryRepository,
+    @Inject(QuizStatisticQueryRepository)
+    private readonly quizStatisticQueryRepository: QuizStatisticQueryRepository,
   ) {}
   @Post('pairs/connection')
   @UseGuards(JwtGuard)
@@ -92,10 +99,13 @@ export class QuizGameController {
   @HttpCode(200)
   async getStatistic(
     @Req() req: Express.Request,
-  ): Promise<QuizMyStatisticType> {
+  ): Promise<QuizStatisticViewType> {
     const userInfo: AccessTokenPayloadType = req.user as AccessTokenPayloadType;
-    const result: QuizMyStatisticType =
-      await this.quizPairQueryRepository.getStatisctic(userInfo.sub);
+    const result: QuizStatisticViewType =
+      await this.quizStatisticQueryRepository.findStatisticByUserId(
+        userInfo.sub,
+      );
+
     return result;
   }
 
@@ -106,7 +116,7 @@ export class QuizGameController {
     @Query() query: InputQueryType,
     @Req() req: Express.Request,
   ): Promise<QuizPairPagesType> {
-    const sanitizedQuery: QuizPairQueryType =
+    const sanitizedQuery: QuizPairSanitizedQueryType =
       QuizGameQueryHelper.pairQuery(query);
     const result: QuizPairPagesType =
       await this.quizPairQueryRepository.findPairsByPlayerId(
@@ -143,5 +153,17 @@ export class QuizGameController {
       );
     }
     return neededPair;
+  }
+
+  @Get('users/top')
+  @HttpCode(200)
+  async topPlayers(
+    @Query() query: InputQueryType,
+  ): Promise<QuizStatisticPagesType> {
+    const sanitizedQuery: QuizStatisticQueryType =
+      QuizGameQueryHelper.topPlayersQuery(query);
+    const result: QuizStatisticPagesType =
+      await this.quizStatisticQueryRepository.getAllStatistics(sanitizedQuery);
+    return result;
   }
 }

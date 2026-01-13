@@ -28,7 +28,7 @@ import { DeleteQuestionCommand } from '../Application/UseCases/delete-question.u
 import { UpdateQuestionCommand } from '../Application/UseCases/update-question.usecase';
 import { UpdateQuestionPublishStatusCommand } from '../Application/UseCases/update-question-publish-status.usecase';
 import type { InputQueryType } from '../../Common/Types/input-query.types';
-import { QuestionQueryType } from './Types/quiz-game.input-query.types';
+import { QuestionSanitizedQueryType } from './Types/quiz-game.input-query.types';
 import { QuizGameQueryHelper } from './Helpers/quiz-game.query.helper';
 
 @Controller('sa/quiz/questions')
@@ -44,7 +44,7 @@ export class QuizGameSaController {
   async getAllQuestions(
     @Query() query: InputQueryType,
   ): Promise<QuestionPagesType> {
-    const sanitizedQuery: QuestionQueryType =
+    const sanitizedQuery: QuestionSanitizedQueryType =
       QuizGameQueryHelper.questionQuery(query);
     const result: QuestionPagesType =
       await this.questionQueryRepository.findAll(sanitizedQuery);

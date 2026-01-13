@@ -1,9 +1,11 @@
 import { QuizPair } from '../../Domain/quiz-pair.entity';
-import { QuizPairTypeormEntity } from '../Data-access/Sql/Entities/quiz-pair-typeorm.entity';
+import { QuizPairTypeormEntity } from '../Data-access/Sql/Entities/quiz-pair.typeorm-entity';
 import { QuizQuestion } from '../../Domain/quiz-question.entity';
-import { QuizQuestionTypeormEntity } from '../Data-access/Sql/Entities/quiz-question-typeorm.entity';
+import { QuizQuestionTypeormEntity } from '../Data-access/Sql/Entities/quiz-question.typeorm-entity';
 import { QuizAnswer } from '../../Domain/quiz-answer.entity';
-import { QuizAnswerTypeormEntity } from '../Data-access/Sql/Entities/quiz-answer-typeorm.entity';
+import { QuizAnswerTypeormEntity } from '../Data-access/Sql/Entities/quiz-answer.typeorm-entity';
+import { QuizStatisticTypeormEntity } from '../Data-access/Sql/Entities/quiz-statistic.typeorm-entity';
+import { QuizStatistic } from '../../Domain/quiz-statistic.entity';
 
 export class QuizGameEntityMapper {
   static pairToTypeormEntityCreate(
@@ -154,6 +156,35 @@ export class QuizGameEntityMapper {
       answerTypeorm.answer,
       answerTypeorm.answerStatus,
       answerTypeorm.addedAt,
+    );
+  }
+
+  static statisticToTypeormEntity(
+    statisticDomain: QuizStatistic,
+  ): QuizStatisticTypeormEntity {
+    const typeormEntity: QuizStatisticTypeormEntity =
+      new QuizStatisticTypeormEntity();
+    typeormEntity.userId = statisticDomain.userId;
+    typeormEntity.sumScore = statisticDomain.sumScore;
+    typeormEntity.avgScores = statisticDomain.avgScores;
+    typeormEntity.gamesCount = statisticDomain.gamesCount;
+    typeormEntity.winsCount = statisticDomain.winsCount;
+    typeormEntity.lossesCount = statisticDomain.lossesCount;
+    typeormEntity.drawsCount = statisticDomain.drawsCount;
+    return typeormEntity;
+  }
+
+  static statisticToDomainEntity(
+    statisticTypeorm: QuizStatisticTypeormEntity,
+  ): QuizStatistic {
+    return new QuizStatistic(
+      statisticTypeorm.userId,
+      statisticTypeorm.sumScore,
+      statisticTypeorm.avgScores,
+      statisticTypeorm.gamesCount,
+      statisticTypeorm.winsCount,
+      statisticTypeorm.lossesCount,
+      statisticTypeorm.drawsCount,
     );
   }
 }

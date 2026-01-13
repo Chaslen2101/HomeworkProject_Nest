@@ -43,6 +43,7 @@ export class QuizPair {
     if (!canFinish) {
       return;
     }
+    this.countScoreWhenFinish(answers);
     this.status = PairStatusEnum.Finished;
     this.finishGameDate = new Date();
   }
@@ -52,43 +53,78 @@ export class QuizPair {
   }
 
   countScore(answers: QuizAnswer[]): void {
-    const firstPlayerAnswers: QuizAnswer[] = answers.filter(
-      (a) => a.userId == this.firstPlayerId,
-    );
-    const firstPlayerCorrectAnswers: QuizAnswer[] = firstPlayerAnswers.filter(
-      (a) => a.answerStatus === AnswerStatusEnum.Correct,
-    );
-    let firstPlayerScore: number = firstPlayerCorrectAnswers.length;
+    const playersAnswers: ExtractedAnswers =
+      this.extractAllAnswersOfPlayers(answers);
+    const correctPlayersAnswers: ExtractedAnswers =
+      this.extractCorrectAnswersOfPlayers(playersAnswers);
 
-    const secondPlayerAnswers: QuizAnswer[] = answers.filter(
-      (a) => a.userId == this.secondPlayerId,
-    );
-    const secondPlayerCorrectAnswers: QuizAnswer[] = secondPlayerAnswers.filter(
-      (a) => a.answerStatus === AnswerStatusEnum.Correct,
-    );
-    let secondPlayerScore: number = secondPlayerCorrectAnswers.length;
+    const firstPlayerScore: number =
+      correctPlayersAnswers.firstPlayerAnswers.length;
 
-    if (this.canFinish(answers)) {
-      const firstPlayerFinishDate: number = Math.max(
-        ...firstPlayerAnswers.map((a) => a.addedAt.getTime()),
-      );
-      const secondPlayerFinishDate: number = Math.max(
-        ...secondPlayerAnswers.map((a) => a.addedAt.getTime()),
-      );
-      if (
-        firstPlayerFinishDate < secondPlayerFinishDate &&
-        firstPlayerScore > 0
-      ) {
-        ++firstPlayerScore;
-      } else if (
-        secondPlayerFinishDate < firstPlayerFinishDate &&
-        secondPlayerScore > 0
-      ) {
-        ++secondPlayerScore;
-      }
-    }
+    const secondPlayerScore: number =
+      correctPlayersAnswers.secondPlayerAnswers.length;
+
     this.firstPlayerScore = firstPlayerScore;
     this.secondPlayerScore = secondPlayerScore;
     return;
   }
+
+  private countScoreWhenFinish(answers: QuizAnswer[]): void {
+    const playersAnswers: ExtractedAnswers =
+      this.extractAllAnswersOfPlayers(answers);
+
+    const firstPlayerFinishDate: number = Math.max(
+      ...playersAnswers.firstPlayerAnswers.map((a) => a.addedAt.getTime()),
+    );
+    const secondPlayerFinishDate: number = Math.max(
+      ...playersAnswers.secondPlayerAnswers.map((a) => a.addedAt.getTime()),
+    );
+
+    if (
+      firstPlayerFinishDate < secondPlayerFinishDate &&
+      this.firstPlayerScore > 0
+    ) {
+      ++this.firstPlayerScore;
+    } else if (
+      secondPlayerFinishDate < firstPlayerFinishDate &&
+      this.secondPlayerScore > 0
+    ) {
+      ++this.secondPlayerScore;
+    }
+  }
+
+  private extractAllAnswersOfPlayers(answers: QuizAnswer[]): ExtractedAnswers {
+    const firstPlayerAnswers: QuizAnswer[] = answers.filter(
+      (a) => a.userId == this.firstPlayerId,
+    );
+    const secondPlayerAnswers: QuizAnswer[] = answers.filter(
+      (a) => a.userId == this.secondPlayerId,
+    );
+    return {
+      firstPlayerAnswers: firstPlayerAnswers,
+      secondPlayerAnswers: secondPlayerAnswers,
+    };
+  }
+
+  private extractCorrectAnswersOfPlayers(
+    playersAnswers: ExtractedAnswers,
+  ): ExtractedAnswers {
+    const firstPlayerAnswers: QuizAnswer[] =
+      playersAnswers.firstPlayerAnswers.filter(
+        (a) => a.answerStatus === AnswerStatusEnum.Correct,
+      );
+    const secondPlayerAnswers: QuizAnswer[] =
+      playersAnswers.secondPlayerAnswers.filter(
+        (a) => a.answerStatus === AnswerStatusEnum.Correct,
+      );
+    return {
+      firstPlayerAnswers: firstPlayerAnswers,
+      secondPlayerAnswers: secondPlayerAnswers,
+    };
+  }
 }
+
+type ExtractedAnswers = {
+  firstPlayerAnswers: QuizAnswer[];
+  secondPlayerAnswers: QuizAnswer[];
+};

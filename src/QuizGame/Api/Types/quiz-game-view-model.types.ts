@@ -62,11 +62,32 @@ export type QuizPairPagesType = {
   items: QuizPairViewType[];
 };
 
-export type QuizMyStatisticType = {
+export type QuizStatisticViewType = {
   sumScore: number;
   avgScores: number;
   gamesCount: number;
   winsCount: number;
   lossesCount: number;
   drawsCount: number;
+};
+
+export type QuizStatisticTop10ViewType = {
+  sumScore: number;
+  avgScores: number;
+  gamesCount: number;
+  winsCount: number;
+  lossesCount: number;
+  drawsCount: number;
+  player: {
+    id: string;
+    login: string;
+  };
+};
+
+export type QuizStatisticPagesType = {
+  pagesCount: number;
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  items: QuizStatisticTop10ViewType[];
 };

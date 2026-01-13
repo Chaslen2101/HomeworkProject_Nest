@@ -1,19 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuizPairTypeormEntity } from '../Entities/quiz-pair-typeorm.entity';
+import { QuizPairTypeormEntity } from '../Entities/quiz-pair.typeorm-entity';
 import { Repository } from 'typeorm';
-import { QuizAnswerTypeormEntity } from '../Entities/quiz-answer-typeorm.entity';
+import { QuizAnswerTypeormEntity } from '../Entities/quiz-answer.typeorm-entity';
 import { MapToViewQuizGame } from '../../../Mappers/quiz-game-view-model.mapper';
 import { UserTypeormEntity } from '../../../../../UserAccounts/Infrastructure/Data-access/Sql/Entities/user.typeorm-entity';
-import { QuizQuestionTypeormEntity } from '../Entities/quiz-question-typeorm.entity';
+import { QuizQuestionTypeormEntity } from '../Entities/quiz-question.typeorm-entity';
 import {
-  QuizMyStatisticType,
   QuizPairPagesType,
   QuizPairViewType,
 } from '../../../../Api/Types/quiz-game-view-model.types';
 import { AccessTokenPayloadType } from '../../../../../Common/Types/auth-payloads.types';
 import { PairStatusEnum } from '../../../../Domain/Types/pair-status.enum';
-import { QuizPairQueryType } from '../../../../Api/Types/quiz-game.input-query.types';
+import { QuizPairSanitizedQueryType } from '../../../../Api/Types/quiz-game.input-query.types';
 
 @Injectable()
 export class QuizPairQueryRepository {
@@ -50,7 +49,7 @@ export class QuizPairQueryRepository {
 
   async findPairsByPlayerId(
     playerInfo: AccessTokenPayloadType,
-    query: QuizPairQueryType,
+    query: QuizPairSanitizedQueryType,
   ): Promise<QuizPairPagesType> {
     const toSkip = (query.pageNumber - 1) * query.pageSize;
 
@@ -68,7 +67,6 @@ export class QuizPairQueryRepository {
 
     const ids: string[] = idsResult.map((item) => item.id);
 
-    // --- ВОТ ЭТОТ ПРЕДОХРАНИТЕЛЬ ---
     if (ids.length === 0) {
       return {
         pagesCount: 0,
@@ -78,7 +76,6 @@ export class QuizPairQueryRepository {
         items: [],
       };
     }
-
     const quizPairs = await this.quizPairRepository
       .createQueryBuilder('q')
       .leftJoinAndSelect('q.firstPlayer', 'fp')
@@ -130,23 +127,5 @@ export class QuizPairQueryRepository {
       return null;
     }
     return MapToViewQuizGame.mapPair(quizPair);
-  }
-
-  async getStatisctic(userId: string): Promise<QuizMyStatisticType> {
-    const result: QuizMyStatisticType | undefined =
-      await this.quizPairRepository
-        .createQueryBuilder('q')
-        .select([
-          `COALESCE(SUM(CASE WHEN q.firstPlayerId = '${userId}' THEN q.firstPlayerScore ELSE q.secondPlayerScore END)::int, 0) as "sumScore"`,
-          `COALESCE(ROUND(AVG(CASE WHEN q.firstPlayerId = '${userId}' THEN q.firstPlayerScore ELSE q.secondPlayerScore END),2)::float, 0) as "avgScores"`,
-          'COUNT (*)::int as "gamesCount"',
-          `COUNT (*) FILTER(WHERE (q.firstPlayerId = '${userId}' AND q.firstPlayerScore > q.secondPlayerScore) OR (q.secondPlayerId = '${userId}' AND q.secondPlayerScore > q.firstPlayerScore))::int as "winsCount"`,
-          `COUNT (*) FILTER(WHERE (q.firstPlayerId = '${userId}' AND q.firstPlayerScore < q.secondPlayerScore) OR (q.secondPlayerId = '${userId}' AND q.secondPlayerScore < q.firstPlayerScore))::int as "lossesCount"`,
-          `COUNT (*) FILTER(WHERE q.firstPlayerScore = q.secondPlayerScore)::int as "drawsCount"`,
-        ])
-        .where([{ firstPlayerId: userId }, { secondPlayerId: userId }])
-        .getRawOne();
-
-    return result!;
   }
 }

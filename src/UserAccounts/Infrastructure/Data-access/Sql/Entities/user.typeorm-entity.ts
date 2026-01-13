@@ -4,8 +4,9 @@ import { PasswordRecoveryInfoTypeormEntity } from './passwordRecoveryInfo.typeor
 import { SessionTypeormEntity } from './session.typeorm-entity';
 import { CommentTypeormEntity } from '../../../../../BloggersPlatform/Infrastructure/Data-access/Sql/Entities/comment.typeorm-entity';
 import { LikeStatusTypeormEntity } from '../../../../../BloggersPlatform/Infrastructure/Data-access/Sql/Entities/likeStatus.typeorm-entity';
-import { QuizPairTypeormEntity } from '../../../../../QuizGame/Infrastructure/Data-access/Sql/Entities/quiz-pair-typeorm.entity';
-import { QuizAnswerTypeormEntity } from '../../../../../QuizGame/Infrastructure/Data-access/Sql/Entities/quiz-answer-typeorm.entity';
+import { QuizPairTypeormEntity } from '../../../../../QuizGame/Infrastructure/Data-access/Sql/Entities/quiz-pair.typeorm-entity';
+import { QuizAnswerTypeormEntity } from '../../../../../QuizGame/Infrastructure/Data-access/Sql/Entities/quiz-answer.typeorm-entity';
+import { QuizStatisticTypeormEntity } from '../../../../../QuizGame/Infrastructure/Data-access/Sql/Entities/quiz-statistic.typeorm-entity';
 
 @Entity()
 export class UserTypeormEntity {
@@ -56,4 +57,10 @@ export class UserTypeormEntity {
     (quizGamesProgress) => quizGamesProgress.user,
   )
   quizPairsProgress: QuizAnswerTypeormEntity;
+
+  @OneToOne(
+    () => QuizStatisticTypeormEntity,
+    (quizGameStatistic) => quizGameStatistic.user,
+  )
+  quizGameStatistic: QuizStatisticTypeormEntity;
 }

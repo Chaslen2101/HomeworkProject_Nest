@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuizQuestionTypeormEntity } from '../Entities/quiz-question-typeorm.entity';
+import { QuizQuestionTypeormEntity } from '../Entities/quiz-question.typeorm-entity';
 import {
   QuestionPagesType,
   QuizQuestionSAViewType,
 } from '../../../../Api/Types/quiz-game-view-model.types';
 import { Repository } from 'typeorm';
 import { MapToViewQuizGame } from '../../../Mappers/quiz-game-view-model.mapper';
-import { QuestionQueryType } from '../../../../Api/Types/quiz-game.input-query.types';
+import { QuestionSanitizedQueryType } from '../../../../Api/Types/quiz-game.input-query.types';
 
 @Injectable()
 export class QuizQuestionQueryRepository {
@@ -27,7 +27,9 @@ export class QuizQuestionQueryRepository {
     return MapToViewQuizGame.mapQuestionForSA(neededQuestion);
   }
 
-  async findAll(sanitizedQuery: QuestionQueryType): Promise<QuestionPagesType> {
+  async findAll(
+    sanitizedQuery: QuestionSanitizedQueryType,
+  ): Promise<QuestionPagesType> {
     const offsetValue: number =
       (sanitizedQuery.pageNumber - 1) * sanitizedQuery.pageSize;
     const [items, totalCount] = await this.questionRepository

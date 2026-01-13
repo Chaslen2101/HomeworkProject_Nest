@@ -1,12 +1,13 @@
 import { InputQueryType } from '../../../Common/Types/input-query.types';
 import {
-  QuestionQueryType,
-  QuizPairQueryType,
+  QuestionSanitizedQueryType,
+  QuizPairSanitizedQueryType,
+  QuizStatisticQueryType,
 } from '../Types/quiz-game.input-query.types';
 import { SortDirectionEnum } from '../../../Common/Types/sort-direction.enum';
 
 export class QuizGameQueryHelper {
-  static questionQuery(query: InputQueryType): QuestionQueryType {
+  static questionQuery(query: InputQueryType): QuestionSanitizedQueryType {
     const sortDirAllowedValues: string[] = ['ASC', 'DESC'];
     const publishedStatusAllowedValues: string[] = [
       'all',
@@ -30,26 +31,61 @@ export class QuizGameQueryHelper {
       publishedStatus: publishedStatus,
       sortBy: query.sortBy ? query.sortBy : 'createdAt',
       sortDirection: !query.sortDirection
-        ? SortDirectionEnum.DEscending
+        ? SortDirectionEnum.Descending
         : sortDirAllowedValues.includes(query.sortDirection.toUpperCase())
           ? (query.sortDirection.toUpperCase() as SortDirectionEnum)
-          : SortDirectionEnum.DEscending,
+          : SortDirectionEnum.Descending,
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
     };
   }
 
-  static pairQuery(query: InputQueryType): QuizPairQueryType {
+  static pairQuery(query: InputQueryType): QuizPairSanitizedQueryType {
     const sortDirAllowedValues: string[] = ['ASC', 'DESC'];
     return {
       sortBy: query.sortBy ? query.sortBy : 'pairCreatedDate',
       sortDirection: !query.sortDirection
-        ? SortDirectionEnum.DEscending
+        ? SortDirectionEnum.Descending
         : sortDirAllowedValues.includes(query.sortDirection.toUpperCase())
           ? (query.sortDirection.toUpperCase() as SortDirectionEnum)
-          : SortDirectionEnum.DEscending,
+          : SortDirectionEnum.Descending,
       pageNumber: query.pageNumber ? +query.pageNumber : 1,
       pageSize: query.pageSize ? +query.pageSize : 10,
     };
+  }
+
+  static topPlayersQuery(query: InputQueryType): QuizStatisticQueryType {
+    const sortDirAllowedValues: string[] = ['ASC', 'DESC'];
+
+    if (query.sort && Array.isArray(query.sort)) {
+      const sanitizedSort: string[] = query.sort.map((sortParam: string) => {
+        const [field, direction] = sortParam.split(' ');
+        const sortDirection: string = sortDirAllowedValues.includes(
+          direction.toUpperCase(),
+        )
+          ? direction.toUpperCase()
+          : SortDirectionEnum.Descending;
+        return `${field} ${sortDirection}`;
+      });
+      return {
+        sort: sanitizedSort,
+        pageNumber: query.pageNumber ? +query.pageNumber : 1,
+        pageSize: query.pageSize ? +query.pageSize : 10,
+      };
+    } else {
+      return {
+        sort: query.sort
+          ? sortDirAllowedValues.includes(
+              query.sort.split(' ')[1].toUpperCase(),
+            )
+            ? [
+                `${query.sort.split(' ')[0]} ${query.sort.split(' ')[1].toUpperCase()}`,
+              ]
+            : ['avgScores DESC', 'sumScore DESC']
+          : ['avgScores DESC', 'sumScore DESC'],
+        pageNumber: query.pageNumber ? +query.pageNumber : 1,
+        pageSize: query.pageSize ? +query.pageSize : 10,
+      };
+    }
   }
 }

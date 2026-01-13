@@ -9,8 +9,8 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 import { UserTypeormEntity } from '../../../../../UserAccounts/Infrastructure/Data-access/Sql/Entities/user.typeorm-entity';
-import { QuizAnswerTypeormEntity } from './quiz-answer-typeorm.entity';
-import { QuizQuestionTypeormEntity } from './quiz-question-typeorm.entity';
+import { QuizAnswerTypeormEntity } from './quiz-answer.typeorm-entity';
+import { QuizQuestionTypeormEntity } from './quiz-question.typeorm-entity';
 import { PairStatusEnum } from '../../../../Domain/Types/pair-status.enum';
 
 @Entity()

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinTable, ManyToOne, PrimaryColumn } from 'typeorm';
 import { UserTypeormEntity } from '../../../../../UserAccounts/Infrastructure/Data-access/Sql/Entities/user.typeorm-entity';
-import { QuizPairTypeormEntity } from './quiz-pair-typeorm.entity';
+import { QuizPairTypeormEntity } from './quiz-pair.typeorm-entity';
 import { AnswerStatusEnum } from '../../../../Domain/Types/answer-status.enum';
 
 @Entity()

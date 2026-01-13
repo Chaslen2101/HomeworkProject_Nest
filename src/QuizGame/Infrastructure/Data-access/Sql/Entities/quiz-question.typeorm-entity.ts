@@ -1,5 +1,5 @@
 import { Column, Entity, ManyToMany, PrimaryColumn } from 'typeorm';
-import { QuizPairTypeormEntity } from './quiz-pair-typeorm.entity';
+import { QuizPairTypeormEntity } from './quiz-pair.typeorm-entity';
 
 @Entity()
 export class QuizQuestionTypeormEntity {

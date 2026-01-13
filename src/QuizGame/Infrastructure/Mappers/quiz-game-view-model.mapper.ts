@@ -3,10 +3,14 @@ import {
   QuizPairViewType,
   QuizAnswerViewType,
   QuizQuestionViewType,
+  QuizStatisticViewType,
+  QuizStatisticPagesType,
+  QuizStatisticTop10ViewType,
 } from '../../Api/Types/quiz-game-view-model.types';
-import { QuizQuestionTypeormEntity } from '../Data-access/Sql/Entities/quiz-question-typeorm.entity';
-import { QuizPairTypeormEntity } from '../Data-access/Sql/Entities/quiz-pair-typeorm.entity';
-import { QuizAnswerTypeormEntity } from '../Data-access/Sql/Entities/quiz-answer-typeorm.entity';
+import { QuizQuestionTypeormEntity } from '../Data-access/Sql/Entities/quiz-question.typeorm-entity';
+import { QuizPairTypeormEntity } from '../Data-access/Sql/Entities/quiz-pair.typeorm-entity';
+import { QuizAnswerTypeormEntity } from '../Data-access/Sql/Entities/quiz-answer.typeorm-entity';
+import { QuizStatisticTypeormEntity } from '../Data-access/Sql/Entities/quiz-statistic.typeorm-entity';
 
 export class MapToViewQuizGame {
   static mapPair(pair: QuizPairTypeormEntity): QuizPairViewType {
@@ -147,6 +151,38 @@ export class MapToViewQuizGame {
       return {
         id: question.id,
         body: question.body,
+      };
+    });
+  }
+
+  static mapStatistic(
+    statistic: QuizStatisticTypeormEntity | null,
+  ): QuizStatisticViewType {
+    return {
+      sumScore: statistic ? statistic.sumScore : 0,
+      avgScores: statistic ? statistic.avgScores : 0,
+      gamesCount: statistic ? statistic.gamesCount : 0,
+      winsCount: statistic ? statistic.winsCount : 0,
+      lossesCount: statistic ? statistic.lossesCount : 0,
+      drawsCount: statistic ? statistic.drawsCount : 0,
+    };
+  }
+
+  static mapStatistics(
+    statistics: QuizStatisticTypeormEntity[],
+  ): QuizStatisticTop10ViewType[] {
+    return statistics.map((statistic) => {
+      return {
+        sumScore: statistic.sumScore,
+        avgScores: statistic.avgScores,
+        gamesCount: statistic.gamesCount,
+        winsCount: statistic.winsCount,
+        lossesCount: statistic.lossesCount,
+        drawsCount: statistic.drawsCount,
+        player: {
+          id: statistic.user.id,
+          login: statistic.user.login,
+        },
       };
     });
   }

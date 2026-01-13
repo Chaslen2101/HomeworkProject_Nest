@@ -1,6 +1,6 @@
 import { SortDirectionEnum } from '../../../Common/Types/sort-direction.enum';
 
-export type QuestionQueryType = {
+export type QuestionSanitizedQueryType = {
   bodySearchTerm: string | null;
   publishedStatus: boolean | null;
   sortBy: string;
@@ -9,9 +9,15 @@ export type QuestionQueryType = {
   pageSize: number;
 };
 
-export type QuizPairQueryType = {
+export type QuizPairSanitizedQueryType = {
   sortBy: string;
   sortDirection: SortDirectionEnum;
+  pageNumber: number;
+  pageSize: number;
+};
+
+export type QuizStatisticQueryType = {
+  sort: string[];
   pageNumber: number;
   pageSize: number;
 };
