@@ -38,14 +38,15 @@ export class QuizPair {
     return this;
   }
 
-  tryFinishGame(answers: QuizAnswer[]): QuizPair | void {
+  tryFinishGame(answers: QuizAnswer[]): boolean {
     const canFinish: boolean = this.canFinish(answers);
     if (!canFinish) {
-      return;
+      return false;
     }
     this.countScoreWhenFinish(answers);
     this.status = PairStatusEnum.Finished;
     this.finishGameDate = new Date();
+    return true;
   }
 
   private canFinish(answers: QuizAnswer[]): boolean {

@@ -21,7 +21,7 @@ export class QuizPairRepository {
   async createNewQuizGame(
     quizPair: QuizPair,
     questions: QuizQuestion[],
-    manager: EntityManager,
+    manager?: EntityManager,
   ): Promise<string> {
     const questionsTypeorm: QuizQuestionTypeormEntity[] =
       QuizGameEntityMapper.questionsToTypeormEntity(questions);

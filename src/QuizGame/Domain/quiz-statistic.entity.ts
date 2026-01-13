@@ -39,7 +39,9 @@ export class QuizStatistic {
       }
     }
 
-    this.avgScores = this.sumScore / this.gamesCount;
+    this.avgScores = this.gamesCount
+      ? this.sumScore / this.gamesCount
+      : this.sumScore;
     ++this.gamesCount;
     return;
   }

@@ -1,28 +1,26 @@
-import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Inject } from '@nestjs/common';
 import { QuizStatisticRepository } from '../../Infrastructure/Data-access/Sql/Repositories/quiz-statistic.repository';
 import { QuizStatistic } from '../../Domain/quiz-statistic.entity';
 import { QuizPair } from '../../Domain/quiz-pair.entity';
 
-export class FinishedGameEvent {
-  constructor(
-    public quizPair: QuizPair,
-    public manager,
-  ) {}
+export class CountStatisticsCommand {
+  constructor(public quizPair: QuizPair) {}
 }
 
-@EventsHandler(FinishedGameEvent)
-export class FinishGameUseCase implements IEventHandler<FinishedGameEvent> {
+@CommandHandler(CountStatisticsCommand)
+export class CountStatisticsUseCase
+  implements ICommandHandler<CountStatisticsCommand>
+{
   constructor(
     @Inject(QuizStatisticRepository)
     private statisticRepository: QuizStatisticRepository,
   ) {}
 
-  async handle(dto: FinishedGameEvent): Promise<void> {
+  public async execute(dto: CountStatisticsCommand): Promise<void> {
     let firstPlayerStatistic: QuizStatistic | null =
       await this.statisticRepository.findStatisticByUserId(
         dto.quizPair.firstPlayerId,
-        dto.manager,
       );
     if (!firstPlayerStatistic) {
       firstPlayerStatistic = QuizStatistic.createNew(
@@ -34,7 +32,6 @@ export class FinishGameUseCase implements IEventHandler<FinishedGameEvent> {
     let secondPlayerStatistic: QuizStatistic | null =
       await this.statisticRepository.findStatisticByUserId(
         dto.quizPair.secondPlayerId!,
-        dto.manager,
       );
     if (!secondPlayerStatistic) {
       secondPlayerStatistic = QuizStatistic.createNew(
@@ -43,8 +40,9 @@ export class FinishGameUseCase implements IEventHandler<FinishedGameEvent> {
     }
     secondPlayerStatistic.updateStatistic(dto.quizPair);
 
-    await this.statisticRepository.update(firstPlayerStatistic, dto.manager);
-    await this.statisticRepository.update(secondPlayerStatistic, dto.manager);
+    await this.statisticRepository.update(firstPlayerStatistic);
+    await this.statisticRepository.update(secondPlayerStatistic);
+
     return;
   }
 }

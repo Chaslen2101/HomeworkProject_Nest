@@ -18,7 +18,7 @@ import { UserTypeormEntity } from '../UserAccounts/Infrastructure/Data-access/Sq
 import { QuizAnswerRepository } from './Infrastructure/Data-access/Sql/Repositories/quiz-answer.repository';
 import { SetAnswerForQuestionUseCase } from './Application/UseCases/set-answer-for-question.usecase';
 import { QuizAnswerQueryRepository } from './Infrastructure/Data-access/Sql/Query-repositories/quiz-answer.query-repository';
-import { FinishGameUseCase } from './Application/UseCases/finish-game.usecase';
+import { CountStatisticsUseCase } from './Application/UseCases/count-statistics-use.case';
 import { QuizStatisticRepository } from './Infrastructure/Data-access/Sql/Repositories/quiz-statistic.repository';
 import { QuizStatisticTypeormEntity } from './Infrastructure/Data-access/Sql/Entities/quiz-statistic.typeorm-entity';
 import { IUnitOfWork } from './Application/Interfaces/unit-of-work.interface';
@@ -32,7 +32,7 @@ const useCases = [
   UpdateQuestionUseCase,
   UpdateQuestionPublishStatusUseCase,
   SetAnswerForQuestionUseCase,
-  FinishGameUseCase,
+  CountStatisticsUseCase,
 ];
 @Module({
   imports: [
