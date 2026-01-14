@@ -14,7 +14,7 @@ export class FinishGameEarlierScheduler {
   ) {}
 
   @Cron(CronExpression.EVERY_SECOND)
-  public async handleExpiredGames() {
+  async handleExpiredGames() {
     const pairs: QuizPair[] =
       await this.quizPairRepository.getPairWithExpiredFinishTimer();
 
