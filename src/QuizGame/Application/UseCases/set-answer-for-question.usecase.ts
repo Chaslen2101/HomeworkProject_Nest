@@ -6,7 +6,7 @@ import { QuizAnswer } from '../../Domain/quiz-answer.entity';
 import { DomainException } from '../../../Common/Domain/Exceptions/domain-exceptions';
 import { GameDataType } from '../../Domain/Types/game-data.types';
 import { QuizAnswerRepository } from '../../Infrastructure/Data-access/Sql/Repositories/quiz-answer.repository';
-import { CountStatisticsCommand } from './count-statistics-use.case';
+import { CountStatisticsCommand } from './count-statistics.usecase';
 import { IUnitOfWork } from '../Interfaces/unit-of-work.interface';
 
 export class SetAnswerForQuestionCommand {

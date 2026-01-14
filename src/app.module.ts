@@ -1,10 +1,10 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import { Module } from '@nestjs/common';
+import { CoreModule } from './Core/core.module';
 import { UserAccountsModule } from './UserAccounts/user-account.module';
 import { BloggersPlatformModule } from './BloggersPlatform/bloggers-platform.module';
 import { TestingModule } from './Testing/testing.module';
-import { CoreModule } from './Core/core.module';
 import { QuizGameModule } from './QuizGame/quiz-game.module';
 
 @Module({
