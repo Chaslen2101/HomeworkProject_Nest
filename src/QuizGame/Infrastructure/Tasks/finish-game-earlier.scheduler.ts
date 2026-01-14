@@ -27,7 +27,7 @@ export class FinishGameEarlierScheduler {
         await this.quizPairRepository.update(pair);
         await this.commandBus.execute(new CountStatisticsCommand(pair));
       } catch (e) {
-        console.log(e);
+        console.log({ error: e });
       }
     }
   }
