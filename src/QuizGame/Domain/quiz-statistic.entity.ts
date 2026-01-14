@@ -39,10 +39,11 @@ export class QuizStatistic {
       }
     }
 
+    ++this.gamesCount;
     this.avgScores = this.gamesCount
       ? Math.round((this.sumScore / this.gamesCount) * 100) / 100
       : this.sumScore;
-    ++this.gamesCount;
+
     return;
   }
 }
