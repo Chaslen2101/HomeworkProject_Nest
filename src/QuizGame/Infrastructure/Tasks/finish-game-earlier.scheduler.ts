@@ -13,7 +13,7 @@ export class FinishGameEarlierScheduler {
     @Inject(CommandBus) private readonly commandBus: CommandBus,
   ) {}
 
-  @Cron(CronExpression.EVERY_5_SECONDS)
+  @Cron(CronExpression.EVERY_SECOND)
   public async handleExpiredGames() {
     const pairs: QuizPair[] =
       await this.quizPairRepository.getPairWithExpiredFinishTimer();
