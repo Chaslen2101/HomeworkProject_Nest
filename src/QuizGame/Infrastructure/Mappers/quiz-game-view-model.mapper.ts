@@ -159,7 +159,7 @@ export class MapToViewQuizGame {
   ): QuizStatisticViewType {
     return {
       sumScore: statistic ? statistic.sumScore : 0,
-      avgScores: statistic ? statistic.avgScores : 0,
+      avgScores: statistic ? Number(statistic.avgScores) : 0,
       gamesCount: statistic ? statistic.gamesCount : 0,
       winsCount: statistic ? statistic.winsCount : 0,
       lossesCount: statistic ? statistic.lossesCount : 0,
@@ -172,12 +172,12 @@ export class MapToViewQuizGame {
   ): QuizStatisticTop10ViewType[] {
     return statistics.map((statistic) => {
       return {
-        sumScore: Number(statistic.sumScore),
+        sumScore: statistic.sumScore,
         avgScores: Number(statistic.avgScores),
-        gamesCount: Number(statistic.gamesCount),
-        winsCount: Number(statistic.winsCount),
-        lossesCount: Number(statistic.lossesCount),
-        drawsCount: Number(statistic.drawsCount),
+        gamesCount: statistic.gamesCount,
+        winsCount: statistic.winsCount,
+        lossesCount: statistic.lossesCount,
+        drawsCount: statistic.drawsCount,
         player: {
           id: statistic.user.id,
           login: statistic.user.login,
