@@ -4,7 +4,6 @@ import {
   QuizAnswerViewType,
   QuizQuestionViewType,
   QuizStatisticViewType,
-  QuizStatisticPagesType,
   QuizStatisticTop10ViewType,
 } from '../../Api/Types/quiz-game-view-model.types';
 import { QuizQuestionTypeormEntity } from '../Data-access/Sql/Entities/quiz-question.typeorm-entity';
@@ -173,12 +172,12 @@ export class MapToViewQuizGame {
   ): QuizStatisticTop10ViewType[] {
     return statistics.map((statistic) => {
       return {
-        sumScore: statistic.sumScore,
-        avgScores: statistic.avgScores,
-        gamesCount: statistic.gamesCount,
-        winsCount: statistic.winsCount,
-        lossesCount: statistic.lossesCount,
-        drawsCount: statistic.drawsCount,
+        sumScore: Number(statistic.sumScore),
+        avgScores: Number(statistic.avgScores),
+        gamesCount: Number(statistic.gamesCount),
+        winsCount: Number(statistic.winsCount),
+        lossesCount: Number(statistic.lossesCount),
+        drawsCount: Number(statistic.drawsCount),
         player: {
           id: statistic.user.id,
           login: statistic.user.login,

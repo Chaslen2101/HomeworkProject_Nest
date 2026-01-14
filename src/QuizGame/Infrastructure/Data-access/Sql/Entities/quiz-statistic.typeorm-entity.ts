@@ -9,7 +9,7 @@ export class QuizStatisticTypeormEntity {
   @Column()
   sumScore: number;
 
-  @Column()
+  @Column({ type: 'numeric' })
   avgScores: number;
 
   @Column()

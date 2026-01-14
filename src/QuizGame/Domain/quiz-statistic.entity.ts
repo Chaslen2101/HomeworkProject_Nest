@@ -40,7 +40,7 @@ export class QuizStatistic {
     }
 
     this.avgScores = this.gamesCount
-      ? this.sumScore / this.gamesCount
+      ? Math.round((this.sumScore / this.gamesCount) * 100) / 100
       : this.sumScore;
     ++this.gamesCount;
     return;
