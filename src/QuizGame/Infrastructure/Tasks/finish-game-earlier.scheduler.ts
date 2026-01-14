@@ -20,11 +20,12 @@ export class FinishGameEarlierScheduler {
     if (pairs.length === 0) {
       return;
     }
-
+    console.log(pairs);
     for (const pair of pairs) {
       pair.finishEarlier();
       await this.quizPairRepository.update(pair);
       await this.commandBus.execute(new CountStatisticsCommand(pair));
+      console.log({ updatedPair: pair });
     }
   }
 }

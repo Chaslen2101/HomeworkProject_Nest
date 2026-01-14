@@ -64,7 +64,7 @@ export class QuizPair {
       this.canFinishEarlier = true;
       const secondsToFinish = 7;
       const date: Date = new Date();
-      // date.setSeconds(date.getSeconds() + secondsToFinish);
+      date.setSeconds(date.getSeconds() + secondsToFinish);
       this.whenCanFinishEarlier = date;
       this.answeredFirst = userId;
     }
