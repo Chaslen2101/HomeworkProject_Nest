@@ -22,13 +22,9 @@ export class FinishGameEarlierScheduler {
     }
 
     for (const pair of pairs) {
-      try {
-        pair.finishEarlier();
-        await this.quizPairRepository.update(pair);
-        await this.commandBus.execute(new CountStatisticsCommand(pair));
-      } catch (e) {
-        console.log({ error: e });
-      }
+      pair.finishEarlier();
+      await this.quizPairRepository.update(pair);
+      await this.commandBus.execute(new CountStatisticsCommand(pair));
     }
   }
 }
