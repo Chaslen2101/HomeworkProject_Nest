@@ -42,6 +42,15 @@ export class QuizPairTypeormEntity {
   @Column('uuid', { nullable: true })
   secondPlayerId: string | null;
 
+  @Column()
+  canFinishEarlier: boolean;
+
+  @Column({ type: 'timestamp with time zone', nullable: true })
+  whenCanFinishEarlier: Date | null;
+
+  @Column({ type: 'uuid', nullable: true })
+  answeredFirst: string | null;
+
   @ManyToMany(() => QuizQuestionTypeormEntity, (questions) => questions.pairs)
   @JoinTable()
   questions: QuizQuestionTypeormEntity[];

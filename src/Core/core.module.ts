@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Global()
 @Module({
@@ -22,6 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       synchronize: true,
       ssl: { rejectUnauthorized: false },
     }),
+    ScheduleModule.forRoot(),
   ],
   exports: [CqrsModule, ThrottlerModule, TypeOrmModule],
 })

@@ -15,6 +15,9 @@ export class QuizPair {
     public finishGameDate: Date | null,
     public firstPlayerScore: number,
     public secondPlayerScore: number,
+    public canFinishEarlier: boolean = false,
+    public whenCanFinishEarlier: Date | null = null,
+    public answeredFirst: string | null = null,
   ) {}
 
   static createNew(userInfo: AccessTokenPayloadType): QuizPair {
@@ -38,7 +41,7 @@ export class QuizPair {
     return this;
   }
 
-  tryFinishGame(answers: QuizAnswer[]): boolean {
+  tryToFinishGame(answers: QuizAnswer[]): boolean {
     const canFinish: boolean = this.canFinish(answers);
     if (!canFinish) {
       return false;
@@ -47,6 +50,36 @@ export class QuizPair {
     this.status = PairStatusEnum.Finished;
     this.finishGameDate = new Date();
     return true;
+  }
+
+  tryToStartFinishTimer(answers: QuizAnswer[], userId: string): void {
+    const extractedAnswers: ExtractedAnswers =
+      this.extractAllAnswersOfPlayers(answers);
+    if (
+      (extractedAnswers.firstPlayerAnswers.length == 5 ||
+        extractedAnswers.secondPlayerAnswers.length == 5) &&
+      answers.length != 10 &&
+      !this.canFinishEarlier
+    ) {
+      this.canFinishEarlier = true;
+      const secondsToFinish = 10;
+      const date: Date = new Date();
+      date.setSeconds(date.getSeconds() + secondsToFinish);
+      this.whenCanFinishEarlier = date;
+      this.answeredFirst = userId;
+    }
+    return;
+  }
+
+  finishEarlier(): void {
+    this.status = PairStatusEnum.Finished;
+    this.finishGameDate = new Date();
+    if (this.firstPlayerId == this.answeredFirst) {
+      ++this.firstPlayerScore;
+    }
+    if (this.secondPlayerId == this.answeredFirst) {
+      ++this.secondPlayerScore;
+    }
   }
 
   private canFinish(answers: QuizAnswer[]): boolean {

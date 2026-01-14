@@ -39,7 +39,6 @@ export class CountStatisticsUseCase
       );
     }
     secondPlayerStatistic.updateStatistic(dto.quizPair);
-
     await this.statisticRepository.update(firstPlayerStatistic);
     await this.statisticRepository.update(secondPlayerStatistic);
 

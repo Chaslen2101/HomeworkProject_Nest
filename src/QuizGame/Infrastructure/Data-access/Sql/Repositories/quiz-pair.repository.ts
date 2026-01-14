@@ -1,7 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { QuizPairTypeormEntity } from '../Entities/quiz-pair.typeorm-entity';
-import { DataSource, EntityManager, Not, Repository } from 'typeorm';
+import {
+  DataSource,
+  EntityManager,
+  LessThanOrEqual,
+  Not,
+  Repository,
+} from 'typeorm';
 import { QuizPair } from '../../../../Domain/quiz-pair.entity';
 import { QuizGameEntityMapper } from '../../../Mappers/quiz-game-entity.mapper';
 import { QuizQuestion } from '../../../../Domain/quiz-question.entity';
@@ -127,5 +133,16 @@ export class QuizPairRepository {
       answers: answersDomain,
       pair: pairDomain,
     };
+  }
+
+  async getPairWithExpiredFinishTimer(
+    manager?: EntityManager,
+  ): Promise<QuizPair[]> {
+    const result: QuizPairTypeormEntity[] = await this.getRepo(manager).findBy({
+      status: PairStatusEnum.Active,
+      canFinishEarlier: true,
+      whenCanFinishEarlier: LessThanOrEqual(new Date()),
+    });
+    return QuizGameEntityMapper.pairsToDomainEntity(result);
   }
 }

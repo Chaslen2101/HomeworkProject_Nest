@@ -23,6 +23,9 @@ export class QuizGameEntityMapper {
     typeormEntity.questions = questions;
     typeormEntity.firstPlayerScore = pairDomain.firstPlayerScore;
     typeormEntity.secondPlayerScore = pairDomain.secondPlayerScore;
+    typeormEntity.canFinishEarlier = pairDomain.canFinishEarlier;
+    typeormEntity.whenCanFinishEarlier = pairDomain.whenCanFinishEarlier;
+    typeormEntity.answeredFirst = pairDomain.answeredFirst;
     return typeormEntity;
   }
 
@@ -39,6 +42,9 @@ export class QuizGameEntityMapper {
     typeormEntity.secondPlayerId = pairDomain.secondPlayerId;
     typeormEntity.firstPlayerScore = pairDomain.firstPlayerScore;
     typeormEntity.secondPlayerScore = pairDomain.secondPlayerScore;
+    typeormEntity.canFinishEarlier = pairDomain.canFinishEarlier;
+    typeormEntity.whenCanFinishEarlier = pairDomain.whenCanFinishEarlier;
+    typeormEntity.answeredFirst = pairDomain.answeredFirst;
     return typeormEntity;
   }
 
@@ -53,7 +59,31 @@ export class QuizGameEntityMapper {
       pairTypeorm.finishGameDate,
       pairTypeorm.firstPlayerScore,
       pairTypeorm.secondPlayerScore,
+      pairTypeorm.canFinishEarlier,
+      pairTypeorm.whenCanFinishEarlier,
+      pairTypeorm.answeredFirst,
     );
+  }
+
+  static pairsToDomainEntity(
+    pairsTypeorm: QuizPairTypeormEntity[],
+  ): QuizPair[] {
+    return pairsTypeorm.map((pairTypeorm) => {
+      return new QuizPair(
+        pairTypeorm.id,
+        pairTypeorm.firstPlayerId,
+        pairTypeorm.secondPlayerId,
+        pairTypeorm.status,
+        pairTypeorm.pairCreatedDate,
+        pairTypeorm.startGameDate,
+        pairTypeorm.finishGameDate,
+        pairTypeorm.firstPlayerScore,
+        pairTypeorm.secondPlayerScore,
+        pairTypeorm.canFinishEarlier,
+        pairTypeorm.whenCanFinishEarlier,
+        pairTypeorm.answeredFirst,
+      );
+    });
   }
 
   static questionToTypeormEntity(

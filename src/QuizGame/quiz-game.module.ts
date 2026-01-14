@@ -24,6 +24,7 @@ import { QuizStatisticTypeormEntity } from './Infrastructure/Data-access/Sql/Ent
 import { IUnitOfWork } from './Application/Interfaces/unit-of-work.interface';
 import { TypeormUnitOfWork } from './Infrastructure/Data-access/Sql/Typeorm/unit-of-work.typeorm';
 import { QuizStatisticQueryRepository } from './Infrastructure/Data-access/Sql/Query-repositories/quiz-statistic.query-repository';
+import { FinishGameEarlierScheduler } from './Infrastructure/Tasks/finish-game-earlier.scheduler';
 
 const useCases = [
   ConnectionQuizGameUseCase,
@@ -33,6 +34,7 @@ const useCases = [
   UpdateQuestionPublishStatusUseCase,
   SetAnswerForQuestionUseCase,
   CountStatisticsUseCase,
+  FinishGameEarlierScheduler,
 ];
 @Module({
   imports: [

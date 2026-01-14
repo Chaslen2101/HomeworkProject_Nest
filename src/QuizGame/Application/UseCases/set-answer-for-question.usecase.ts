@@ -43,7 +43,8 @@ export class SetAnswerForQuestionUseCase
         await this.quizAnswerRepository.createNewAnswer(newAnswer, manager);
         gameData.answers.push(newAnswer);
         gameData.pair.countScore(gameData.answers);
-        const isFinished: boolean = gameData.pair.tryFinishGame(
+        gameData.pair.tryToStartFinishTimer(gameData.answers, dto.userInfo.sub);
+        const isFinished: boolean = gameData.pair.tryToFinishGame(
           gameData.answers,
         );
         await this.quizPairRepository.update(gameData.pair, manager);
