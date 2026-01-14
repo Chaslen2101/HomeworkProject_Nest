@@ -17,7 +17,7 @@ export class FinishGameEarlierScheduler {
   public async handleExpiredGames() {
     const pairs: QuizPair[] =
       await this.quizPairRepository.getPairWithExpiredFinishTimer();
-
+    console.log('Cron Active', { pairs: pairs });
     if (pairs.length === 0) {
       return;
     }
